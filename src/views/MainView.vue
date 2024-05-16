@@ -16,6 +16,5 @@ export default defineComponent({
 
 <style scoped>
 h1 {
-  font-size: 2100px;
 }
 </style>

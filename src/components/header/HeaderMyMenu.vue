@@ -9,7 +9,12 @@
     <div class="image-box">
       <font-awesome-icon :icon="['far', 'paper-plane']" size="2xl" class="icon" />
     </div>
-    <div class="my-image-box">
+    <div class="image-box">
+      <RouterLink to="/login">
+        <font-awesome-icon :icon="['fas', 'right-to-bracket']" size="2xl" class="icon" />
+      </RouterLink>
+    </div>
+    <div class="my-image-box" style="display: none">
       <img src="@/assets/main/poorin.png" />
     </div>
   </div>
@@ -22,9 +27,11 @@
   width: 30px;
   height: 30px;
   cursor: pointer;
+  text-decoration: none;
+  color: black;
 }
 .my {
-  width: 20%;
+  width: 17%;
   display: flex;
   justify-content: space-between;
 }
@@ -42,8 +49,8 @@ img {
 }
 
 .my-image-box img {
-  width: 60px;
-  height: 60px;
+  width: 45px;
+  height: 45px;
   border-radius: 50%;
   cursor: pointer;
 }
