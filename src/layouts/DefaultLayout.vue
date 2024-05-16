@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <Header />
-    <v-main>
+    <v-main style="--v-layout-bottom: 0px">
       <router-view />
     </v-main>
     <Footer />

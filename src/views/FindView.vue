@@ -1,43 +1,19 @@
 <template>
   <div class="container">
-    <div class="login-box">
-      <div class="logo-box">
-        <div class="logo">
-          <RouterLink to="/" class="go-to-link">
-            <img src="@/assets/main/logo.png" alt="Logo" class="logo-image" />
-            <div>소확행</div>
-          </RouterLink>
+    <div class="find-box">
+      <div class="header-box">
+        <div class="header">
+          <div>비밀번호 재설정</div>
         </div>
       </div>
-      <form @submit.prevent="handleSubmit" class="login-form">
+      <div class="info">가입한 이메일 주소를 입력해주세요.</div>
+      <form @submit.prevent="handleSubmit" class="find-form">
         <div class="input-group">
           <input v-model="email" id="email" name="email" type="text" required placeholder="이메일" />
+          <font-awesome-icon :icon="['far', 'circle-check']" size="xl" class="icon" />
         </div>
-        <div class="input-group">
-          <input v-model="password" id="password" name="password" type="password" required placeholder="비밀번호" />
-        </div>
-        <button type="submit" class="login-button">로그인</button>
-        <div class="links">
-          <RouterLink to="/find" class="link">비밀번호 찾기</RouterLink> &nbsp;&nbsp;|&nbsp;&nbsp;
-          <RouterLink to="/signup" class="link">회원가입</RouterLink>
-        </div>
+        <button type="submit" class="submit-button">인증코드 전송</button>
       </form>
-      <div class="social-login">
-        <div class="separator">
-          <span class="separator-text">간편 로그인 / 회원가입</span>
-        </div>
-        <div class="social-icons">
-          <div class="social-icon">
-            <img src="@/assets/login/google.png" alt="Google" class="icon" />
-          </div>
-          <div class="social-icon">
-            <img src="@/assets/login/kakao.png" alt="Kakao" class="icon" />
-          </div>
-          <div class="social-icon">
-            <img src="@/assets/login/naver.webp" alt="Naver" class="icon" />
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -57,14 +33,15 @@ const handleSubmit = () => {
 
 <style scoped>
 .container {
-  min-height: 100vh;
+  height: calc(100vh - 100px);
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: #f3f4f6;
+  padding-bottom: 200px;
 }
 
-.login-box {
+.find-box {
   width: 100%;
   max-width: 450px;
   padding: 2.5rem;
@@ -74,35 +51,30 @@ const handleSubmit = () => {
   text-align: center;
 }
 
-.logo {
-  width: 50%;
+.header {
+  width: 100%;
   display: flex;
   justify-content: center;
   flex-direction: column;
   align-items: center;
-  margin: 0 auto;
-  margin-bottom: 2rem;
-}
-
-.logo-image {
-  cursor: pointer;
-  width: 64px;
-  height: 64px;
-  margin-bottom: 0.5rem;
-}
-
-.go-to-link {
-  font-weight: bold;
-  color: #333333;
-  text-decoration: none;
+  margin: 2rem auto;
   font-size: 2rem;
 }
 
-.login-form {
+.find-form {
   margin-bottom: 1rem;
 }
 
+.info {
+  text-align: left;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+}
+
 .input-group {
+  position: relative;
+  display: flex;
+  align-items: center;
   margin-bottom: 2rem;
 }
 
@@ -113,6 +85,7 @@ const handleSubmit = () => {
   border-radius: 4px;
   font-size: 1rem;
   color: #333333;
+  box-sizing: border-box;
 }
 
 .input-group input:focus {
@@ -121,7 +94,14 @@ const handleSubmit = () => {
   box-sizing: border-box;
 }
 
-.login-button {
+.icon {
+  position: absolute;
+  right: 10px;
+  pointer-events: none;
+  color: green;
+}
+
+.submit-button {
   width: 100%;
   padding: 14px 16px;
   background-color: #333333;
@@ -134,77 +114,7 @@ const handleSubmit = () => {
   margin-bottom: 1rem;
 }
 
-.login-button:hover {
+.submit-button:hover {
   background-color: black;
-}
-
-.links {
-  display: flex;
-  justify-content: end;
-  font-size: 0.8rem;
-  color: #333333;
-}
-
-.links .link {
-  text-decoration: none;
-  color: #333333;
-}
-
-.links .link:hover {
-  font-weight: bold;
-}
-
-.social-login {
-  margin-top: 3rem;
-}
-
-.separator {
-  position: relative;
-  margin-bottom: 1rem;
-}
-
-.separator::before {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background-color: #d1d5db;
-  transform: translateY(-50%);
-}
-
-.separator-text {
-  position: relative;
-  padding: 0 1rem;
-  background-color: #ffffff;
-  color: #666666;
-}
-
-.social-icons {
-  display: flex;
-  justify-content: space-evenly;
-}
-
-.social-icon {
-  width: 60px;
-  height: 60px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  border: 1px solid #d1d5db;
-  border-radius: 50%;
-  background-color: #ffffff;
-  cursor: pointer;
-}
-
-.social-icon img {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-}
-
-.social-icon:hover {
-  background-color: #f3f4f6;
 }
 </style>
