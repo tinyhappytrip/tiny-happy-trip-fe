@@ -1,15 +1,37 @@
 <template>
-  <v-app-bar app>
-    <v-toolbar-title>My App</v-toolbar-title>
-    <v-spacer></v-spacer>
-    <v-btn text to="/">Home</v-btn>
-    <v-btn text to="/login">Login</v-btn>
-    <v-btn text to="/register">Register</v-btn>
-  </v-app-bar>
+  <header class="header">
+    <div class="container">
+      <HeaderLogo />
+      <HeaderMyMenu />
+    </div>
+    <HeaderMenuBar />
+  </header>
 </template>
 
-<script>
-export default {
-  name: 'Header'
-}
+<script setup>
+import HeaderLogo from '../header/HeaderLogo.vue'
+import HeaderMenuBar from '../header/HeaderMenuBar.vue'
+import HeaderMyMenu from '../header/HeaderMyMenu.vue'
 </script>
+
+<style scoped>
+.header {
+  position: fixed;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  color: black;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100px;
+  top: 0;
+}
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 60%;
+  margin: 0 auto;
+}
+</style>

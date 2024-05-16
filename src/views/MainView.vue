@@ -13,3 +13,9 @@ export default defineComponent({
   name: 'MainView'
 })
 </script>
+
+<style scoped>
+h1 {
+  font-size: 2100px;
+}
+</style>

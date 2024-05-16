@@ -1,0 +1,11 @@
+@font-face {
+    font-family: 'april16th';
+    src: url('src/assets/font/April16thTTF-Promise.ttf') format('truetype'); /* TTF 형식 */
+    font-weight: normal;
+    font-style: normal;
+}
+
+body {
+    color: red;
+    font-family: 'april16th', april16th;
+}
