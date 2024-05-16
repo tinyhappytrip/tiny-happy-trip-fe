@@ -75,7 +75,7 @@ const handleSubmit = () => {
   position: relative;
   display: flex;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 2.5rem;
 }
 
 .input-group input {

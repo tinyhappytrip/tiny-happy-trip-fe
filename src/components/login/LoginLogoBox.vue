@@ -3,8 +3,8 @@
     <div class="logo">
       <RouterLink to="/" class="go-to-link">
         <img src="@/assets/main/logo.png" alt="Logo" class="logo-image" />
-        <div>소확행</div>
       </RouterLink>
+      <div class="title">로그인</div>
     </div>
   </div>
 </template>
@@ -34,5 +34,12 @@
   color: #333333;
   text-decoration: none;
   font-size: 2rem;
+}
+
+.title {
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: default;
+  color: #333333;
 }
 </style>
