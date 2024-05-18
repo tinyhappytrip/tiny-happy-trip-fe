@@ -19,21 +19,21 @@
 </template>
 
 <script setup>
+import { getType } from '@/api/user-api'
+import { sendPassword } from '@/api/mail-api'
 import { ref } from 'vue'
 
 const email = ref('')
-const password = ref('')
 
-const handleSubmit = () => {
-  // Handle the form submission
-  console.log('Email:', email.value)
-  console.log('Password:', password.value)
+const handleSubmit = async () => {
+  console.log(email.value)
+  await sendPassword(email.value)
 }
 </script>
 
 <style scoped>
 .container {
-  height: calc(100vh - 100px);
+  height: calc(100vh - 80px);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -43,7 +43,7 @@ const handleSubmit = () => {
 
 .find-box {
   width: 100%;
-  max-width: 450px;
+  max-width: 400px;
   padding: 2.5rem;
   background-color: #ffffff;
   border-radius: 8px;
@@ -58,7 +58,8 @@ const handleSubmit = () => {
   flex-direction: column;
   align-items: center;
   margin: 2rem auto;
-  font-size: 2rem;
+  font-size: 1.7rem;
+  font-weight: 600;
 }
 
 .find-form {
@@ -80,7 +81,7 @@ const handleSubmit = () => {
 
 .input-group input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 11px 12px;
   border: 1.5px solid #d1d5db;
   border-radius: 4px;
   font-size: 1rem;
@@ -118,3 +119,5 @@ const handleSubmit = () => {
   background-color: black;
 }
 </style>
+import { findPassword } from '@/api/mail-api';import { findType } from '@/api/user-api'; import { findType } from '@/api/user-api';import { sendPassword } from
+'@/api/mail-api';

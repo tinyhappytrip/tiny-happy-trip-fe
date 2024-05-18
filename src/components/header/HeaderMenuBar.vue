@@ -13,7 +13,6 @@
 
 <style scoped>
 .nav {
-  font-weight: 700;
   display: flex;
   position: absolute;
   justify-content: center;
@@ -27,7 +26,8 @@
 }
 .nav ul li {
   margin-left: 30px;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 .nav ul li a {
   color: black;

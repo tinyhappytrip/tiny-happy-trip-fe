@@ -56,7 +56,8 @@ const emailDomain = ref('')
 const password = ref('')
 const passwordCheck = ref('')
 const nickname = ref('')
-
+const params = new URLSearchParams(window.location.search)
+const paramsObj = Object.fromEntries(params.entries())
 const text = () => {
   console.log('클릭')
 }
@@ -93,7 +94,7 @@ const handleSubmit = () => {
 
 .signup-container {
   width: 100%;
-  max-width: 450px;
+  max-width: 400px;
   padding: 2.5rem;
   background-color: #ffffff;
   border-radius: 8px;
@@ -113,8 +114,8 @@ const handleSubmit = () => {
 
 .logo-image {
   cursor: pointer;
-  width: 64px;
-  height: 64px;
+  width: 50px;
+  height: 50px;
   margin-bottom: 0.5rem;
 }
 
@@ -126,8 +127,8 @@ const handleSubmit = () => {
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 1.7rem;
+  font-weight: 700;
   cursor: default;
   color: #333333;
 }
@@ -140,7 +141,7 @@ const handleSubmit = () => {
   display: block;
   text-align: left;
   margin-bottom: 0.3rem;
-  font-size: 1rem;
+  font-size: 0.9rem;
 }
 
 .description {
@@ -152,7 +153,7 @@ const handleSubmit = () => {
 }
 
 .form-group {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .email-input-group {
@@ -164,7 +165,7 @@ const handleSubmit = () => {
 
 .email-input-group input {
   width: 50%;
-  padding: 14px 16px;
+  padding: 11px 12px;
   border: 1.5px solid #d1d5db;
   border-radius: 4px;
   font-size: 1rem;
@@ -178,7 +179,7 @@ const handleSubmit = () => {
 
 .select-wrapper select {
   width: 100%;
-  padding: 14px 16px;
+  padding: 11px 12px;
   border: 1.5px solid #d1d5db;
   border-radius: 4px;
   font-size: 1rem;
@@ -210,16 +211,15 @@ const handleSubmit = () => {
   font-size: 1rem;
   font-weight: bold;
   cursor: pointer;
-  margin-bottom: 1rem;
 }
 
 .input-group {
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 }
 
 .input-group input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 11px 12px;
   border: 1.5px solid #d1d5db;
   border-radius: 4px;
   font-size: 1rem;

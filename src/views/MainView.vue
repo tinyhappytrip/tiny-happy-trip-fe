@@ -6,13 +6,7 @@
   </div>
 </template>
 
-<script>
-import { defineComponent } from 'vue'
-
-export default defineComponent({
-  name: 'MainView'
-})
-</script>
+<script></script>
 
 <style scoped>
 h1 {

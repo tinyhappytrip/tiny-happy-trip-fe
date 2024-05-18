@@ -16,13 +16,17 @@
 
 <script setup>
 import { ref } from 'vue'
+import { login } from '@/api/user-api'
 
 const email = ref('')
 const password = ref('')
 
-const handleSubmit = () => {
-  console.log('Email:', email.value)
-  console.log('Password:', password.value)
+const handleSubmit = async () => {
+  const data = {
+    email: email.value,
+    password: password.value
+  }
+  login(data)
 }
 </script>
 
@@ -37,7 +41,7 @@ const handleSubmit = () => {
 
 .input-group input {
   width: 100%;
-  padding: 14px 16px;
+  padding: 11px 12px;
   border: 1.5px solid #d1d5db;
   border-radius: 4px;
   font-size: 1rem;
