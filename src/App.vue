@@ -1,4 +1,5 @@
 <template>
+  <div :class="{ 'modal-background': !computedShowModal }"></div>
   <component :is="layout">
     <router-view />
   </component>
@@ -18,7 +19,6 @@ const layout = computed(() => {
 @import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR&family=Jua&display=swap');
 
 #app {
-  text-align: center;
   font-family: 'IBM Plex Sans KR', sans-serif;
   font-weight: 500;
   font-style: normal;

@@ -4,7 +4,9 @@
       <font-awesome-icon :icon="['fas', 'magnifying-glass']" size="2xl" class="icon" />
     </div>
     <div class="image-box">
+      <RouterLink to="/story/write">
       <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
+        </RouterLink>
     </div>
     <div class="image-box">
       <font-awesome-icon :icon="['far', 'paper-plane']" size="2xl" class="icon" />
