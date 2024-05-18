@@ -5,8 +5,8 @@
     </div>
     <div class="image-box">
       <RouterLink to="/story/write">
-      <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
-        </RouterLink>
+        <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
+      </RouterLink>
     </div>
     <div class="image-box">
       <font-awesome-icon :icon="['far', 'paper-plane']" size="2xl" class="icon" />
@@ -20,7 +20,7 @@
       <img src="@/assets/main/poorin.png" />
       <transition name="slide">
         <div v-if="isDropdownVisible" class="dropdown-menu">
-          <RouterLink :to="`/profile/${userId}`" class="dropdown-item">프로필</RouterLink>
+          <RouterLink :to="`/profile/2`" class="dropdown-item">프로필</RouterLink>
           <RouterLink :to="`/mypage/${userId}`" class="dropdown-item">마이페이지</RouterLink>
           <div class="dropdown-item" @click="logout">로그아웃</div>
         </div>

@@ -1,13 +1,17 @@
 <template>
   <div class="container">
-    <ProfileInfoBox class="left-box" />
-    <ProfileContentBox class="right-box" />
+    <ProfileInfoBox :userId="route.params.userId" class="left-box" />
+    <ProfileContentBox :userId="route.params.userId" class="right-box" />
   </div>
 </template>
 
 <script setup>
 import ProfileInfoBox from '@/components/profile/ProfileInfoBox.vue'
 import ProfileContentBox from '@/components/profile/ProfileContentBox.vue'
+import { useRoute } from 'vue-router'
+import {onMounted, ref} from 'vue'
+const route = useRoute();
+
 </script>
 
 <style scoped>

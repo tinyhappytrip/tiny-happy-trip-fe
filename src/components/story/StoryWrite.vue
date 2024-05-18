@@ -1,32 +1,29 @@
 <script setup>
-import { writeStory } from "@/api/story";
-import { ref, onMounted, watch } from "vue";
-import { useRoute } from "vue-router";
-import StoryImageUploader from "@/components/story/StoryImageUploader.vue";
-import StoryForm from "./StoryForm.vue";
-const story = ref({});
+import { writeStory } from '@/api/story'
+import { ref, onMounted, watch } from 'vue'
+import { useRoute } from 'vue-router'
+import StoryImageUploader from '@/components/story/StoryImageUploader.vue'
+import StoryForm from './StoryForm.vue'
 
-const searchMode = ref(false);
-const route = useRoute();
+const story = ref({})
+const searchMode = ref(false)
+const route = useRoute()
 
 const uploadStory = () => {
-  const { content, weather, emotion, location, scope, latitude, longitude, hashtags, tags, imageFiles } = story.value; // 객체 분해
-  const storyData = { content, weather, emotion, location, scope, latitude, longitude, hashtags, tags, imageFiles };
-  storyData.latitude = 2.2;
-  storyData.longitude = 2.2;
-  console.log("서버에 스토리 작성");
-  
-  console.log(storyData);
+  const { content, weather, emotion, location, scope, latitude, longitude, hashtags, tags, imageFiles } = story.value // 객체 분해
+  const storyData = { content, weather, emotion, location, scope, latitude, longitude, hashtags, tags, imageFiles }
+  storyData.latitude = 2.2
+  storyData.longitude = 2.2
   writeStory(
     storyData,
     (result) => {
-      console.log(result.data);
+      console.log(result.data)
     },
     (error) => {
-      console.log(error);
+      console.log(error)
     }
-  );
-};
+  )
+}
 </script>
 
 <template>
@@ -46,9 +43,7 @@ const uploadStory = () => {
         </div>
       </div>
       <div>
-        <v-btn justify="end" color="#0C081E" size="small" style="float: right" @click="uploadStory">
-          스토리 작성
-        </v-btn>
+        <v-btn justify="end" color="#0C081E" size="small" style="float: right" @click="uploadStory"> 스토리 작성 </v-btn>
       </div>
     </v-card>
   </div>

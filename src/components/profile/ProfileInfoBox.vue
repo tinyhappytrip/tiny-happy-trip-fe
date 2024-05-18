@@ -4,38 +4,118 @@
       <img class="profile-picture" src="@/assets/main/poorin.png" alt="Profile Picture" />
       <div class="profile-info"></div>
     </div>
-    <h2 class="profile-name">SUMBIM</h2>
-    <p class="profile-description">프론트엔드 개발자 입니다.</p>
+    <h2 class="profile-name">{{ profile.nickname }}</h2>
+    <p class="profile-description">{{ profile.description }}</p>
     <div class="profile-stats">
       <div class="stat">
         <span class="stat-number">245</span>
         <span class="stat-label">게시물</span>
       </div>
       <div class="stat">
-        <span class="stat-number">189</span>
+        <span class="stat-number">{{ profile.followerCount }}</span>
         <span class="stat-label">팔로워</span>
       </div>
       <div class="stat">
-        <span class="stat-number">132</span>
+        <span class="stat-number">{{ profile.followingCount }}</span>
         <span class="stat-label">팔로잉</span>
       </div>
     </div>
     <div class="profile-actions">
-      <button class="follow-button">팔로우</button>
+      <button @click="clickFollowBtn" class="follow-button">{{ isFollowing ? '팔로우 취소' : '팔로우' }}</button>
       <button class="message-button">메시지</button>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, defineProps, onMounted, computed } from 'vue'
+import { getUserInfo, followUser, unFollowUser, followList } from '@/api/user-api'
+import { useAuthStore } from '@/stores/auth'
 
-const profile = ref({
-  name: 'SUMBIM',
-  description: '프론트엔드 개발자.',
-  posts: 245,
-  followers: 189,
-  following: 132
+const authStore = useAuthStore()
+authStore.checkAuth()
+const isLoggedIn = computed(() => authStore.isLoggedIn)
+const loginUserId = computed(() => authStore.userId)
+
+const profile = ref({})
+const isFollowing = ref(false)
+const userFollowerList = ref([])
+const { userId } = defineProps({
+  userId: {
+    type: Number,
+    required: true
+  }
+})
+
+const clickFollowBtn = () => {
+  if (isFollowing.value) {
+    unFollow()
+  } else {
+    follow()
+  }
+}
+
+const unFollow = () => {
+  unFollowUser(
+    userId,
+    (result) => {
+      console.log(result)
+      isFollowing.value = false
+      userInfo()
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+
+const follow = () => {
+  followUser(
+    userId,
+    (result) => {
+      console.log(result)
+      isFollowing.value = true
+      userInfo()
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+const userInfo = () => {
+  getUserInfo(
+    userId,
+    (result) => {
+      profile.value = result.data
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+
+const checkIsFollowing = () => {
+  followList(
+    userId,
+    (result) => {
+      userFollowerList.value = result.data
+      for (let i = 0; i < userFollowerList.value.length; i++) {
+        if (userFollowerList.value[i].userId == loginUserId.value) {
+          isFollowing.value = true
+          break
+        }
+      }
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+
+// 초기 작업
+onMounted(() => {
+  userInfo()
+  checkIsFollowing()
 })
 </script>
 

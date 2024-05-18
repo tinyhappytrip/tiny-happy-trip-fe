@@ -17,16 +17,24 @@
 <script setup>
 import { ref } from 'vue'
 import { login } from '@/api/user-api'
+import { useRouter } from 'vue-router'
 
 const email = ref('')
 const password = ref('')
+const router = useRouter();
 
 const handleSubmit = async () => {
   const data = {
     email: email.value,
     password: password.value
   }
-  login(data)
+  login(data,
+    (result) => {
+      router.push("/");
+    },(error) => {
+      console.log(error)
+    }
+  )
 }
 </script>
 

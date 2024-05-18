@@ -47,4 +47,10 @@ export const routes = [
       }
     ]
   }
+  // {
+  //   path: '/collection',
+  //   name: 'collection',
+  //   meta: { layout: DefaultLayout },
+  //   component: () => import('@/views/CollectionView.vue')
+  // }
 ]
