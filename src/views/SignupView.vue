@@ -43,6 +43,7 @@
         <div class="input-group">
           <input v-model="nickname" id="nickname" name="nickname" type="text" required placeholder="닉네임" />
         </div>
+        <div class="alert">{{  message }}</div>
         <button type="submit" class="signup-btn">회원가입</button>
       </form>
     </div>
@@ -51,6 +52,9 @@
 
 <script setup>
 import { ref } from 'vue'
+import { signup } from '@/api/user-api'
+import { useRouter } from 'vue-router'
+const message = ref(' ')
 const email = ref('')
 const emailDomain = ref('')
 const password = ref('')
@@ -58,6 +62,8 @@ const passwordCheck = ref('')
 const nickname = ref('')
 const params = new URLSearchParams(window.location.search)
 const paramsObj = Object.fromEntries(params.entries())
+const router = useRouter();
+
 const text = () => {
   console.log('클릭')
 }
@@ -69,16 +75,25 @@ const verifyEmail = () => {
 
 const handleSubmit = () => {
   if (password.value !== passwordCheck.value) {
-    alert('비밀번호가 일치하지 않습니다.')
+    message.value = '비밀번호가 일치하지 않습니다.';
     return
   }
+  message.value = ' ';
 
   const domain = emailDomain.value === 'custom' ? customEmailDomain.value : emailDomain.value
 
-  console.log('Form submitted', {
+  console.log('Form submitted', )
+
+  signup({
     email: `${email.value}@${emailDomain.value}`,
     password: password.value,
     nickname: nickname.value
+  }, (result) => {
+    console.log(result)
+    router.push("login")
+    message.value = '';
+  }, (error) => {
+    message.value = '이미 있는 이메일 계정입니다.';
   })
 }
 </script>
@@ -247,5 +262,12 @@ const handleSubmit = () => {
 
 .signup-btn:hover {
   background-color: black;
+}
+
+.alert {
+  height: 15px;
+  color: red;
+  margin: 0 auto;
+  margin-bottom: 1rem;
 }
 </style>

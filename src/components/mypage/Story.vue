@@ -11,27 +11,40 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      photos: [
-        { url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSC1Qw9qKJbrqHv9k1XDHWe0OePKRwXfA4wuX7JWeP2&s', title: 'Photo 1' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 2' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 3' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 4' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 5' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 6' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 1' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 2' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 3' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 4' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 5' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 6' }
-      ]
-    }
+<script setup>
+import { userStory } from '@/api/story'
+const userStories = ref([])
+const { userId } = defineProps({
+  userId: {
+    type: Number,
+    required: true
   }
-}
+})
+
+userStory(
+  userId,
+  (result) => {
+    console.log(result)
+    userStories.value = result.data
+  },
+  (error) => {
+    console.log(error)
+  }
+)
+const photos = ref([
+  { url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSC1Qw9qKJbrqHv9k1XDHWe0OePKRwXfA4wuX7JWeP2&s', title: 'Photo 1' },
+  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 2' },
+  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 3' },
+  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 4' },
+  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 5' },
+  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 6' },
+  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 1' },
+  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 2' },
+  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 3' },
+  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 4' },
+  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 5' },
+  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 6' }
+])
 </script>
 
 <style scoped>

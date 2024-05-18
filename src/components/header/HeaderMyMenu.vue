@@ -20,7 +20,7 @@
       <img src="@/assets/main/poorin.png" />
       <transition name="slide">
         <div v-if="isDropdownVisible" class="dropdown-menu">
-          <RouterLink :to="`/profile/${userId}`" class="dropdown-item">프로필</RouterLink>
+          <RouterLink :to="`/profile/2`" class="dropdown-item">프로필</RouterLink>
           <RouterLink :to="`/mypage/${userId}`" class="dropdown-item">마이페이지</RouterLink>
           <div class="dropdown-item" @click="logout">로그아웃</div>
         </div>

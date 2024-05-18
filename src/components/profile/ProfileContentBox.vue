@@ -6,17 +6,25 @@
       <button @click="activeTab = 'likes'">여행지도</button>
     </div>
     <div class="tab-content">
-      <Story v-if="activeTab === 'story'" />
-      <Collection v-if="activeTab === 'collection'" />
-      <Likes v-if="activeTab === 'likes'" />
+      <Story :userId="userId" v-if="activeTab === 'story'" />
+      <Collection :userId="userId" v-if="activeTab === 'collection'" />
+      <Likes :userId="userId" v-if="activeTab === 'likes'" />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, defineProps } from 'vue'
 
 const activeTab = ref('story')
+
+const { userId } = defineProps({
+  userId: {
+    type: Number,
+    required: true
+  }
+})
+
 </script>
 
 <style scoped>

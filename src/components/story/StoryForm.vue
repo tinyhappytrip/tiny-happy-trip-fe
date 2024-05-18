@@ -6,16 +6,16 @@
         <p class="comment">날씨는 어땠나요?</p>
         <div>
           <button @click="changeWeather('sunny')">
-            <img :class="{ 'non-selected' : props.story.weather != 'sunny' }" src="/src/assets/weather/sunny.png" width="35px" />
+            <img :class="{ 'non-selected': props.story.weather != 'sunny' }" src="/src/assets/weather/sunny.png" width="35px" />
           </button>
           <button @click="changeWeather('cloud')">
-            <img :class="{ 'non-selected' : props.story.weather != 'cloud' }" src="/src/assets/weather/cloud.png" width="35px" />
+            <img :class="{ 'non-selected': props.story.weather != 'cloud' }" src="/src/assets/weather/cloud.png" width="35px" />
           </button>
           <button @click="changeWeather('rain')">
-            <img :class="{ 'non-selected' : props.story.weather != 'rain' }" src="/src/assets/weather/rainy.png" width="35px" />
+            <img :class="{ 'non-selected': props.story.weather != 'rain' }" src="/src/assets/weather/rainy.png" width="35px" />
           </button>
           <button @click="changeWeather('snow')">
-            <img :class="{ 'non-selected' : props.story.weather != 'snow' }" src="/src/assets/weather/snow.png" width="35px" />
+            <img :class="{ 'non-selected': props.story.weather != 'snow' }" src="/src/assets/weather/snow.png" width="35px" />
           </button>
         </div>
       </div>
@@ -23,16 +23,16 @@
         <p class="comment_title">감정</p>
         <p class="comment">감정은 어땠나요?</p>
         <button @click="changeEmotion('happy')">
-          <img :class="{ 'non-selected' : props.story.emotion != 'happy' }" src="/src/assets/emotion/happy.png" width="35px" />
+          <img :class="{ 'non-selected': props.story.emotion != 'happy' }" src="/src/assets/emotion/happy.png" width="35px" />
         </button>
         <button @click="changeEmotion('sad')">
-          <img :class="{ 'non-selected' : props.story.emotion != 'sad' }" src="/src/assets/emotion/sad.png" width="35px" />
+          <img :class="{ 'non-selected': props.story.emotion != 'sad' }" src="/src/assets/emotion/sad.png" width="35px" />
         </button>
         <button @click="changeEmotion('angry')">
-          <img :class="{ 'non-selected' : props.story.emotion != 'angry' }" src="/src/assets/emotion/angry.png" width="35px" />
+          <img :class="{ 'non-selected': props.story.emotion != 'angry' }" src="/src/assets/emotion/angry.png" width="35px" />
         </button>
         <button @click="changeEmotion('amazing')">
-          <img :class="{ 'non-selected' : props.story.emotion != 'amazing' }" src="/src/assets/emotion/amazing.png" width="35px" />
+          <img :class="{ 'non-selected': props.story.emotion != 'amazing' }" src="/src/assets/emotion/amazing.png" width="35px" />
         </button>
       </div>
     </div>
@@ -78,64 +78,45 @@
       <div class="toggle">
         <div>공개 범위 설정</div>
         <div class="radio-group">
-        <label class="radio-option">
-            <input v-model="props.story.scope" type="radio" name="visibility" value="PUBLIC"> 공개
-        </label>
-        <label class="radio-option">
-            <input v-model="props.story.scope" type="radio" name="visibility" value="PRIVATE"> 비공개
-        </label>
-        <label class="radio-option">
-            <input v-model="props.story.scope" type="radio" name="visibility" value="FOLLOWER"> 팔로워만 공개
-        </label>
-    </div>
-
+          <label class="radio-option"> <input v-model="props.story.scope" type="radio" name="visibility" value="PUBLIC" /> 공개 </label>
+          <label class="radio-option"> <input v-model="props.story.scope" type="radio" name="visibility" value="PRIVATE" /> 비공개 </label>
+          <label class="radio-option"> <input v-model="props.story.scope" type="radio" name="visibility" value="FOLLOWER" /> 팔로워만 공개 </label>
+        </div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref, defineProps, toRefs } from "vue";
+import { onMounted, ref, defineProps, toRefs } from 'vue'
 
-const props = defineProps({
+const { story } = defineProps({
   story: Object
 })
 
-
-const story = toRefs(props)
-
-const locations = ref([
-  "제주도1",
-  "제주도2",
-  "제주도3",
-  "제주도1",
-  "제주도1",
-  "제주도1",
-  "제주도1",
-  "제주도1",
-]);
-const searchKeyword = ref("");
-const selectedLocation = ref("");
-const isLocationSelected = ref(false);
-const searchMode = ref(false);
+const locations = ref(['제주도1', '제주도2', '제주도3', '제주도1', '제주도1', '제주도1'])
+const searchKeyword = ref('')
+const selectedLocation = ref('')
+const isLocationSelected = ref(false)
+const searchMode = ref(false)
 
 const changeWeather = (weather) => {
-  props.story.weather = weather;
-};
+  props.story.weather = weather
+}
 
 const changeEmotion = (emotion) => {
-  props.story.emotion = emotion;
-};
+  props.story.emotion = emotion
+}
 
 const searchModeToggle = () => {
-  searchMode.value = !searchMode.value;
-};
+  searchMode.value = !searchMode.value
+}
 const clickedItem = (location) => {
-  isLocationSelected.value = true;
-  searchMode.value = false;
-  selectedLocation.value = location;
-  props.story.location = location;
-};
+  isLocationSelected.value = true
+  searchMode.value = false
+  selectedLocation.value = location
+  props.story.location = location
+}
 </script>
 
 <style scoped>
@@ -248,5 +229,4 @@ body {
 .radio-option {
   margin: 5px 0;
 }
-
 </style>

@@ -16,7 +16,7 @@ export default {
   data() {
     return {
       photos: [
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 1' },
+        { url: 'http://loc alhost:3000/src/assets/main/poorin.png', title: 'Photo 1' },
         { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 2' },
         { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 3' },
         { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 4' },
