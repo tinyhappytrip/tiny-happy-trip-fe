@@ -1,7 +1,7 @@
 <template>
   <nav class="nav">
     <ul>
-      <li><a href="#">이야기</a></li>
+      <li><a href="/story">이야기</a></li>
       <li><a href="#">모음집</a></li>
       <li><a href="#">추천여행지</a></li>
       <li><a href="#">여행계획</a></li>
