@@ -4,20 +4,14 @@
   </component>
 </template>
 
-<script>
+<script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
 
-export default {
-  name: 'App',
-  setup() {
-    const route = useRoute()
-    const layout = computed(() => {
-      return route.meta.layout || 'div'
-    })
-    return { layout }
-  }
-}
+const route = useRoute()
+const layout = computed(() => {
+  return route.meta.layout || 'div'
+})
 </script>
 
 <style>

@@ -8,7 +8,11 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import LoginForm from './LoginForm.vue'
+import LoginLogoBox from './LoginLogoBox.vue'
+import LoginSocialBox from './LoginSocialBox.vue'
+</script>
 
 <style scoped>
 .container {
@@ -21,7 +25,7 @@
 
 .login-box {
   width: 100%;
-  max-width: 450px;
+  max-width: 400px;
   padding: 2.5rem;
   background-color: #ffffff;
   border-radius: 8px;

@@ -1,7 +1,7 @@
 <template>
   <nav class="nav">
     <ul>
-      <li><a href="#">이야기</a></li>
+      <li><a href="/story">이야기</a></li>
       <li><a href="#">모음집</a></li>
       <li><a href="#">추천여행지</a></li>
       <li><a href="#">여행계획</a></li>
@@ -13,7 +13,6 @@
 
 <style scoped>
 .nav {
-  font-weight: 700;
   display: flex;
   position: absolute;
   justify-content: center;
@@ -27,7 +26,8 @@
 }
 .nav ul li {
   margin-left: 30px;
-  font-size: 1.3rem;
+  font-size: 1.2rem;
+  font-weight: 500;
 }
 .nav ul li a {
   color: black;

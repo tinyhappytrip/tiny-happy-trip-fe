@@ -24,8 +24,8 @@
 
 .logo-image {
   cursor: pointer;
-  width: 64px;
-  height: 64px;
+  width: 50px;
+  height: 50px;
   margin-bottom: 0.5rem;
 }
 
@@ -37,8 +37,8 @@
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: bold;
+  font-size: 1.7rem;
+  font-weight: 700;
   cursor: default;
   color: #333333;
 }

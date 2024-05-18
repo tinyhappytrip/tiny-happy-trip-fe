@@ -16,7 +16,7 @@ export default {
 <style>
 .v-application__wrap {
   min-height: 0 !important;
-  padding-top: 100px;
+  padding-top: 80px;
 }
 
 html::-webkit-scrollbar {

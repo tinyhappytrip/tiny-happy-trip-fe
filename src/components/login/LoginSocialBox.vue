@@ -4,15 +4,15 @@
       <span class="separator-text">간편 로그인 / 회원가입</span>
     </div>
     <div class="social-icons">
-      <div class="social-icon">
+      <a class="social-icon" href="http://localhost:8080/oauth2/authorization/google?redirect_uri=http://localhost:3000&mode=login">
         <img src="@/assets/login/google.png" alt="Google" class="icon" />
-      </div>
-      <div class="social-icon">
+      </a>
+      <a class="social-icon" href="http://localhost:8080/oauth2/authorization/kakao?redirect_uri=http://localhost:3000&mode=login">
         <img src="@/assets/login/kakao.png" alt="Kakao" class="icon" />
-      </div>
-      <div class="social-icon">
+      </a>
+      <a class="social-icon" href="http://localhost:8080/oauth2/authorization/naver?redirect_uri=http://localhost:3000&mode=login">
         <img src="@/assets/login/naver.webp" alt="Naver" class="icon" />
-      </div>
+      </a>
     </div>
   </div>
 </template>
@@ -41,6 +41,7 @@
 }
 
 .separator-text {
+  font-size: 0.8rem;
   position: relative;
   padding: 0 1rem;
   background-color: #ffffff;
@@ -53,8 +54,8 @@
 }
 
 .social-icon {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -65,8 +66,8 @@
 }
 
 .social-icon img {
-  width: 60px;
-  height: 60px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
 }
 

@@ -18,17 +18,22 @@ import { RouterLink } from 'vue-router'
   z-index: 999;
   cursor: pointer;
 }
+
 .logo .logo-box {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-right: 10px;
 }
+
 .logo img {
   width: 50px;
 }
+
 .logo .home-link {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
 }
+
 .home-link {
   display: flex;
   justify-content: center;
