@@ -1,5 +1,4 @@
 <template>
-  <div :class="{ 'modal-background': !computedShowModal }"></div>
   <component :is="layout">
     <router-view />
   </component>

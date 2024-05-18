@@ -17,6 +17,7 @@ import { RouterLink } from 'vue-router'
 .logo {
   z-index: 999;
   cursor: pointer;
+  width: 20%;
 }
 
 .logo .logo-box {

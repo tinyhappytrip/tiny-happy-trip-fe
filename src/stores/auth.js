@@ -8,7 +8,7 @@ export const useAuthStore = defineStore('auth', {
     isLoggedIn: false,
     userId: '',
     role: '',
-    userProfile: ''
+    userImage: ''
   }),
 
   actions: {
@@ -16,7 +16,7 @@ export const useAuthStore = defineStore('auth', {
       setCookie(data)
       const { sub: userId, auth: role } = jwtDecode(getAccessToken())
       this.setAuth(true, userId, role.split('_')[1])
-      // this.userProfile = (await authAxios().get(`/users/${this.userId}`)).data.userImage
+      this.userImage = (await authAxios().get(`/users/${this.userId}`)).data.userImage
     },
     logout() {
       removeCookie()
@@ -31,7 +31,8 @@ export const useAuthStore = defineStore('auth', {
       if (getAccessToken()) {
         const { sub: userId, auth: role } = jwtDecode(getAccessToken())
         this.setAuth(true, userId, role.split('_')[1])
-        // this.userProfile = (await authAxios().get(`/users/${this.userId}`)).data.userImage
+        this.userImage = (await authAxios().get(`/users/${this.userId}`)).data.userImage
+        console.log(this.userImage)
       } else {
         this.logout()
       }

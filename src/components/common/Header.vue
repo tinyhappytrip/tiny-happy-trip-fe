@@ -2,7 +2,7 @@
   <header class="header">
     <div class="container">
       <HeaderLogo />
-      <HeaderMyMenu />
+      <HeaderMyMenu :isModalVisible="isModalVisible" @update:modalVisible="$emit('update:modalVisible', $event)" />
     </div>
     <HeaderMenuBar />
   </header>
@@ -14,6 +14,14 @@ import HeaderMenuBar from '../header/HeaderMenuBar.vue'
 import HeaderMyMenu from '../header/HeaderMyMenu.vue'
 import { useAuthStore } from '@/stores/auth'
 import { setCookie } from '@/util/cookie'
+
+const props = defineProps({
+  isModalVisible: {
+    type: Boolean,
+    required: true
+  }
+})
+
 const authStore = useAuthStore()
 const params = new URLSearchParams(window.location.search)
 const paramsObj = Object.fromEntries(params.entries())

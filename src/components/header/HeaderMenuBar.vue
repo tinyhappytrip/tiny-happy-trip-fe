@@ -25,7 +25,7 @@
   margin: 0;
 }
 .nav ul li {
-  margin-left: 30px;
+  margin: 20px;
   font-size: 1.2rem;
   font-weight: 500;
 }
