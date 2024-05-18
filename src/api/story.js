@@ -1,6 +1,6 @@
-import { localAxios } from '@/util/http-commons'
+import { noAuthAxios } from '@/util/http-commons'
 
-const local = localAxios()
+const local = noAuthAxios()
 
 function listStory(success, fail) {
   local.get(`/stories`).then(success).catch(fail)

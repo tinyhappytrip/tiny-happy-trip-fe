@@ -4,8 +4,6 @@
   </v-footer>
 </template>
 
-<script>
-export default {
-  name: 'Footer'
-}
-</script>
+<script></script>
+
+<style scoped></style>

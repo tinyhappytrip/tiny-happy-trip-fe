@@ -1,12 +1,12 @@
 <template>
   <div class="my">
-    <div class="image-box">
+    <div class="image-box" @click="openModal">
       <font-awesome-icon :icon="['fas', 'magnifying-glass']" size="2xl" class="icon" />
     </div>
     <div class="image-box">
       <RouterLink to="/story/write">
-      <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
-        </RouterLink>
+        <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
+      </RouterLink>
     </div>
     <div class="image-box">
       <font-awesome-icon :icon="['far', 'paper-plane']" size="2xl" class="icon" />
@@ -35,12 +35,20 @@ import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
 authStore.checkAuth()
+
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 const userId = computed(() => authStore.userId)
+const userImage = computed(() => authStore.userImage)
 const isDropdownVisible = ref(false)
-console.log(userId.value)
+
+const emit = defineEmits(['update:modalVisible'])
+
 const toggleDropdown = () => {
   isDropdownVisible.value = !isDropdownVisible.value
+}
+
+const openModal = () => {
+  emit('update:modalVisible', true)
 }
 
 const logout = () => {
@@ -64,8 +72,8 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .icon {
-  width: 30px;
-  height: 30px;
+  width: 25px;
+  height: 25px;
   cursor: pointer;
   text-decoration: none;
   color: black;
@@ -114,6 +122,7 @@ img {
   border-radius: 5px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
+  text-align: center;
 }
 
 .dropdown-item {
