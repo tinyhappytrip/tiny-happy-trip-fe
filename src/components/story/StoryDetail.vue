@@ -28,6 +28,7 @@
             gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
             cover
           ></v-img>
+
           <StoryLike :story="story"></StoryLike>
         </div>
 
@@ -50,7 +51,7 @@
             {{ story.content }}
           </div>
           <hr />
-          <div v-for="comment in comments" :key="comment.storyCommentId">
+          <div v-for="comment in story.storyComments" :key="comment.storyCommentId">
             <div class="comment">
               <div class="storyComment">
                 <img width="10px" class="storyComment_img" :src="comment.userImage ? comment.userImage : '/src/assets/main/user.png'" />
@@ -75,11 +76,10 @@
           <div>
             <StoryCommentInput
               ref="commentInput"
-              :storyId="story.storyId"
+              :storyId="storyId"
               :nickname="nickname"
               :commentId="commentId"
               v-model:commentMode="commentMode"
-              v-model:comments="comments"
               @move-detail="getStoryDetail"
             ></StoryCommentInput>
           </div>
@@ -91,26 +91,25 @@
 
 <script setup>
 import { detailStory } from '@/api/story'
-import { ref, defineProps, defineEmits, computed, onMounted, nextTick, getCurrentInstance } from 'vue'
+import { toRef, ref, defineProps, defineEmits, computed, onMounted, nextTick, getCurrentInstance } from 'vue'
 import StoryCommentInput from '@/components/story/StoryCommentInput.vue'
-
-const story = ref({})
-const createdAt = ref('')
-const comments = ref([])
-const nickname = ref('')
-const commentId = ref(0)
-const commentMode = ref(true)
-const openMenu = ref(false)
-const commentInputRef = ref(null)
 
 const { proxy } = getCurrentInstance()
 
-const { storyId } = defineProps({
+const props = defineProps({
   storyId: {
     type: Number,
     required: true
   }
 })
+
+const storyId = ref(props.storyId)
+const story = ref({})
+const createdAt = ref('')
+const nickname = ref('')
+const commentId = ref(0)
+const commentMode = ref(true)
+const openMenu = ref(false)
 
 const emits = defineEmits(['close'])
 
@@ -120,13 +119,13 @@ const closeModal = () => {
 
 const getStoryDetail = () => {
   console.log('서버에서 스토리 상세 정보 받아옴.')
-  storyId.value = props.storyId
+  console.log(storyId.value)
+
   detailStory(
     storyId.value,
     (result) => {
       story.value = result.data
       createdAt.value = story.value.createdAt
-      comments.value = story.value.storyComments
     },
     (error) => {
       console.log(error)
@@ -161,9 +160,8 @@ const reply = (commentNickname, replyCommentId) => {
     scrollToBottom()
     // ref를 사용하여 sendReply 메서드 호출
     const commentInput = proxy.$refs.commentInput
-    console.log(commentInput)
     if (commentInput && typeof commentInput.setReply === 'function') {
-      commentInput.setReply()
+      commentInput.setReply(nickname.value, commentId.value)
     } else {
       console.error('commentInput ref is not found or setReply is not a function')
     }

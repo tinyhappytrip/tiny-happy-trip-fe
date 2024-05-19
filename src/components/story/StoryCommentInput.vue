@@ -15,13 +15,9 @@ const commentMessage = ref('')
 const commentMode = defineModel('commentMode')
 const emit = defineEmits(['move-detail'])
 
-const { storyId, comments, nickname, commentId } = defineProps({
+const props = defineProps({
   storyId: {
     type: Number,
-    required: true
-  },
-  comments: {
-    type: Array,
     required: true
   },
   nickname: {
@@ -31,6 +27,9 @@ const { storyId, comments, nickname, commentId } = defineProps({
     type: Number
   }
 })
+
+const storyId = ref(props.storyId)
+const commentId = ref(props.commentId)
 
 const sendComment = () => {
   commentStory(
@@ -47,8 +46,9 @@ const sendComment = () => {
   emit('move-detail', storyId)
 }
 
-const setReply = () => {
-  commentMessage.value = '@' + nickname.value + ' '
+const setReply = (nickname, replyCommentId) => {
+  commentId.value = replyCommentId
+  commentMessage.value = '@' + nickname + ' '
 }
 
 const sendReply = () => {

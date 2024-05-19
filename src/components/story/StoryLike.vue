@@ -9,20 +9,18 @@
 
 <script setup>
 import { likeStory } from '@/api/story'
-import { defineProps, toRefs } from 'vue'
-const { story } = defineProps({
+import { defineProps, onMounted } from 'vue'
+const props = defineProps({
   story: {
     type: Object,
     required: true
   }
 })
+const { story } = toRefs(props)
 
 const like = () => {
   console.log('좋아요 누름')
-  console.log(story.value.storyId)
-
   likeStory(props.story.storyId, (result) => {
-    console.log(result)
     story.value.like = !story.value.like
     if (!story.value.like) {
       story.value.likeCount--

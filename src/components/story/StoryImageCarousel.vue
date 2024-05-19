@@ -20,7 +20,6 @@ const computedImagePath = (img) => {
 }
 const colors = ref(['indigo', 'warning', 'pink darken-2', 'red lighten-1', 'deep-purple accent-4'])
 const slides = ref(['First', 'Second', 'Third', 'Fourth'])
-console.log(images.length)
 </script>
 
 <style scope></style>

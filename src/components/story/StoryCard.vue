@@ -37,7 +37,10 @@
     <span style="padding: 10px; color: blue" v-for="(hashtag, idx) in story.tags" :key="idx">
       {{ hashtag }}
     </span>
-    <StoryCommentInput :storyId="story.storyId" v-model:commentMode="commentMode"></StoryCommentInput>
+    <StoryCommentInput 
+    :storyId="story.storyId" 
+    v-model:commentMode="commentMode">
+  </StoryCommentInput>
   </div>
 </template>
 
@@ -64,14 +67,15 @@ const computedDate = (rawDate) => {
   return year + '년 ' + month + '월 ' + day + '일'
 }
 const computedWeather = computed(() => {
-  return '/src/assets/weather/' + story.value.weather + '.png'
+  return '/src/assets/weather/' + story.weather + '.png'
 })
 
 const computedEmotion = computed(() => {
-  return '/src/assets/emotion/' + story.value.emotion + '.png'
+  return '/src/assets/emotion/' + story.emotion + '.png'
 })
 
 const moveDetail = (storyId) => {
+  console.log(storyId)
   emit('move-detail', storyId)
 }
 </script>

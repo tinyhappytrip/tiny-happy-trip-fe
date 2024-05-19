@@ -81,10 +81,8 @@ const alerts = ref([
 ])
 
 const getStoryList = () => {
-  console.log('서버에서 스토리 목록 받아옴.')
   listStory(
     (result) => {
-      console.log(result.data)
       stories.value = result.data
     },
     (error) => {

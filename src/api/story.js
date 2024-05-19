@@ -14,6 +14,7 @@ function detailStory(storyId, success, fail) {
 }
 
 function writeStory(story, success, fail) {
+  console.log(story)
   authAxios().post(BASE_API_PATH, story).then(success).catch(fail)
 }
 
@@ -25,6 +26,7 @@ function likeStory(storyId, success, fail) {
 }
 
 function commentStory(storyId, comment, success, fail) {
+  console.log(comment)
   authAxios()
     .post(BASE_API_PATH + '/comments/' + storyId, comment)
     .then(success)
