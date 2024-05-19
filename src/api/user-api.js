@@ -1,16 +1,14 @@
 import { noAuthAxios, authAxios } from '@/util/http-commons'
 import { useAuthStore } from '@/stores/auth'
 import { sendPassword } from './mail-api'
+import router from '@/router'
 import Cookies from 'js-cookie'
 
 const BASE_API_PATH = '/users'
 const store = useAuthStore()
 
-export async function login(data, success, fail) {
-  noAuthAxios()
-    .post(BASE_API_PATH + '/login', data)
-    .then(success)
-    .catch(fail)
+export async function login(data) {
+  return await noAuthAxios().post(BASE_API_PATH + '/login', data)
 }
 
 export async function logout() {
@@ -34,8 +32,8 @@ export async function getType(email) {
     })
 }
 
-export async function getHomeUserImage() {
-  await authAxios.get
+export async function getValidate(type, value) {
+  return await noAuthAxios().get(`${BASE_API_PATH}/validate?type=${type}&value=${value}`)
 }
 
 export async function socialSignup(data) {
@@ -44,11 +42,10 @@ export async function socialSignup(data) {
   window.location.href = `http://localhost:8080/oauth2/authorization/${socialType.toLowerCase()}?redirect_uri=http://localhost:3000&mode=login`
 }
 
-export async function signup(signupUser, success, fail) {
+export async function signup(signupUser, success) {
   await noAuthAxios()
     .post(BASE_API_PATH + '/signup', signupUser)
     .then(success)
-    .catch(fail)
 }
 
 export async function getUserInfo(userId, success, fail) {

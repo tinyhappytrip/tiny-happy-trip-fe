@@ -9,9 +9,8 @@
 import ProfileInfoBox from '@/components/profile/ProfileInfoBox.vue'
 import ProfileContentBox from '@/components/profile/ProfileContentBox.vue'
 import { useRoute } from 'vue-router'
-import {onMounted, ref} from 'vue'
-const route = useRoute();
-
+import { onMounted, ref } from 'vue'
+const route = useRoute()
 </script>
 
 <style scoped>
@@ -19,6 +18,7 @@ const route = useRoute();
   width: 60%;
   margin: 0 auto;
   margin-top: 70px;
+  padding-top: 80px;
 }
 
 .left-box {

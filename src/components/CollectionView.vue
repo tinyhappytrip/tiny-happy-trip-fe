@@ -38,6 +38,6 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 /* 스타일은 필요에 따라 추가 */
 </style>

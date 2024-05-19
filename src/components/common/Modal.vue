@@ -11,7 +11,7 @@
 </template>
 
 <script setup>
-import { onMounted, onUnmounted, getCurrentInstance } from 'vue'
+import { onMounted, onUnmounted, getCurrentInstance, watch } from 'vue'
 import SearchBar from '../search/SearchBar.vue'
 import SearchContent from '../search/SearchContent.vue'
 const searchKeyword = ref()
@@ -44,6 +44,12 @@ const searchByKeyword = (keyword) => {
   searchKeyword.value = keyword
   proxy.$refs.searchContent.searchByKeyword(keyword)
 }
+watch(
+  () => props.visible,
+  (newValue) => {
+    document.documentElement.style.overflow = newValue ? 'hidden' : 'auto'
+  }
+)
 </script>
 
 <style scoped>

@@ -119,10 +119,13 @@ const interval = ref(null)
 const router = useRouter()
 
 const isEmailComplete = computed(() => {
-  if (emailDomain.value === 'custom') {
-    return email.value && customEmailDomain.value
+  const domain = emailDomain.value === 'custom' ? customEmailDomain.value : emailDomain.value
+  const fullEmail = `${email.value}@${domain}`
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+  if (email.value && domain && emailPattern.test(fullEmail) && !emailError.value) {
+    return true
   }
-  return email.value && emailDomain.value
+  return false
 })
 
 const isFormValid = computed(() => {
@@ -139,7 +142,7 @@ const isFormValid = computed(() => {
   )
 })
 
-const validateEmail = () => {
+const validateEmail = async () => {
   const domain = emailDomain.value === 'custom' ? customEmailDomain.value : emailDomain.value
   const fullEmail = `${email.value}@${domain}`
   const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -147,8 +150,24 @@ const validateEmail = () => {
     emailError.value = '유효한 이메일을 입력해주세요.'
     return false
   }
-  emailError.value = ''
-  return true
+  await getValidate('email', fullEmail).then(async (response) => {
+    if (response.data === 'KAKAO') {
+      emailError.value = '카카오 간편계정으로 가입된 회원입니다.'
+      return false
+    } else if (response.data === 'GOOGLE') {
+      emailError.value = '구글 간편계정으로 가입된 회원입니다.'
+      return false
+    } else if (response.data === 'NAVER') {
+      emailError.value = '네이버 간편계정으로 가입된 회원입니다.'
+      return false
+    } else if (response.data === 'EMAIL') {
+      emailError.value = '이미 가입된 회원입니다.'
+      return false
+    } else {
+      emailError.value = ''
+      return true
+    }
+  })
 }
 
 const validatePassword = () => {
@@ -194,37 +213,25 @@ const validateNickname = () => {
   return true
 }
 
-const updateNickname = (event) => {
+const updateNickname = async (event) => {
   nickname.value = event.target.value.trim()
-  validateNickname()
+  await getValidate('nickname', nickname.value).then((response) => {
+    if (response.data) {
+      nicknameError.value = '이미 사용중인 닉네임입니다.'
+    } else {
+      validateNickname()
+    }
+  })
 }
 
 const verifyEmail = async () => {
   if (validateEmail()) {
     const domain = emailDomain.value === 'custom' ? customEmailDomain.value : emailDomain.value
-    console.log(`Verify email: ${email.value}@${domain}`)
     const emailData = `${email.value}@${domain}`
-    await getValidate(emailData).then(async (response) => {
-      console.log(response)
-      if (response.data === 'KAKAO') {
-        emailError.value = '카카오 간편계정으로 가입된 회원입니다.'
-        email.value = ''
-      } else if (response.data === 'GOOGLE') {
-        emailError.value = '구글 간편계정으로 가입된 회원입니다.'
-        email.value = ''
-      } else if (response.data === 'NAVER') {
-        emailError.value = '네이버 간편계정으로 가입된 회원입니다.'
-        email.value = ''
-      } else if (response.data === 'EMAIL') {
-        emailError.value = '이미 가입된 회원입니다.'
-        email.value = ''
-      } else {
-        isVerificationSent.value = true
-        startTimer()
-        await sendCode(emailData).then((response) => {
-          correctVerificationCode.value = response.data.toString().trim()
-        })
-      }
+    isVerificationSent.value = true
+    startTimer()
+    await sendCode(emailData).then((response) => {
+      correctVerificationCode.value = response.data.toString().trim()
     })
   }
 }
@@ -248,7 +255,6 @@ const handleSubmit = () => {
         nickname: nickname.value
       },
       (result) => {
-        console.log(result)
         router.push('login')
         message.value = ''
       }

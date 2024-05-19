@@ -1,34 +1,39 @@
 <template>
   <div class="my">
-    <div class="image-box" @click="openModal">
-      <font-awesome-icon :icon="['fas', 'magnifying-glass']" size="2xl" class="icon" />
-    </div>
-    <div class="image-box">
-      <RouterLink to="/story/write">
-        <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
-      </RouterLink>
-    </div>
-    <div class="image-box">
-      <font-awesome-icon :icon="['far', 'paper-plane']" size="2xl" class="icon" />
-    </div>
-    <div v-if="!isLoggedIn" class="image-box">
-      <RouterLink to="/login">
-        <font-awesome-icon :icon="['fas', 'right-to-bracket']" size="2xl" class="icon" />
-      </RouterLink>
-    </div>
-    <div v-if="isLoggedIn" class="my-image-box" @click.stop="toggleDropdown">
-      <img src="@/assets/main/poorin.png" />
-      <transition name="slide">
-        <div v-if="isDropdownVisible" class="dropdown-menu">
-          <RouterLink :to="`/profile/2`" class="dropdown-item">프로필</RouterLink>
-          <RouterLink :to="`/mypage/${userId}`" class="dropdown-item">마이페이지</RouterLink>
-          <div class="dropdown-item" @click="logout">로그아웃</div>
-        </div>
-      </transition>
-    </div>
+    <template v-if="isLoggedIn">
+      <div class="image-box" @click="openModal">
+        <font-awesome-icon :icon="['fas', 'magnifying-glass']" size="2xl" class="icon" />
+      </div>
+      <div class="image-box">
+        <RouterLink to="/story/write">
+          <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
+        </RouterLink>
+      </div>
+      <div class="image-box">
+        <RouterLink to="/messenger">
+          <font-awesome-icon :icon="['far', 'paper-plane']" size="2xl" class="icon" />
+        </RouterLink>
+      </div>
+      <div v-if="isLoggedIn" class="my-image-box" @click.stop="toggleDropdown">
+        <img :src="`http://localhost:8080/image?path=${userImage}`" />
+        <transition name="slide">
+          <div v-if="isDropdownVisible" class="dropdown-menu">
+            <RouterLink :to="`/profile/${userId}`" class="dropdown-item">프로필</RouterLink>
+            <RouterLink :to="`/mypage/${userId}`" class="dropdown-item">마이페이지</RouterLink>
+            <div class="dropdown-item" @click="logout">로그아웃</div>
+          </div>
+        </transition>
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="login-box">
+        <RouterLink to="/login" class="to-login">로그인</RouterLink>
+        <RouterLink to="/signup" class="to-login">회원가입</RouterLink>
+      </div>
+    </template>
   </div>
 </template>
-
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '@/stores/auth'
@@ -57,19 +62,20 @@ const logout = () => {
   location.href = '/'
 }
 
-function handleClick(event) {
-  isDropdownVisible.value = false
+const handleClickOutside = (event) => {
+  if (!event.target.closest('.my-image-box')) {
+    isDropdownVisible.value = false
+  }
 }
 
 onMounted(() => {
-  window.addEventListener('click', handleClick)
+  window.addEventListener('click', handleClickOutside)
 })
 
 onBeforeUnmount(() => {
-  window.removeEventListener('click', handleClick)
+  window.removeEventListener('click', handleClickOutside)
 })
 </script>
-
 <style scoped>
 .icon {
   width: 25px;
@@ -89,7 +95,7 @@ onBeforeUnmount(() => {
   justify-content: center;
   align-items: center;
   z-index: 999;
-  width: 25%;
+  width: 20%;
 }
 
 img {
@@ -107,8 +113,8 @@ img {
 }
 
 .my-image-box img {
-  width: 45px;
-  height: 45px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   cursor: pointer;
 }
@@ -141,7 +147,7 @@ img {
 
 .slide-enter-active,
 .slide-leave-active {
-  transition: transform 0.5s ease, opacity 0.3s ease;
+  transition: transform 0.3s ease, opacity 0.2s ease;
 }
 .slide-enter-from {
   transform: translateY(-20px);
@@ -158,5 +164,22 @@ img {
 .slide-leave-to {
   transform: translateY(-20px);
   opacity: 0;
+}
+
+.login-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  width: 100%;
+}
+
+.to-login {
+  z-index: 9999;
+  text-decoration: none;
+  color: black;
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-right: 30px;
 }
 </style>

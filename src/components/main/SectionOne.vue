@@ -5,26 +5,34 @@
         <h2><span style="color: red">소소하고</span> <span style="color: coral">확실한</span> <span style="color: beige">여행</span></h2>
         <h1>당신의 이야기를 들려주세요</h1>
       </div>
-      <button @click="writeStory">작성하기</button>
+      <div class="button" v-if="isLoggedIn" @click="writeStory">작성하기</div>
+      <RouterLink to="/login">
+        <div class="button" v-if="!isLoggedIn">로그인</div>
+      </RouterLink>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  name: 'App',
-  methods: {
-    writeStory() {
-      alert('이야기 작성 페이지로 이동합니다.')
-    }
-  },
-  mounted() {
-    document.documentElement.style.overflow = 'auto'
-  },
-  beforeDestroy() {
-    document.documentElement.style.overflow = ''
-  }
+<script setup>
+import { computed, onMounted, onBeforeUnmount } from 'vue'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+authStore.checkAuth()
+
+const isLoggedIn = computed(() => authStore.isLoggedIn)
+
+const writeStory = () => {
+  alert('이야기 작성 페이지로 이동합니다.')
 }
+
+onMounted(() => {
+  document.documentElement.style.overflow = 'auto'
+})
+
+onBeforeUnmount(() => {
+  document.documentElement.style.overflow = ''
+})
 </script>
 
 <style scoped>
@@ -59,7 +67,12 @@ h1 {
   margin-bottom: 20px;
 }
 
-button {
+a {
+  text-decoration: none;
+}
+
+.button {
+  text-decoration: none;
   padding: 10px 20px;
   font-size: 1.2rem;
   color: white;
@@ -70,7 +83,7 @@ button {
   text-align: right;
 }
 
-button:hover {
+.button:hover {
   background-color: white;
   color: black;
 }

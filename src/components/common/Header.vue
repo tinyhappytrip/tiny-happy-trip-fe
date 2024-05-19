@@ -22,19 +22,19 @@ const props = defineProps({
   }
 })
 
-const authStore = useAuthStore()
-const params = new URLSearchParams(window.location.search)
-const paramsObj = Object.fromEntries(params.entries())
-const { accessToken, refreshToken, grantType } = paramsObj
-if (accessToken) {
-  const data = {
-    accessToken,
-    refreshToken
-  }
-  setCookie(data)
-  authStore.checkAuth()
-  window.history.replaceState({}, document.title, window.location.pathname)
-}
+// const authStore = useAuthStore()
+// const params = new URLSearchParams(window.location.search)
+// const paramsObj = Object.fromEntries(params.entries())
+// const { accessToken, refreshToken, grantType } = paramsObj
+// if (accessToken) {
+//   const data = {
+//     accessToken,
+//     refreshToken
+//   }
+//   setCookie(data)
+//   authStore.checkAuth()
+//   window.history.replaceState({}, document.title, window.location.pathname)
+// }
 </script>
 
 <style scoped>
@@ -55,6 +55,6 @@ if (accessToken) {
   justify-content: space-between;
   align-items: center;
   width: 60%;
-  margin: 0 auto;
+  margin: 20px auto;
 }
 </style>

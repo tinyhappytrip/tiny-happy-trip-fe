@@ -31,6 +31,6 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 /* Optional: Add custom styles here */
 </style>

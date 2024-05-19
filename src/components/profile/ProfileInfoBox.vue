@@ -36,7 +36,6 @@ const authStore = useAuthStore()
 authStore.checkAuth()
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 const loginUserId = computed(() => authStore.userId)
-
 const profile = ref({})
 const isFollowing = ref(false)
 const userFollowerList = ref([])
@@ -119,7 +118,7 @@ onMounted(() => {
 })
 </script>
 
-<style>
+<style scoped>
 .profile-container {
   position: fixed;
   display: flex;

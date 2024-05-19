@@ -7,22 +7,24 @@
       </div>
       <form @submit.prevent="handleSubmit" class="signup-form">
         <label for="nickname" class="label">닉네임</label>
-        <div class="description">소확행에서 사용할 닉네임입니다.(2자 ~ 10자)</div>
+        <div class="description">소확행에서 사용할 닉네임입니다.(3자 ~ 10자)</div>
         <div class="input-group">
-          <input v-model="nickname" id="nickname" name="nickname" type="text" required placeholder="닉네임" />
+          <input :value="nickname" id="nickname" name="nickname" type="text" required placeholder="닉네임" @input="updateNickname" />
+          <div class="error-message">{{ nicknameError }}</div>
         </div>
-        <button type="submit" class="signup-btn">회원가입</button>
+        <button type="submit" class="signup-btn" :disabled="!isFormValid">회원가입</button>
       </form>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import Cookies from 'js-cookie'
-import { socialSignup } from '@/api/user-api'
-import { useRouter, useRoute } from 'vue-router'
+import { socialSignup, getValidate } from '@/api/user-api'
+import { useRouter } from 'vue-router'
 const nickname = ref('')
+const nicknameError = ref('')
 const params = new URLSearchParams(window.location.search)
 const router = useRouter()
 
@@ -33,7 +35,47 @@ if (params.get('email')) {
   router.replace({ path: '/signup?social=true' })
 }
 
+const isFormValid = computed(() => {
+  return nickname.value && !nicknameError.value
+})
+
+const validateNickname = async () => {
+  const hangulConsonants = /^[ㄱ-ㅎ]$/
+  const hangulVowels = /^[ㅏ-ㅣ]$/
+  const invalidHangulPattern = /([ㄱ-ㅎㅏ-ㅣ])$/
+  const containsWhitespace = /\s/g
+
+  if (containsWhitespace.test(nickname.value)) {
+    nicknameError.value = '닉네임에는 공백을 포함할 수 없습니다.'
+    return false
+  } else if (hangulConsonants.test(nickname.value) || hangulVowels.test(nickname.value)) {
+    nicknameError.value = '올바른 닉네임을 입력해주세요.'
+    return false
+  } else if (invalidHangulPattern.test(nickname.value)) {
+    nicknameError.value = '올바른 닉네임을 입력해주세요.'
+    return false
+  } else if (nickname.value.length < 3 || nickname.value.length > 10) {
+    nicknameError.value = '닉네임은 3자 이상 10자 이하이어야 합니다.'
+    return false
+  } else {
+    await getValidate('nickname', nickname.value).then((response) => {
+      if (response.data) {
+        nicknameError.value = '이미 사용중인 닉네임입니다.'
+      } else {
+        nicknameError.value = ''
+      }
+    })
+  }
+}
+
+const updateNickname = (event) => {
+  nickname.value = event.target.value.trim()
+  validateNickname()
+}
+
 const handleSubmit = async () => {
+  if (!isFormValid.value) return
+
   const data = {
     email: Cookies.get('email'),
     nickname: nickname.value,
@@ -44,8 +86,12 @@ const handleSubmit = async () => {
     Cookies.remove('email')
     Cookies.remove('socialType')
     Cookies.remove('userImage')
+    router.replace('/')
   })
 }
+
+// Watchers for real-time validation
+watch(nickname, validateNickname)
 </script>
 
 <style scoped>
@@ -61,7 +107,7 @@ const handleSubmit = async () => {
 .signup-container {
   width: 100%;
   max-width: 400px;
-  padding: 2.5rem;
+  padding: 1.5rem 2.5rem;
   background-color: #ffffff;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -82,10 +128,6 @@ const handleSubmit = async () => {
 
 .header p {
   font-size: 0.8rem;
-}
-
-.signup-form {
-  margin-bottom: 1rem;
 }
 
 .label {
@@ -198,5 +240,13 @@ const handleSubmit = async () => {
 
 .signup-btn:hover {
   background-color: black;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.6rem;
+  text-align: left;
+  line-height: 1.5;
+  position: absolute;
 }
 </style>

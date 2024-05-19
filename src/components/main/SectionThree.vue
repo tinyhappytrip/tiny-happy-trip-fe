@@ -10,21 +10,20 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'App',
-  methods: {
-    writeStory() {
-      alert('이야기 작성 페이지로 이동합니다.')
-    }
-  },
-  mounted() {
-    document.documentElement.style.overflow = 'auto'
-  },
-  beforeDestroy() {
-    document.documentElement.style.overflow = ''
-  }
+<script setup>
+import { onMounted, onBeforeUnmount } from 'vue'
+
+function writeStory() {
+  alert('이야기 작성 페이지로 이동합니다.')
 }
+
+onMounted(() => {
+  document.documentElement.style.overflow = 'auto'
+})
+
+onBeforeUnmount(() => {
+  document.documentElement.style.overflow = ''
+})
 </script>
 
 <style scoped>
