@@ -18,10 +18,9 @@ import Modal from '@/components/common/Modal.vue'
 const isModalVisible = ref(false)
 </script>
 
-<style>
+<style scoped>
 .v-application__wrap {
   min-height: 0 !important;
-  padding-top: 80px;
 }
 
 html::-webkit-scrollbar {
