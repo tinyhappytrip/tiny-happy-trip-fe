@@ -21,6 +21,7 @@ export const useAuthStore = defineStore('auth', {
     logout() {
       removeCookie()
       this.setAuth(false, '', '')
+      this.userImage = ''
     },
     setAuth(isLoggedIn, userId, role) {
       this.isLoggedIn = isLoggedIn
@@ -32,7 +33,6 @@ export const useAuthStore = defineStore('auth', {
         const { sub: userId, auth: role } = jwtDecode(getAccessToken())
         this.setAuth(true, userId, role.split('_')[1])
         this.userImage = (await authAxios().get(`/users/${this.userId}`)).data.userImage
-        console.log(this.userImage)
       } else {
         this.logout()
       }
