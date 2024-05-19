@@ -7,7 +7,7 @@
       <span class="title1">
         <img :src="story.userImage ? story.userImage : '/src/assets/main/user.png'" class="user-image" />
         <span>{{ story.nickname }}</span>
-        <span style="color: #808080"> {{ computedDate(story.createdAt) }}</span>
+        <span style="color: #808080"> {{ story.createdAt }}</span>
         <span>날씨</span><img width="30px" :src="computedWeather" /> <span>감정</span><img width="30px" :src="computedEmotion" />
         <button @click.stop="openMenu = !openMenu" class="menu_btn">
           <img src="@/assets/main/menu.png" width="35px" class="menu" />
@@ -37,10 +37,7 @@
     <span style="padding: 10px; color: blue" v-for="(hashtag, idx) in story.tags" :key="idx">
       {{ hashtag }}
     </span>
-    <StoryCommentInput 
-    :storyId="story.storyId" 
-    v-model:commentMode="commentMode">
-  </StoryCommentInput>
+    <StoryCommentInput :storyId="story.storyId" v-model:commentMode="commentMode"> </StoryCommentInput>
   </div>
 </template>
 

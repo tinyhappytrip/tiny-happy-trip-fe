@@ -2,63 +2,69 @@ import { noAuthAxios, authAxios } from '@/util/http-commons'
 
 const BASE_API_PATH = '/stories'
 
-function listStory(success, fail) {
-  authAxios().get(BASE_API_PATH).then(success).catch(fail)
+async function listStory(success, fail) {
+  await authAxios().get(BASE_API_PATH).then(success).catch(fail)
 }
 
-function detailStory(storyId, success, fail) {
-  authAxios()
+async function detailStory(storyId, success, fail) {
+  await authAxios()
     .get(BASE_API_PATH + '/detail/' + storyId)
     .then(success)
     .catch(fail)
 }
 
-function writeStory(story, success, fail) {
+async function writeStory(story, success, fail) {
   console.log(story)
-  authAxios().post(BASE_API_PATH, story).then(success).catch(fail)
+  await authAxios().post(BASE_API_PATH, story).then(success).catch(fail)
 }
 
-function likeStory(storyId, success, fail) {
-  authAxios()
+async function likeStory(storyId, success, fail) {
+  await authAxios()
     .post(BASE_API_PATH + '/like/' + storyId)
     .then(success)
     .catch(fail)
 }
 
-function commentStory(storyId, comment, success, fail) {
+async function commentStory(storyId, comment, success, fail) {
   console.log(comment)
-  authAxios()
+  await authAxios()
     .post(BASE_API_PATH + '/comments/' + storyId, comment)
     .then(success)
     .catch(fail)
 }
 
-function replyStory(commentId, reply, success, fail) {
-  authAxios()
+async function replyStory(commentId, reply, success, fail) {
+  await authAxios()
     .post(BASE_API_PATH + '/replies/' + commentId, reply)
     .then(success)
     .catch(fail)
 }
 
-function removeStory(storyId, success, fail) {
-  authAxios()
+async function removeStory(storyId, success, fail) {
+  await authAxios()
     .delete(BASE_API_PATH + '/' + storyId)
     .then(success)
     .catch(fail)
 }
 
-function editStory(storyId, story, success, fail) {
-  authAxios()
+async function editStory(storyId, story, success, fail) {
+  await authAxios()
     .patch(BASE_API_PATH + '/' + storyId, story)
     .then(success)
     .catch(fail)
 }
 
-function userStory(userId, success, fail) {
-  authAxios()
+async function userStory(userId, success, fail) {
+  await authAxios()
     .get(BASE_API_PATH + '/' + userId)
     .then(success)
     .catch(fail)
 }
 
-export { listStory, detailStory, writeStory, likeStory, commentStory, replyStory, removeStory, editStory, userStory }
+async function listStoryBySearchKeyword(searchKeyword, success, fail) {
+  await noAuthAxios()
+    .get(BASE_API_PATH + '/search/' + encodeURIComponent(searchKeyword))
+    .then(success)
+    .catch(fail)
+}
+export { listStory, detailStory, writeStory, likeStory, commentStory, replyStory, removeStory, editStory, userStory, listStoryBySearchKeyword }

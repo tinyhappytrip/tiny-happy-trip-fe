@@ -6,16 +6,21 @@
     <div class="tab result">검색결과 {?} 개</div>
   </div>
   <div class="tab-content">
-    <component :is="currentTabComponent"></component>
+    <component :is="currentTabComponent" :search-keyword="searchKeyword" ref="searchContents"></component>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, defineExpose, getCurrentInstance } from 'vue'
 import SearchStory from '@/components/search/SearchStory.vue'
 import SearchCollection from '@/components/search/SearchCollection.vue'
 import SearchUser from '@/components/search/SearchUser.vue'
 
+const props = defineProps({
+  searchKeyword: {
+    type: String
+  }
+})
 const activeTab = ref('story')
 
 const currentTabComponent = computed(() => {
@@ -29,6 +34,18 @@ const currentTabComponent = computed(() => {
     default:
       return null
   }
+})
+
+const { proxy } = getCurrentInstance()
+
+const searchByKeyword = (keyword) => {
+  console.log('하위 메서드 실행됨!!!!!!!!')
+  console.log(keyword)
+  proxy.$refs.searchContents.searchByKeyword(keyword)
+}
+
+defineExpose({
+  searchByKeyword
 })
 </script>
 

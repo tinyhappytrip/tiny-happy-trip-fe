@@ -4,7 +4,7 @@
       <span class="title1">
         <img :src="story.userImage ? story.userImage : '/src/assets/main/user.png'" class="user-image" />
         <span>{{ story.nickname }}</span>
-        <span class="date"> {{ computedDate(createdAt) }}</span>
+        <span class="date"> {{ computedDate(story.createdAt) }}</span>
         <span>날씨</span><img width="30px" :src="computedWeather" /> <span>감정</span><img width="30px" :src="computedEmotion" />
         <button @click.stop="openMenu = !openMenu" class="menu_btn">
           <img src="@/assets/main/menu.png" width="35px" class="menu" />
@@ -47,9 +47,8 @@
           <div style="height: 200px; background: pink"></div>
           <hr />
 
-          <div>
-            {{ story.content }}
-          </div>
+          <div v-html="highlightContent"></div>
+
           <hr />
           <div v-for="comment in story.storyComments" :key="comment.storyCommentId">
             <div class="comment">
@@ -90,22 +89,22 @@
 </template>
 
 <script setup>
-import { detailStory } from '@/api/story'
 import { toRef, ref, defineProps, defineEmits, computed, onMounted, nextTick, getCurrentInstance } from 'vue'
 import StoryCommentInput from '@/components/story/StoryCommentInput.vue'
+import { detailStory } from '@/api/story'
 
 const { proxy } = getCurrentInstance()
 
 const props = defineProps({
+  story: {
+    type: Object
+  },
   storyId: {
-    type: Number,
-    required: true
+    type: Number
   }
 })
-
 const storyId = ref(props.storyId)
-const story = ref({})
-const createdAt = ref('')
+const story = ref(props.story)
 const nickname = ref('')
 const commentId = ref(0)
 const commentMode = ref(true)
@@ -115,22 +114,6 @@ const emits = defineEmits(['close'])
 
 const closeModal = () => {
   emits('close')
-}
-
-const getStoryDetail = () => {
-  console.log('서버에서 스토리 상세 정보 받아옴.')
-  console.log(storyId.value)
-
-  detailStory(
-    storyId.value,
-    (result) => {
-      story.value = result.data
-      createdAt.value = story.value.createdAt
-    },
-    (error) => {
-      console.log(error)
-    }
-  )
 }
 
 const computedWeather = computed(() => {
@@ -181,10 +164,31 @@ const scrollToBottom = () => {
     }
   })
 }
+const getStoryDetail = async (storyId) => {
+  console.log(storyId)
 
-onMounted(() => {
-  getStoryDetail()
-})
+  await detailStory(
+    storyId.value,
+    (result) => {
+      story.value = result.data
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
+
+const makeHight = () => {
+  console.log(story.value)
+  console.log(story.value.hashtags)
+  story.value.hashtags.forEach((hashtag) => {
+    const regex = new RegExp(`{hashtag}`, 'g')
+    story.value.content = story.value.content.replace(regex, `<span class="highlight"${hashtag}</span>`)
+  })
+  return story.value.content
+}
+
+const highlightContent = makeHight()
 </script>
 
 <style scoped>
@@ -304,5 +308,9 @@ hr {
 .date {
   color: #808080;
   font-size: 10px;
+}
+
+.highlight {
+  color: red;
 }
 </style>

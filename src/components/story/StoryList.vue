@@ -1,6 +1,11 @@
 <template>
   <div>
-    <StoryDetail :storyId="storyId" v-if="showModal" @close="closeModal" />
+    <StoryDetail 
+    v-if="showModal && story" 
+    :story="story" 
+    :storyId="storyId"
+    @close="closeModal"
+    />
     <div class="v-container v-locale--is-ltr">
       <div class="v-row justify-end">
         <!--좌측-->
@@ -50,7 +55,7 @@
 </template>
 
 <script setup>
-import { listStory } from '@/api/story'
+import { listStory, detailStory } from '@/api/story'
 import { ref, onMounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import StoryCard from '@/components/story/StoryCard.vue'
@@ -60,6 +65,7 @@ import { useModalStore } from '@/stores/modal'
 const router = useRouter()
 const stories = ref([])
 const showModal = ref(false)
+const story = ref({})
 const storyId = ref(0)
 const modalStore = useModalStore()
 const alerts = ref([
@@ -84,6 +90,7 @@ const getStoryList = () => {
   listStory(
     (result) => {
       stories.value = result.data
+      console.log(stories.value)
     },
     (error) => {
       console.log(error)
@@ -91,8 +98,9 @@ const getStoryList = () => {
   )
 }
 
-const handleMoveDetail = (detailStoryId) => {
+const handleMoveDetail = async (detailStoryId) => {
   storyId.value = detailStoryId
+  await getStoryDetail(detailStoryId)
   showModal.value = true
   modalStore.setModal(showModal.value)
 }
@@ -111,6 +119,20 @@ const closeModal = () => {
 }
 
 getStoryList()
+
+const getStoryDetail = async (storyId) => {
+  console.log(storyId)
+
+  await detailStory(
+    storyId,
+    (result) => {
+      story.value = result.data
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+}
 </script>
 
 <style scoped>

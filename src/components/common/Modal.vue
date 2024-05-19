@@ -3,17 +3,18 @@
     <div v-if="visible" class="modal-overlay" @click.self="$emit('update:visible', false)">
       <div class="modal">
         <button class="close-button" @click="$emit('update:visible', false)">닫기</button>
-        <SearchBar />
-        <SearchContent />
+        <SearchBar @click-search-button="searchByKeyword" />
+        <SearchContent ref="searchContent" :search-keyword="searchKeyword" />
       </div>
     </div>
   </transition>
 </template>
 
 <script setup>
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, getCurrentInstance } from 'vue'
 import SearchBar from '../search/SearchBar.vue'
 import SearchContent from '../search/SearchContent.vue'
+const searchKeyword = ref()
 
 const props = defineProps({
   visible: {
@@ -36,6 +37,13 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('keydown', handleEsc)
 })
+
+const { proxy } = getCurrentInstance()
+
+const searchByKeyword = (keyword) => {
+  searchKeyword.value = keyword
+  proxy.$refs.searchContent.searchByKeyword(keyword)
+}
 </script>
 
 <style scoped>

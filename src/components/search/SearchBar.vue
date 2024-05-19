@@ -5,14 +5,15 @@
       <transition name="fade">
         <div class="delete-button" v-if="searchQuery" @click="clearSearch">삭제</div>
       </transition>
-      <font-awesome-icon class="icon" :icon="['fas', 'magnifying-glass']" />
+      <button @click="search"><font-awesome-icon class="icon" :icon="['fas', 'magnifying-glass']" /></button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-
+import { defineEmits } from 'vue'
+const emit = defineEmits(['clickSearchButton'])
 const searchQuery = ref('')
 const searchInput = ref(null)
 
@@ -22,8 +23,7 @@ const clearSearch = () => {
 }
 
 const search = () => {
-  console.log('검색어:', searchQuery.value)
-  // 검색 로직 여기 추가 ㄱ
+  emit('clickSearchButton', searchQuery.value)
 }
 </script>
 

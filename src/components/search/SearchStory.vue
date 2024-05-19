@@ -16,29 +16,56 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue'
-
-export default defineComponent({
-  name: 'StoryComponent',
-  setup() {
-    const items = ref([
-      { title: '첫 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 10, comments: 5 },
-      { title: '두 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 20, comments: 15 },
-      { title: '세 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 30, comments: 25 },
-      { title: '네 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 40, comments: 35 },
-      { title: '다섯 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 50, comments: 45 },
-      { title: '여섯 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 60, comments: 55 },
-      { title: '일곱 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 70, comments: 65 },
-      { title: '여덟 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 80, comments: 75 },
-      { title: '아홉 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 90, comments: 85 },
-      { title: '열 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 100, comments: 95 }
-    ])
-
-    return {
-      items
-    }
+<script setup>
+import { defineComponent, onMounted, ref, getCurrentInstance } from 'vue'
+import { listStoryBySearchKeyword } from '@/api/story'
+const props = defineProps({
+  searchKeyword: {
+    type: String
   }
+})
+const { proxy } = getCurrentInstance()
+const searchKeyword = ref(props.searchKeyword)
+const stories = ref({})
+
+const items = ref([
+  { title: '첫 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 10, comments: 5 },
+  { title: '두 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 20, comments: 15 },
+  { title: '세 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 30, comments: 25 },
+  { title: '네 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 40, comments: 35 },
+  { title: '다섯 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 50, comments: 45 },
+  { title: '여섯 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 60, comments: 55 },
+  { title: '일곱 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 70, comments: 65 },
+  { title: '여덟 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 80, comments: 75 },
+  { title: '아홉 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 90, comments: 85 },
+  { title: '열 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 100, comments: 95 }
+])
+const searchByKeyword = (keyword) => {
+  fetchStories(keyword)
+}
+const fetchStories = (keyword) => {
+  listStoryBySearchKeyword(
+    keyword,
+    (result) => {
+      stories.value = result.data
+    },
+    (error) => console.log(error)
+  )
+}
+onMounted(() => {
+  fetchStories(searchKeyword.value)
+})
+
+watch(
+  () => props.searchKeyword,
+  (newKeyword) => {
+    searchKeyword.value = newKeyword
+    fetchStories(newKeyword)
+  }
+)
+
+defineExpose({
+  searchByKeyword
 })
 </script>
 
