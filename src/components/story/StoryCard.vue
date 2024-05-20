@@ -2,148 +2,188 @@
   <div class="clip-icon">
     <img src="@/assets/clip.png" />
   </div>
-  <div class="card" @click.stop="moveDetail(story.storyId)">
+  <div class="card">
     <div class="subcard">
-      <span class="title1">
-        <img :src="story.userImage ? story.userImage : '/src/assets/main/user.png'" class="user-image" />
-        <span>{{ story.nickname }}</span>
-        <span style="color: #808080"> {{ story.createdAt }}</span>
-        <span>날씨</span><img width="30px" :src="computedWeather" /> <span>감정</span><img width="30px" :src="computedEmotion" />
-        <button @click.stop="openMenu = !openMenu" class="menu_btn">
-          <img src="@/assets/main/menu.png" width="35px" class="menu" />
-        </button>
-        <v-list v-if="openMenu">
-          <v-list-item @click.stop="onEdit">
-            <v-list-item-title><button>수정하기</button></v-list-item-title>
-          </v-list-item>
-          <v-list-item @click.stop="onDelete">
-            <v-list-item-title><button>삭제하기</button></v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </span>
+      <div class="title">
+        <img :src="`http://localhost:8080/image?path=${story.userImage}`" class="user-image" />
+        <div class="user-info-box">
+          <div>{{ story.nickname }}</div>
+          <div style="color: #808080">{{ formattedDate }}</div>
+        </div>
+        <div class="image-box">
+          <img width="30px" :src="computedWeather" />
+        </div>
+        <div class="image-box">
+          <img width="30px" :src="computedEmotion" />
+        </div>
+      </div>
     </div>
-    <span class="loc">
+    <div class="location-box">
       <img src="@/assets/main/location.png" width="20px" />
       <span>{{ story.location }}</span>
-    </span>
-    <StoryImageCarousel :images="story.images" @click.stop="moveDetail(story.storyId)"></StoryImageCarousel>
-
-    <StoryLike :story="story" style="margin: 0 30px"></StoryLike>
-
-    <div style="padding: 10px 0 30px 40px">
-      {{ story.content }}
     </div>
-
-    <span style="padding: 10px; color: blue" v-for="(hashtag, idx) in story.tags" :key="idx">
-      {{ hashtag }}
-    </span>
+    <StoryImageCarousel style="height: 456px" :images="story.images" @click.stop="moveDetail(story.storyId)" />
+    <StoryLike :story="story"></StoryLike>
+    <div style="display: inline" v-html="displayedContent"></div>
+    <div style="display: inline; margin-left: 10px" v-if="hasLineBreaks && !showMore">
+      <button @click="showMore = true">더보기 ..</button>
+    </div>
     <StoryCommentInput :storyId="story.storyId" v-model:commentMode="commentMode"> </StoryCommentInput>
   </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits, toRefs, computed, onMounted, ref } from 'vue'
+import { defineProps, defineEmits, ref, computed } from 'vue'
 import StoryLike from '@/components/story/StoryLike.vue'
 import StoryImageCarousel from '@/components/story/StoryImageCarousel.vue'
+import StoryCommentInput from './StoryCommentInput.vue'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+authStore.checkAuth()
+const userId = computed(() => authStore.userId)
+
 const { story } = defineProps({
   story: {
     type: Object,
     required: true
   }
 })
+
 const emit = defineEmits(['move-detail'])
 const openMenu = ref(false)
 const commentMode = ref(true)
+const showMore = ref(false)
 
-const computedDate = (rawDate) => {
-  const date = rawDate.split(' ')[0]
-  const yearMonthDay = date.split('-')
-  const year = yearMonthDay[0].slice(-2)
-  const month = yearMonthDay[1]
-  const day = yearMonthDay[2]
-  return year + '년 ' + month + '월 ' + day + '일'
+const formatDate = (rawDate) => {
+  const date = new Date(rawDate)
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  return `${year}년 ${month}월 ${day}일`
 }
+
+const formattedDate = computed(() => formatDate(story.createdAt))
+
 const computedWeather = computed(() => {
-  return '/src/assets/weather/' + story.weather + '.png'
+  return `/src/assets/weather/${story.weather}.png`
 })
 
 const computedEmotion = computed(() => {
-  return '/src/assets/emotion/' + story.emotion + '.png'
+  return `/src/assets/emotion/${story.emotion}.png`
 })
 
 const moveDetail = (storyId) => {
   console.log(storyId)
   emit('move-detail', storyId)
 }
+
+// 개행 문자를 <br> 태그로 변환하는 함수
+const formatContent = (content) => {
+  return content.replace(/\n/g, '<br>')
+}
+
+// 개행 문자가 있는지 확인하는 함수
+const hasLineBreaks = computed(() => story.content.includes('\n'))
+
+// 첫 줄만 추출하는 함수
+const firstLine = computed(() => story.content.split('\n')[0])
+
+// formattedContent 계산 속성 추가
+const formattedContent = computed(() => formatContent(story.content))
+
+// 표시할 컨텐츠 계산 속성
+const displayedContent = computed(() => {
+  if (showMore.value) {
+    return formattedContent.value
+  }
+  return formatContent(firstLine.value)
+})
 </script>
 
 <style scoped>
-.title1 {
-  display: flex;
-  align-items: center; /* 수직 중앙 정렬 */
-  margin: 20px 30px 0 30px;
-  display: flex;
+.clip-icon {
+  position: absolute;
+  z-index: 1000;
+  margin: -20px;
 }
 
-.title1 > * {
-  padding: 0 5px;
-}
-.loc {
-  display: flex;
-  align-items: center; /* 수직 중앙 정렬 */
-  margin-left: 30px;
-}
-.loc > * {
-  padding-right: 5px;
-  margin: 0 5px;
-  font-size: 15px;
+.clip-icon img {
+  width: 60px;
+  height: auto;
 }
 
-.user-image {
-  border-radius: 50%;
-  text-align: center;
-  width: 30px;
-}
 .card {
-  padding: 5px 20px;
-  background: none;
-  box-shadow: 0 0 0 transparent; /* 또는 'initial'로 설정 */
-  background: white;
+  padding: 20px;
   border-radius: 5px;
-  margin-bottom: 40px;
-  width: 600px;
-  border: 1px solid black;
-}
-
-.card > * {
-  padding: 10px 0;
+  margin-bottom: 100px;
+  width: 500px;
+  border: 2px solid #ddd;
 }
 
 .subcard {
   position: relative;
 }
 
-.menu_btn {
-  display: contents;
+.title {
+  display: flex;
+  align-items: center;
+  padding: 0 0 10px 0;
+  font-size: 0.9rem;
 }
-.menu {
+
+.user-image {
+  border-radius: 50%;
+  text-align: center;
+  width: 40px;
+  height: 40px;
+  justify-content: space-evenly;
+  cursor: pointer;
+}
+
+.user-info-box div {
+  margin: 2px 10px;
+}
+
+.image-box {
+  margin: 0 10px;
+}
+
+.menu_btn {
+  display: block;
+  margin-left: auto;
+  cursor: pointer;
+}
+
+.dropdown-menu {
+  top: 40px;
+  right: -15px;
   position: absolute;
-  right: 0;
-  margin: 0 25px;
+  width: 60px;
+  border-radius: 5px;
+  text-align: center;
+  border: 1px solid #ddd;
+  z-index: 1000;
+}
+
+.dropdown-menu div {
+  margin: 4px 0;
+}
+
+.dropdown-menu div:hover {
+  color: white;
+  background-color: black;
+}
+
+.location-box {
+  display: flex;
+  align-items: center;
+  cursor: default;
+  font-size: 0.9rem;
+  margin: 5px 0;
 }
 
 .align-end {
   margin: 0 auto;
-}
-
-.clip-icon {
-  position: absolute;
-  z-index: 1000;
-  margin: -30px;
-}
-
-.clip-icon img {
-  width: 80px;
-  height: auto;
 }
 </style>

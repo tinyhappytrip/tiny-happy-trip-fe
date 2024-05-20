@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="buttons">
-      <button @click.stop="like"><img :src="story.like ? '/src/assets/save-on.png' : '/src/assets/save-off.png'" width="25px" /></button>
-      <span style="padding: 10px 5px">책갈피 {{ story.likeCount }}개</span>
+      <button @click.stop="like"><img :src="story.like ? '/src/assets/save-on.png' : '/src/assets/save-off.png'" width="20px" /></button>
+      <span style="padding: 5px 0px">책갈피 {{ story.likeCount }}개</span>
     </div>
   </div>
 </template>
@@ -35,8 +35,11 @@ const like = () => {
 .buttons {
   display: flex;
   justify-items: center;
+  margin: 5px 0 15px 0;
 }
-.buttons > * {
-  margin: 0 5px;
+
+.buttons span {
+  font-size: 0.9rem;
+  margin-left: 5px;
 }
 </style>

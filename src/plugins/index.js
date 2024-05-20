@@ -5,6 +5,7 @@ import VueFullPage from 'vue-fullpage.js'
 import 'sweetalert2/dist/sweetalert2.min.css'
 import Swal from 'sweetalert2'
 
+// import swiper styles
 export function registerPlugins(app) {
   app.use(vuetify).use(router).use(pinia).use(VueFullPage)
   app.provide('$swal', Swal)

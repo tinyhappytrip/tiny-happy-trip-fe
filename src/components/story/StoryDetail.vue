@@ -1,76 +1,62 @@
 <template>
   <div class="modal-overlay" @click.stop="closeModal">
-    <v-card class="card" ref="modalContent">
-      <span class="title1">
-        <img :src="story.userImage ? story.userImage : '/src/assets/main/user.png'" class="user-image" />
-        <span>{{ story.nickname }}</span>
-        <span class="date"> {{ computedDate(story.createdAt) }}</span>
-        <span>날씨</span><img width="30px" :src="computedWeather" /> <span>감정</span><img width="30px" :src="computedEmotion" />
-        <button @click.stop="openMenu = !openMenu" class="menu_btn">
-          <img src="@/assets/main/menu.png" width="35px" class="menu" />
-        </button>
-        <v-list v-if="openMenu">
-          <v-list-item @click.stop="onEdit">
-            <v-list-item-title><button>수정하기</button></v-list-item-title>
-          </v-list-item>
-          <v-list-item @click.stop="onDelete">
-            <v-list-item-title><button>삭제하기</button></v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </span>
+    <div class="card" ref="modalContent">
       <div class="content">
         <div class="left-content">
-          <v-img
-            src="https://cdn.vuetifyjs.com/images/cards/house.jpg"
-            class="align-end"
-            width="350px"
-            height="350px"
-            gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-            cover
-          ></v-img>
-
-          <StoryLike :story="story"></StoryLike>
+          <StoryImageCarousel :images="story.images" />
         </div>
-
         <div class="right-content">
-          <div>
-            <p>위치</p>
-            <span class="loc">
-              <img src="@/assets/main/location.png" width="20px" />
-              <span>{{ story.location }}</span>
-            </span>
+          <div class="subcard">
+            <div class="title">
+              <img :src="`http://localhost:8080/image?path=${story.userImage}`" class="user-image" />
+              <div class="user-info-box">
+                <div>{{ story.nickname }}</div>
+                <div style="color: #808080">{{ formattedDate }}</div>
+              </div>
+              <div class="image-box">
+                <img width="30px" :src="computedWeather" />
+              </div>
+              <div class="image-box">
+                <img width="30px" :src="computedEmotion" />
+              </div>
+            </div>
           </div>
-
-          <!-- 지도 좌표 -->
-          {{ story.latitude }}
-          {{ story.longitude }}
+          <div class="location-box">
+            <img src="@/assets/main/location.png" width="20px" />
+            <span>{{ story.location }}</span>
+          </div>
           <div style="height: 200px; background: pink"></div>
-          <hr />
-
-          <div v-html="highlightContent"></div>
-
-          <hr />
-          <div v-for="comment in story.storyComments" :key="comment.storyCommentId">
-            <div class="comment">
-              <div class="storyComment">
-                <img width="10px" class="storyComment_img" :src="comment.userImage ? comment.userImage : '/src/assets/main/user.png'" />
-                <p>{{ comment.nickname }}</p>
+          <div class="scroll-box">
+            <div style="border-bottom: 0.5px solid #ddd; display: block; padding: 20px 0" v-html="formattedContent"></div>
+            <div v-for="comment in story.storyComments" :key="comment.storyCommentId">
+              <div class="comment" style="padding-top: 15px">
+                <RouterLink :to="`/profile/${comment.userId}`">
+                  <img :src="`http://localhost:8080/image?path=${story.userImage}`" width:="10px" style="margin-right: 5px;" class="comment-user-image"/>
+                </RouterLink>
+                <p style="font-size: 0.8rem; margin-right: 10px; line-height: 1.3">
+                  <RouterLink :to="`/profile/${comment.userId}`">
+                    {{ comment.nickname }}
+                  </RouterLink>
+                  &nbsp;&nbsp;
+                  {{ comment.content }}
+                </p>
               </div>
-              <span class="alert_content">{{ comment.content }}</span>
-              <span class="alert_content date">{{ computedDate(comment.createdAt) }}</span>
-              <button @click.stop="reply(comment.nickname, comment.storyCommentId)">답글달기</button>
-            </div>
-
-            <div class="reply" v-for="reply in comment.replies" :key="reply.storyReplyId">
-              <span><p>-></p></span>
-              <div class="storyComment">
-                <img width="10px" class="storyComment_img" :src="reply.userImage ? reply.userImage : '/src/assets/main/user.png'" />
-                <p>{{ reply.nickname }}</p>
+              <div>
+                <span class="alert_content date">{{ computedDate(comment.createdAt) }}</span>
+                <button style="font-size: 0.8rem; margin-left: 10px" @click.stop="reply(comment.nickname, comment.storyCommentId)">답글달기</button>
               </div>
-              <span class="alert_content">{{ reply.content }}</span>
-              <span class="alert_content date">{{ computedDate(reply.createdAt) }}</span>
+              <div class="reply" v-for="reply in comment.replies" :key="reply.storyReplyId">
+                <span><p>-></p></span>
+                <div class="storyComment">
+                  <img width="10px" class="storyComment_img" :src="reply.userImage ? reply.userImage : '/src/assets/main/user.png'" />
+                  <p>{{ reply.nickname }}</p>
+                </div>
+                <span class="alert_content">{{ reply.content }}</span>
+                <span class="alert_content date">{{ computedDate(reply.createdAt) }}</span>
+              </div>
             </div>
           </div>
+          <StoryLike :story="story"></StoryLike>
 
           <div>
             <StoryCommentInput
@@ -80,35 +66,49 @@
               :commentId="commentId"
               v-model:commentMode="commentMode"
               @move-detail="getStoryDetail"
+              :customStyle="customStyle"
             ></StoryCommentInput>
           </div>
         </div>
       </div>
-    </v-card>
+    </div>
   </div>
 </template>
 
 <script setup>
 import { toRef, ref, defineProps, defineEmits, computed, onMounted, nextTick, getCurrentInstance } from 'vue'
 import StoryCommentInput from '@/components/story/StoryCommentInput.vue'
+import StoryImageCarousel from './StoryImageCarousel.vue'
+import StoryLike from './StoryLike.vue'
 import { detailStory } from '@/api/story'
+import { useRouter } from 'vue-router'
+const router = useRouter()
 
+const getProfileUrl = (nickname) => {
+  return `/profile/${nickname}`
+}
+
+const goToProfile = (nickname) => {
+  router.push(getProfileUrl(nickname))
+}
 const { proxy } = getCurrentInstance()
 
 const props = defineProps({
   story: {
-    type: Object
+    type: Object,
+    required: true
   },
   storyId: {
-    type: Number
+    type: Number,
+    required: true
   }
 })
-const storyId = ref(props.storyId)
+
 const story = ref(props.story)
+const storyId = ref(props.storyId)
 const nickname = ref('')
 const commentId = ref(0)
 const commentMode = ref(true)
-const openMenu = ref(false)
 
 const emits = defineEmits(['close'])
 
@@ -116,32 +116,34 @@ const closeModal = () => {
   emits('close')
 }
 
+const customStyle = ref({
+  width: '90%',
+  position: 'absolute',
+  bottom: '0'
+})
+
 const computedWeather = computed(() => {
-  return '/src/assets/weather/' + story.value.weather + '.png'
+  return `/src/assets/weather/${story.value.weather}.png`
 })
 
 const computedEmotion = computed(() => {
-  return '/src/assets/emotion/' + story.value.emotion + '.png'
+  return `/src/assets/emotion/${story.value.emotion}.png`
 })
 
 const computedDate = (rawDate) => {
-  console.log(rawDate)
-  const date = rawDate.split(' ')[0]
-  const yearMonthDay = date.split('-')
-  const year = yearMonthDay[0].slice(-2)
-  const month = yearMonthDay[1]
-  const day = yearMonthDay[2]
-  return year + '년 ' + month + '월 ' + day + '일'
+  const date = new Date(rawDate)
+  const year = date.getFullYear().toString().slice(-2)
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  return `${year}년 ${month}월 ${day}일`
 }
 
 const reply = (commentNickname, replyCommentId) => {
   nickname.value = commentNickname
   commentId.value = replyCommentId
   commentMode.value = false
-  // DOM이 업데이트된 후에 스크롤을 수행합니다.
   nextTick(() => {
     scrollToBottom()
-    // ref를 사용하여 sendReply 메서드 호출
     const commentInput = proxy.$refs.commentInput
     if (commentInput && typeof commentInput.setReply === 'function') {
       commentInput.setReply(nickname.value, commentId.value)
@@ -155,124 +157,110 @@ const scrollToBottom = () => {
   nextTick(() => {
     const modalContent = proxy.$refs.modalContent
     if (modalContent) {
-      console.log('scroll 완료')
-      console.log('modalContent.scrollHeight:', modalContent.scrollHeight)
       modalContent.scrollTop = modalContent.scrollHeight
-      console.log('modalContent.scrollTop:', modalContent.scrollTop)
     } else {
       console.error('modalContent is not available')
     }
   })
 }
+
 const getStoryDetail = async (storyId) => {
-  console.log(storyId)
-
-  await detailStory(
-    storyId.value,
-    (result) => {
-      story.value = result.data
-    },
-    (error) => {
-      console.log(error)
-    }
-  )
+  try {
+    const result = await detailStory(storyId.value)
+    story.value = result.data
+  } catch (error) {
+    console.log(error)
+  }
 }
 
-const makeHight = () => {
-  console.log(story.value)
-  console.log(story.value.hashtags)
-  story.value.hashtags.forEach((hashtag) => {
-    const regex = new RegExp(`{hashtag}`, 'g')
-    story.value.content = story.value.content.replace(regex, `<span class="highlight"${hashtag}</span>`)
-  })
-  return story.value.content
+const formatDate = (rawDate) => {
+  const date = new Date(rawDate)
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  return `${year}년 ${month}월 ${day}일`
 }
 
-const highlightContent = makeHight()
+const formattedDate = computed(() => formatDate(story.value.createdAt))
+
+const formatContent = (content) => {
+  return content.replace(/\n/g, '<br>')
+}
+
+const hasLineBreaks = computed(() => story.value.content.includes('\n'))
+
+const firstLine = computed(() => story.value.content.split('\n')[0])
+
+const formattedContent = computed(() => formatContent(story.value.content))
+
+const displayedContent = computed(() => {
+  return formatContent(firstLine.value)
+})
 </script>
 
 <style scoped>
 .modal-overlay {
   position: fixed;
-  width: 100%;
-  height: 100%;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  z-index: 1000;
-  transform: translateY(-10%);
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 3000;
 }
 
 .card {
-  width: 800px;
-  height: 600px;
+  background-color: white;
+  width: 1000px;
+  height: 800px;
   margin: 0 auto;
-  padding: 10px;
-  overflow-y: auto; /* 스크롤 가능하도록 설정 */
+  position: relative;
 }
 
 .user-image {
   border-radius: 50%;
-  text-align: center;
-  width: 30px;
+  width: 40px;
+  height: 40px;
+}
+
+.comment-user-image {
+  border-radius: 50%;
+  width: 25px;
+  height: 25;
 }
 
 .content {
   display: flex;
-}
-
-.right-content * {
-  margin: 5px 0;
-}
-
-.left-content * {
-  margin-bottom: 20px;
+  width: 100%;
+  height: 100%;
 }
 
 .left-content {
-  flex: 1;
-  padding-right: 10px;
-  width: 50%;
-  border-right: 1px solid black;
+  width: 60%;
 }
 
 .right-content {
-  flex: 2;
-  padding: 0px 20px;
-  width: 50%;
+  width: 40%;
+  position: relative;
+  padding: 10px;
 }
 
-.title1 {
+.title {
   display: flex;
   align-items: center;
-}
-
-.align-end {
-  margin-top: 20px;
-}
-
-.title1 > * {
-  padding: 0 5px;
-}
-
-hr {
-  margin: 10px 0;
-}
-
-.weather-and-emotion > * {
-  margin-right: 10px;
 }
 
 .comment {
   display: flex;
-  justify-items: center;
-  align-items: center;
+  align-items: flex-start;
 }
 
 .reply {
   margin-left: 20px;
   display: flex;
-  justify-items: center;
   align-items: center;
   background: pink;
 }
@@ -295,14 +283,27 @@ hr {
   margin: 0 25px;
 }
 
+.menu-list {
+  position: absolute;
+  right: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.menu-list button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  text-align: left;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 .loc {
   display: flex;
   align-items: center;
-}
-
-.loc > * {
-  padding-right: 5px;
-  font-size: 15px;
 }
 
 .date {
@@ -312,5 +313,48 @@ hr {
 
 .highlight {
   color: red;
+}
+
+.subcard {
+  position: relative;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  padding: 0 0 10px 0;
+  font-size: 0.9rem;
+}
+
+.user-image {
+  border-radius: 50%;
+  text-align: center;
+  width: 40px;
+  height: 40px;
+  justify-content: space-evenly;
+  cursor: pointer;
+}
+
+.user-info-box div {
+  margin: 2px 10px;
+}
+
+.image-box {
+  margin: 0 10px;
+}
+
+.location-box {
+  display: flex;
+}
+
+.scroll-box {
+  overflow-y: auto;
+  height: 430px;
+  border-bottom: 0.5px solid #ddd;
+}
+
+a {
+  text-decoration: none;
+  color: black;
 }
 </style>

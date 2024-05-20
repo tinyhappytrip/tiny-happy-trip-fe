@@ -15,7 +15,14 @@ async function detailStory(storyId, success, fail) {
 
 async function writeStory(story, success, fail) {
   console.log(story)
-  await authAxios().post(BASE_API_PATH, story).then(success).catch(fail)
+  await authAxios()
+    .post(BASE_API_PATH, story, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    })
+    .then(success)
+    .catch(fail)
 }
 
 async function likeStory(storyId, success, fail) {

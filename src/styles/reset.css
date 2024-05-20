@@ -4,7 +4,8 @@
    License: none (public domain)
 */
 html {
-  overflow: auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 html,
 body,

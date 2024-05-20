@@ -1,15 +1,13 @@
 <template>
-  <div>
-    <div class="comment">
-      <input @click.stop="" class="comment-input" type="text" placeholder="댓글 달기.." v-model="commentMessage" />
-      <button @click.stop="commentMode ? sendComment() : sendReply()" class="comment-btn">작성</button>
-    </div>
-  </div>
+  <form @submit.prevent="handleSubmit" class="comment" :style="customStyle">
+    <input @click.stop="" class="comment-input" type="text" placeholder="댓글 달기.." v-model="commentMessage" />
+    <button @click.stop="" class="comment-btn">작성</button>
+  </form>
 </template>
 
 <script setup>
 import { commentStory, replyStory } from '@/api/story'
-import { defineProps, defineExpose, defineModel, defineEmits, toRefs, ref } from 'vue'
+import { defineProps, defineExpose, defineModel, defineEmits, ref, watch } from 'vue'
 
 const commentMessage = ref('')
 const commentMode = defineModel('commentMode')
@@ -25,6 +23,9 @@ const props = defineProps({
   },
   commentId: {
     type: Number
+  },
+  customStyle: {
+    type: Object
   }
 })
 
@@ -43,7 +44,7 @@ const sendComment = () => {
     }
   )
   commentMessage.value = ''
-  emit('move-detail', storyId)
+  emit('move-detail', storyId.value)
 }
 
 const setReply = (nickname, replyCommentId) => {
@@ -67,17 +68,24 @@ const sendReply = () => {
   )
   commentMode.value = true
   commentMessage.value = ''
-  emit('move-detail', storyId)
+  emit('move-detail', storyId.value)
 }
 
 // 답글 달다가 태그 지우면 -> 댓글 달기로 전환
-watch(commentMessage, (newComment, oldComment) => {
-  if (!commentMode.value) {
-    if (newComment.length == 0) {
-      commentMode.value = true
-    }
+watch(commentMessage, (newComment) => {
+  if (!commentMode.value && newComment.length === 0) {
+    commentMode.value = true
   }
 })
+
+// 폼 제출 핸들러
+const handleSubmit = () => {
+  if (commentMode.value) {
+    sendComment()
+  } else {
+    sendReply()
+  }
+}
 
 defineExpose({
   setReply
@@ -87,22 +95,21 @@ defineExpose({
 <style scoped>
 .comment {
   display: flex;
-  justify-content: space;
-  margin-left: 35px;
+  padding: 15px 0 10px 0;
+  justify-content: space-between;
+  position: relative;
 }
 .comment-input {
   border-bottom: 1px solid black;
-  width: 400px;
+  width: 100%;
+  padding: 5px 0;
 }
 
 .comment-btn {
-  background-color: black;
-  color: white;
-  border-radius: 10px;
-  padding: 10px;
-  width: 80px;
-  height: 30px;
+  position: absolute;
   text-align: center;
-  margin: 0 auto;
+  height: 100%;
+  top: 0;
+  right: 0;
 }
 </style>

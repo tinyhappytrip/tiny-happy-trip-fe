@@ -29,12 +29,11 @@ export const routes = [
         component: () => import('@/components/story/StoryWrite.vue')
       }
     ]
+  },
+  {
+    path: '/collection',
+    name: 'collection',
+    component: () => import('@/views/CollectionView.vue')
   }
   // { path: '/messenger', name: 'messenger', component: () => import('@/views/MessengerView.vue'), meta: { layout: DefaultLayout } }
-  // {
-  //   path: '/collection',
-  //   name: 'collection',
-  //   meta: { layout: DefaultLayout },
-  //   component: () => import('@/views/CollectionView.vue')
-  // }
 ]
