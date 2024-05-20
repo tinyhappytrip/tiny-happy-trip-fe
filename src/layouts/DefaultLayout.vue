@@ -37,3 +37,16 @@ html::-webkit-scrollbar-track {
   background: transparent;
 }
 </style>
+
+<style>
+.v-application__wrap {
+  min-width: 1920px;
+  overflow-x: hidden;
+}
+.v-main {
+  width: 1920px;
+}
+.v-footer {
+  min-width: 1920px;
+}
+</style>

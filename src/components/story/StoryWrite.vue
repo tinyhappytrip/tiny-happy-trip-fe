@@ -31,13 +31,13 @@ const searchMode = ref(false)
 const router = useRouter()
 
 const uploadStory = () => {
-  story.value.latitude = 2.2
-  story.value.longitude = 2.2
+  story.value.latitude = 123.123
+  story.value.longitude = 123.123
   writeStory(
     toRaw(story.value),
     (result) => {
       console.log(result.data)
-      router.push('/story')
+      // router.push('/story')
     },
     (error) => {
       console.log(error)

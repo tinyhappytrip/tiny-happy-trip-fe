@@ -4,20 +4,25 @@
       <div class="image-box" @click="openModal">
         <font-awesome-icon :icon="['fas', 'magnifying-glass']" size="2xl" class="icon" />
       </div>
-      <div class="image-box">
-        <RouterLink to="/story/write">
-          <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
-        </RouterLink>
+
+      <div class="image-box" @click.stop="togglePlusDropdown">
+        <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
+        <transition name="slide">
+          <div v-if="isPlusDropdownVisible" class="dropdown-menu plus">
+            <RouterLink to="/story/write" class="dropdown-item">이야기</RouterLink>
+            <RouterLink to="/collection/write" class="dropdown-item">모음집</RouterLink>
+          </div>
+        </transition>
       </div>
       <div class="image-box">
         <RouterLink to="/messenger">
           <font-awesome-icon :icon="['far', 'paper-plane']" size="2xl" class="icon" />
         </RouterLink>
       </div>
-      <div v-if="isLoggedIn" class="my-image-box" @click.stop="toggleDropdown">
+      <div v-if="isLoggedIn && userImage" class="my-image-box" @click.stop="toggleProfileDropdown">
         <img :src="`http://localhost:8080/image?path=${userImage}`" />
         <transition name="slide">
-          <div v-if="isDropdownVisible" class="dropdown-menu">
+          <div v-if="isProfileDropdownVisible" class="dropdown-menu">
             <RouterLink :to="`/profile/${userId}`" class="dropdown-item">프로필</RouterLink>
             <RouterLink :to="`/mypage/${userId}`" class="dropdown-item">마이페이지</RouterLink>
             <div class="dropdown-item" @click="logout">로그아웃</div>
@@ -34,22 +39,23 @@
     </template>
   </div>
 </template>
+
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 
-const authStore = useAuthStore()
-authStore.checkAuth()
-
-const isLoggedIn = computed(() => authStore.isLoggedIn)
-const userId = computed(() => authStore.userId)
-const userImage = computed(() => authStore.userImage)
-const isDropdownVisible = ref(false)
-
 const emit = defineEmits(['update:modalVisible'])
+const isProfileDropdownVisible = ref(false)
+const isPlusDropdownVisible = ref(false)
 
-const toggleDropdown = () => {
-  isDropdownVisible.value = !isDropdownVisible.value
+const toggleProfileDropdown = () => {
+  isProfileDropdownVisible.value = !isProfileDropdownVisible.value
+  isPlusDropdownVisible.value = false
+}
+
+const togglePlusDropdown = () => {
+  isPlusDropdownVisible.value = !isPlusDropdownVisible.value
+  isProfileDropdownVisible.value = false
 }
 
 const openModal = () => {
@@ -58,15 +64,24 @@ const openModal = () => {
 
 const logout = () => {
   authStore.logout()
-  isDropdownVisible.value = false
+  isProfileDropdownVisible.value = false
+  isPlusDropdownVisible.value = false
   location.href = '/'
 }
 
 const handleClickOutside = (event) => {
-  if (!event.target.closest('.my-image-box')) {
-    isDropdownVisible.value = false
+  if (!event.target.closest('.my-image-box') && !event.target.closest('.image-box')) {
+    isProfileDropdownVisible.value = false
+    isPlusDropdownVisible.value = false
   }
 }
+
+const authStore = useAuthStore()
+authStore.checkAuth()
+
+const isLoggedIn = computed(() => authStore.isLoggedIn)
+const userId = computed(() => authStore.userId)
+const userImage = computed(() => authStore.userImage)
 
 onMounted(() => {
   window.addEventListener('click', handleClickOutside)
@@ -76,6 +91,7 @@ onBeforeUnmount(() => {
   window.removeEventListener('click', handleClickOutside)
 })
 </script>
+
 <style scoped>
 .icon {
   width: 25px;
@@ -129,6 +145,10 @@ img {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   text-align: center;
+}
+
+.plus {
+  top: 55px;
 }
 
 .dropdown-item {

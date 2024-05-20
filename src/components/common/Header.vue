@@ -12,8 +12,6 @@
 import HeaderLogo from '../header/HeaderLogo.vue'
 import HeaderMenuBar from '../header/HeaderMenuBar.vue'
 import HeaderMyMenu from '../header/HeaderMyMenu.vue'
-import { useAuthStore } from '@/stores/auth'
-import { setCookie } from '@/util/cookie'
 
 const props = defineProps({
   isModalVisible: {
@@ -21,20 +19,6 @@ const props = defineProps({
     required: true
   }
 })
-
-// const authStore = useAuthStore()
-// const params = new URLSearchParams(window.location.search)
-// const paramsObj = Object.fromEntries(params.entries())
-// const { accessToken, refreshToken, grantType } = paramsObj
-// if (accessToken) {
-//   const data = {
-//     accessToken,
-//     refreshToken
-//   }
-//   setCookie(data)
-//   authStore.checkAuth()
-//   window.history.replaceState({}, document.title, window.location.pathname)
-// }
 </script>
 
 <style scoped>
@@ -46,9 +30,10 @@ const props = defineProps({
   background-color: white;
   color: black;
   box-sizing: border-box;
-  width: 100%;
+  width: 1920px;
   height: 80px;
   top: 0;
+  z-index: 100;
 }
 .container {
   display: flex;

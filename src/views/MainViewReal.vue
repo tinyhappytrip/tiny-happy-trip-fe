@@ -1,13 +1,13 @@
 <template>
   <v-app>
-    <v-container fluid>
-      <Header class="header" :isModalVisible="isModalVisible" @update:modalVisible="isModalVisible = $event" />
-      <div ref="container" class="scroll-container">
-        <section v-for="(section, index) in sections" :key="index" class="section">
-          <component :is="section" />
-        </section>
-      </div>
-    </v-container>
+    <!-- <v-container fluid> -->
+    <Header class="header" :isModalVisible="isModalVisible" @update:modalVisible="isModalVisible = $event" />
+    <div ref="container" class="scroll-container">
+      <section v-for="(section, index) in sections" :key="index" class="section">
+        <component :is="section" />
+      </section>
+    </div>
+    <!-- </v-container> -->
   </v-app>
   <Modal :visible="isModalVisible" @update:visible="isModalVisible = $event" />
 </template>

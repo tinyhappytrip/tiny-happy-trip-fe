@@ -18,20 +18,19 @@
 </template>
 
 <script setup>
-import { defineComponent, onMounted, ref, getCurrentInstance, defineEmits } from 'vue'
+import { onMounted, ref, getCurrentInstance, defineEmits } from 'vue'
 import { listStoryBySearchKeyword } from '@/api/story'
 const props = defineProps({
   searchKeyword: {
     type: String
   }
 })
-const { proxy } = getCurrentInstance()
 const searchKeyword = ref(props.searchKeyword)
 const stories = ref({})
 const emit = defineEmits(['setSearchCount'])
-
 const items = ref([])
 const searchByKeyword = (keyword) => {
+  console.log(keyword, '키워드 검색 호출됨')
   fetchStories(keyword)
 }
 const fetchStories = (keyword) => {
@@ -39,11 +38,12 @@ const fetchStories = (keyword) => {
   listStoryBySearchKeyword(
     keyword,
     (result) => {
+      items.value = []
       console.log(stories.value)
       stories.value = result.data
       for (let i = 0; i < stories.value.length; i++) {
         const story = stories.value[i]
-        const replyCount = 0
+        let replyCount = 0
         for (let j = 0; j < story.storyComments.length; j++) {
           replyCount += story.storyComments[j].storyReplies.length
         }
@@ -71,6 +71,7 @@ const computedImagePath = (img) => {
   return `http://localhost:8080/image?path=${img}`
 }
 onMounted(() => {
+  console.log('hi')
   fetchStories(searchKeyword.value)
 })
 

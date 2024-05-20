@@ -1,19 +1,7 @@
 <template>
-    <div>
-
-    </div>
+  <RouterView />
 </template>
 
-<script>
-export default {
-    setup () {
-        
+<script setup></script>
 
-        return {}
-    }
-}
-</script>
-
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

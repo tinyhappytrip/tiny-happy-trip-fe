@@ -1,6 +1,7 @@
 <template>
   <v-app>
-<<<<<<< HEAD
+    <Header class="header" :isModalVisible="isModalVisible" @update:modalVisible="isModalVisible = $event" />
+    <div ref="container" class="scroll-container"></div>
     <Header />
     <v-main>
       <v-container>
@@ -25,27 +26,19 @@
     </v-main>
     <Footer />
   </v-app>
+  <Modal :visible="isModalVisible" @update:visible="isModalVisible = $event" />
 </template>
 
 <script>
 export default {
   name: 'App'
 }
-=======
-    <v-container fluid>
-      <Header class="header" :isModalVisible="isModalVisible" @update:modalVisible="isModalVisible = $event" />
-      <div ref="container" class="scroll-container"></div>
-    </v-container>
-  </v-app>
-  <Modal :visible="isModalVisible" @update:visible="isModalVisible = $event" />
-</template>
-
 <script setup>
 import { ref, onMounted, onBeforeUnmount, markRaw } from 'vue'
 import Header from '@/components/common/Header.vue'
 
 const isModalVisible = ref(false)
->>>>>>> b3af6fc (feat: search 기능 추가)
+
 </script>
 
 <style scoped>
