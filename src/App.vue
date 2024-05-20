@@ -1,7 +1,9 @@
 <template>
-  <component :is="layout">
-    <router-view />
-  </component>
+  <div id="app">
+    <component :is="layout">
+      <router-view />
+    </component>
+  </div>
 </template>
 
 <script setup>
@@ -46,5 +48,6 @@ onMounted(() => {
   font-family: 'IBM Plex Sans KR', sans-serif;
   font-weight: 500;
   font-style: normal;
+  height: 100%;
 }
 </style>
