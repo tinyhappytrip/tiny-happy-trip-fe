@@ -164,13 +164,16 @@ const scrollToBottom = () => {
   })
 }
 
-const getStoryDetail = async (storyId) => {
-  try {
-    const result = await detailStory(storyId.value)
-    story.value = result.data
-  } catch (error) {
-    console.log(error)
-  }
+const getStoryDetail = (storyId) => {
+  console.log('디테일 불러오기')
+  console.log(storyId)
+  detailStory(
+    storyId,
+    (result) => {
+      story.value = result.data
+    },
+    (error) => console.log(error)
+  )
 }
 
 const formatDate = (rawDate) => {
