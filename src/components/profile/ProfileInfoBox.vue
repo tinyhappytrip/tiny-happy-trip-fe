@@ -20,9 +20,12 @@
         <span class="stat-label">팔로잉</span>
       </div>
     </div>
-    <div class="profile-actions">
+    <div v-if="isUser" class="profile-actions">
       <button @click="clickFollowBtn" class="follow-button">{{ isFollowing ? '팔로우 취소' : '팔로우' }}</button>
       <button class="message-button">메시지</button>
+    </div>
+    <div v-else class="profile-actions">
+      <button class="follow-button">프로필변경</button>
     </div>
   </div>
 </template>

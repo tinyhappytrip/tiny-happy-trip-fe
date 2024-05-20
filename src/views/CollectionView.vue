@@ -1,9 +1,7 @@
 <template>
-  <CollectionSwiper />
+  <RouterView />
 </template>
 
-<script setup>
-import CollectionSwiper from '@/components/collection/CollectionSwiper.vue'
-</script>
+<script setup></script>
 
 <style lang="scss" scoped></style>

@@ -2,13 +2,10 @@
   <div class="container">
     <div class="row">
       <div class="col" v-for="(item, index) in items" :key="index">
-        <div class="card">
-          <div class="card-img" :style="{ backgroundImage: `url(${item.image})` }"></div>
+        <div class="card" @click="showDetail(item.collectionId)">
+          <div class="card-img" :style="{ backgroundImage: `url(${computedImagePath(item.image)})` }"></div>
           <div class="card-content">
-            <h3 class="headline">{{ item.title }}</h3>
-            <div class="card-info">
-              <span>👍 {{ item.likes }}</span>
-            </div>
+            <div class="card-title">{{ computedTitle(item.description) }}</div>
           </div>
         </div>
       </div>
@@ -16,29 +13,58 @@
   </div>
 </template>
 
-<script>
-import { defineComponent, ref } from 'vue'
-
-export default defineComponent({
-  name: 'StoryComponent',
-  setup() {
-    const items = ref([
-      { title: '첫 번째 모음집', image: 'https://via.placeholder.com/300x300', likes: 10, comments: 5 },
-      { title: '두 번째 모음집', image: 'https://via.placeholder.com/300x300', likes: 20, comments: 15 },
-      { title: '세 번째 모음집', image: 'https://via.placeholder.com/300x300', likes: 30, comments: 25 },
-      { title: '네 번째 모음집', image: 'https://via.placeholder.com/300x300', likes: 40, comments: 35 },
-      { title: '다섯 번째 모음집', image: 'https://via.placeholder.com/300x300', likes: 50, comments: 45 },
-      { title: '여섯 번째 모음집', image: 'https://via.placeholder.com/300x300', likes: 60, comments: 55 },
-      { title: '일곱 번째 모음집', image: 'https://via.placeholder.com/300x300', likes: 70, comments: 65 },
-      { title: '여덟 번째 모음집', image: 'https://via.placeholder.com/300x300', likes: 80, comments: 75 },
-      { title: '아홉 번째 모음집', image: 'https://via.placeholder.com/300x300', likes: 90, comments: 85 },
-      { title: '열 번째 모음집', image: 'https://via.placeholder.com/300x300', likes: 100, comments: 95 }
-    ])
-
-    return {
-      items
-    }
+<script setup>
+import { onMounted, ref, getCurrentInstance, defineEmits } from 'vue'
+import { listCollectionBySearchKeyword } from '@/api/collection'
+const props = defineProps({
+  searchKeyword: {
+    type: String
   }
+})
+const searchKeyword = ref(props.searchKeyword)
+const collections = ref({})
+const emit = defineEmits(['setSearchCount'])
+const items = ref([])
+
+const searchByKeyword = (keyword) => {
+  fetchCollections(keyword)
+}
+const fetchCollections = (keyword) => {
+  listCollectionBySearchKeyword(
+    keyword,
+    (result) => {
+      items.value = []
+      collections.value = result.data
+      for (let i = 0; i < collections.value.length; i++) {
+        const collection = collections.value[i]
+        items.value.push({
+          collectionId: collection.collectionId,
+          description: collection.description,
+          image: ''
+        })
+      }
+      emit('setSearchCount', items.value.length)
+    },
+    (error) => console.log(error)
+  )
+}
+
+const computedTitle = (title) => {
+  if (title.length > 15) {
+    return title.substring(0, 15) + '...더보기'
+  }
+  return title
+}
+const computedImagePath = (img) => {
+  return `http://localhost:8080/image?path=${img}`
+}
+onMounted(() => {
+  console.log('hi')
+  fetchCollections(searchKeyword.value)
+})
+
+defineExpose({
+  searchByKeyword
 })
 </script>
 
@@ -70,16 +96,12 @@ export default defineComponent({
 }
 
 .card {
+  cursor: pointer;
   position: relative;
   border: 1px solid #ddd;
   border-radius: 8px;
   overflow: hidden;
-  transition: box-shadow 0.3s ease;
   padding-top: 100%;
-}
-
-.card:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .card-img {
@@ -90,21 +112,26 @@ export default defineComponent({
   height: 100%;
   background-size: cover;
   background-position: center;
+  transition: filter 0.3s ease;
+}
+
+.card:hover .card-img {
+  filter: blur(5px);
 }
 
 .card-content {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   width: 100%;
-  padding: 16px;
-  background: rgba(0, 0, 0, 0.5);
-  color: white;
+  height: 100%;
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+  align-items: center;
+  justify-content: center;
+  color: white;
   opacity: 0;
   transition: opacity 0.3s ease;
+  flex-direction: column; /* 추가 */
 }
 
 .card:hover .card-content {
@@ -113,19 +140,15 @@ export default defineComponent({
 
 .card-info {
   display: flex;
-  justify-content: space-between;
-  font-size: 0.875rem;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
 }
-
-.card:hover .card-info {
-  opacity: 1;
+.card-title {
+  color: black;
 }
-
-.headline {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin: 0;
+.card-info span {
+  margin: 0 10px;
+  color: black;
 }
 </style>

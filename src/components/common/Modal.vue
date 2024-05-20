@@ -2,7 +2,7 @@
   <transition name="fade">
     <div v-if="visible" class="modal-overlay" @click.self="$emit('update:visible', false)">
       <div class="modal">
-        <button class="close-button" @click="$emit('update:visible', false)">닫기</button>
+        <button class="close-button" @click="clickCloseButton">닫기</button>
         <SearchBar @click-search-button="searchByKeyword" />
         <SearchContent ref="searchContent" :search-keyword="searchKeyword" />
       </div>
@@ -30,6 +30,11 @@ const handleEsc = (event) => {
   }
 }
 
+const clickCloseButton = () => {
+  emit('update:visible', false)
+  searchByKeyword.value = ''
+}
+
 onMounted(() => {
   window.addEventListener('keydown', handleEsc)
 })
@@ -42,7 +47,7 @@ const { proxy } = getCurrentInstance()
 
 const searchByKeyword = (keyword) => {
   searchKeyword.value = keyword
-  proxy.$refs.searchContent.searchByKeyword(keyword)
+  proxy.$refs.searchContent.searchByKeywordFromComponent(keyword)
 }
 watch(
   () => props.visible,

@@ -2,9 +2,10 @@
   <div class="container">
     <div class="row">
       <div class="col" v-for="(item, index) in items" :key="index">
-        <div class="card">
-          <div class="card-img" :style="{ backgroundImage: `url(${item.image})` }"></div>
+        <div class="card" @click="showDetail(item.storyId)">
+          <div class="card-img" :style="{ backgroundImage: `url(${computedImagePath(item.image)})` }"></div>
           <div class="card-content">
+            <div class="card-title">{{ computedTitle(item.title) }}</div>
             <div class="card-info">
               <span>👍 {{ item.likes }}</span>
               <span>💬 {{ item.comments }}</span>
@@ -17,52 +18,62 @@
 </template>
 
 <script setup>
-import { defineComponent, onMounted, ref, getCurrentInstance } from 'vue'
+import { onMounted, ref, getCurrentInstance, defineEmits } from 'vue'
 import { listStoryBySearchKeyword } from '@/api/story'
 const props = defineProps({
   searchKeyword: {
     type: String
   }
 })
-const { proxy } = getCurrentInstance()
 const searchKeyword = ref(props.searchKeyword)
 const stories = ref({})
+const emit = defineEmits(['setSearchCount'])
+const items = ref([])
 
-const items = ref([
-  { title: '첫 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 10, comments: 5 },
-  { title: '두 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 20, comments: 15 },
-  { title: '세 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 30, comments: 25 },
-  { title: '네 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 40, comments: 35 },
-  { title: '다섯 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 50, comments: 45 },
-  { title: '여섯 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 60, comments: 55 },
-  { title: '일곱 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 70, comments: 65 },
-  { title: '여덟 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 80, comments: 75 },
-  { title: '아홉 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 90, comments: 85 },
-  { title: '열 번째 이야기', image: 'https://via.placeholder.com/300x300', likes: 100, comments: 95 }
-])
 const searchByKeyword = (keyword) => {
+  console.log(keyword, '키워드 검색 호출됨')
   fetchStories(keyword)
 }
 const fetchStories = (keyword) => {
   listStoryBySearchKeyword(
     keyword,
     (result) => {
+      items.value = []
+      console.log(stories.value)
       stories.value = result.data
+      for (let i = 0; i < stories.value.length; i++) {
+        const story = stories.value[i]
+        let replyCount = 0
+        for (let j = 0; j < story.storyComments.length; j++) {
+          replyCount += story.storyComments[j].storyReplies.length
+        }
+        items.value.push({
+          storyId: story.storyId,
+          title: story.content,
+          image: story.images[0],
+          likes: story.likeCount,
+          comments: story.storyComments.length + replyCount
+        })
+      }
+      emit('setSearchCount', items.value.length)
     },
     (error) => console.log(error)
   )
 }
+
+const computedTitle = (title) => {
+  if (title.length > 15) {
+    return title.substring(0, 15) + '...더보기'
+  }
+  return title
+}
+const computedImagePath = (img) => {
+  return `http://localhost:8080/image?path=${img}`
+}
 onMounted(() => {
+  console.log('hi')
   fetchStories(searchKeyword.value)
 })
-
-watch(
-  () => props.searchKeyword,
-  (newKeyword) => {
-    searchKeyword.value = newKeyword
-    fetchStories(newKeyword)
-  }
-)
 
 defineExpose({
   searchByKeyword
@@ -132,6 +143,7 @@ defineExpose({
   color: white;
   opacity: 0;
   transition: opacity 0.3s ease;
+  flex-direction: column; /* 추가 */
 }
 
 .card:hover .card-content {
@@ -144,8 +156,11 @@ defineExpose({
   justify-content: center;
   font-size: 1rem;
 }
-
+.card-title {
+  color: black;
+}
 .card-info span {
   margin: 0 10px;
+  color: black;
 }
 </style>

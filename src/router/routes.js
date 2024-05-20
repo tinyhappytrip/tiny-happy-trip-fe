@@ -33,7 +33,25 @@ export const routes = [
   {
     path: '/collection',
     name: 'collection',
-    component: () => import('@/views/CollectionView.vue')
+    meta: { layout: DefaultLayout },
+    component: () => import('@/views/CollectionView.vue'),
+    children: [
+      {
+        path: 'write',
+        name: 'collection-write',
+        component: () => import('@/components/collection/CollectionWrite.vue')
+      },
+      {
+        path: '',
+        name: 'collection-list',
+        component: () => import('@/components/collection/CollectionSwiper.vue')
+      },
+      {
+        path: ':collectionId',
+        name: 'collection-detail',
+        component: () => import('@/components/collection/CollectionDetail.vue')
+      }
+    ]
   }
   // { path: '/messenger', name: 'messenger', component: () => import('@/views/MessengerView.vue'), meta: { layout: DefaultLayout } }
 ]

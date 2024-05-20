@@ -20,6 +20,7 @@ const searchInput = ref(null)
 const clearSearch = () => {
   searchQuery.value = ''
   searchInput.value.focus()
+  search()
 }
 
 const search = () => {

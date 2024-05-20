@@ -21,86 +21,44 @@
     :modules="modules"
     class="mySwiper"
   >
-    <!-- <swiper-slide v-for="(story, index) in stories" :key="index" class="swiper-slide">
-      <div class="story-container">
-        <div class="story-header">
-          <img :src="story.profileImage" alt="Profile" class="profile-image" />
-          <span class="username">{{ story.username }}</span>
-        </div>
-        <img :src="story.image" :alt="story.alt" class="story-image" />
-      </div>
-    </swiper-slide> -->
-
-    <swiper-slide><img src="https://swiperjs.com/demos/images/nature-1.jpg" /></swiper-slide>
-    <swiper-slide><img src="https://swiperjs.com/demos/images/nature-2.jpg" /></swiper-slide>
-    <swiper-slide><img src="https://swiperjs.com/demos/images/nature-3.jpg" /></swiper-slide>
-    <swiper-slide><img src="https://swiperjs.com/demos/images/nature-4.jpg" /></swiper-slide>
-    <swiper-slide><img src="https://swiperjs.com/demos/images/nature-5.jpg" /></swiper-slide>
-    <swiper-slide><img src="https://swiperjs.com/demos/images/nature-6.jpg" /></swiper-slide>
-    <swiper-slide><img src="https://swiperjs.com/demos/images/nature-7.jpg" /></swiper-slide>
-    <swiper-slide><img src="https://swiperjs.com/demos/images/nature-8.jpg" /></swiper-slide>
-    <swiper-slide><img src="https://swiperjs.com/demos/images/nature-9.jpg" /></swiper-slide>
+    <swiper-slide @click="showDetail(collection.collectionId)" v-for="(collection, index) in collections" :key="index">
+      <h1>{{ collection.title }}</h1>
+      <CollectionQuarterImage :items="collection.collectionItems"></CollectionQuarterImage>
+    </swiper-slide>
   </swiper>
 </template>
-<script>
-// Import Swiper Vue.js components
+
+<script setup>
 import { Swiper, SwiperSlide } from 'swiper/vue'
-
-// Import Swiper styles
 import 'swiper/css'
-
 import 'swiper/css/effect-coverflow'
 import 'swiper/css/pagination'
 import 'swiper/css/navigation'
-// import required modules
 import { EffectCoverflow, Pagination, Keyboard, Navigation, Autoplay } from 'swiper/modules'
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+import { listRecommendCollections } from '@/api/collection'
 
-export default {
-  components: {
-    Swiper,
-    SwiperSlide
-  },
-  setup() {
-    // const stories = ref([
-    //   {
-    //     image: 'https://via.placeholder.com/300x500?text=Story+1',
-    //     alt: 'Story 1',
-    //     profileImage: 'https://via.placeholder.com/50',
-    //     username: 'user1'
-    //   },
-    //   {
-    //     image: 'https://via.placeholder.com/300x500?text=Story+2',
-    //     alt: 'Story 2',
-    //     profileImage: 'https://via.placeholder.com/50',
-    //     username: 'user2'
-    //   },
-    //   {
-    //     image: 'https://via.placeholder.com/300x500?text=Story+3',
-    //     alt: 'Story 3',
-    //     profileImage: 'https://via.placeholder.com/50',
-    //     username: 'user3'
-    //   },
-    //   {
-    //     image: 'https://via.placeholder.com/300x500?text=Story+4',
-    //     alt: 'Story 4',
-    //     profileImage: 'https://via.placeholder.com/50',
-    //     username: 'user4'
-    //   },
-    //   {
-    //     image: 'https://via.placeholder.com/300x500?text=Story+5',
-    //     alt: 'Story 5',
-    //     profileImage: 'https://via.placeholder.com/50',
-    //     username: 'user5'
-    //   }
-    // ])
+const collections = ref([])
 
-    return {
-      // stories,
-      modules: [EffectCoverflow, Pagination, Keyboard, Navigation, Autoplay]
-    }
-  }
+const showDetail = (collection) => {
+  // 모달 띄워주세여
+  //CollectionDetail.vue
+  console.log('Collection details:', collection)
 }
+
+onMounted(() => {
+  listRecommendCollections(
+    (result) => {
+      collections.value = result.data
+      console.log(collections.value)
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
+})
+
+const modules = [EffectCoverflow, Pagination, Keyboard, Navigation, Autoplay]
 </script>
 <style>
 .swiper {
@@ -119,5 +77,12 @@ export default {
 .swiper-slide img {
   display: block;
   width: 100%;
+}
+
+h1 {
+  color: black;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 20px; /* 이미지와 제목 사이의 간격 조정 */
 }
 </style>
