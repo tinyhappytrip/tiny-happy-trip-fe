@@ -29,10 +29,6 @@
   <Modal :visible="isModalVisible" @update:visible="isModalVisible = $event" />
 </template>
 
-<script>
-export default {
-  name: 'App'
-}
 <script setup>
 import { ref, onMounted, onBeforeUnmount, markRaw } from 'vue'
 import Header from '@/components/common/Header.vue'
