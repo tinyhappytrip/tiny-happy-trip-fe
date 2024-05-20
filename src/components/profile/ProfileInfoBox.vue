@@ -39,10 +39,7 @@ const authStore = useAuthStore()
 authStore.checkAuth()
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 const loginUserId = computed(() => authStore.userId)
-<<<<<<< HEAD
-=======
 const isUser = ref(false)
->>>>>>> b3af6fc (feat: search 기능 추가)
 const profile = ref({})
 const isFollowing = ref(false)
 const userFollowerList = ref([])

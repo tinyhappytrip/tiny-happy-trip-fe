@@ -35,15 +35,6 @@ export const routes = [
     name: 'collection',
     meta: { layout: DefaultLayout },
     component: () => import('@/views/CollectionView.vue')
-  }
-<<<<<<< HEAD
-  // { path: '/messenger', name: 'messenger', component: () => import('@/views/MessengerView.vue'), meta: { layout: DefaultLayout } }
-  // {
-  //   path: '/collection',
-  //   name: 'collection',
-  //   meta: { layout: DefaultLayout },
-  //   component: () => import('@/views/CollectionView.vue')
-  // }
-=======
->>>>>>> b3af6fc (feat: search 기능 추가)
+  },
+  { path: '/messenger', name: 'messenger', component: () => import('@/views/MessengerView.vue'), meta: { layout: DefaultLayout } }
 ]
