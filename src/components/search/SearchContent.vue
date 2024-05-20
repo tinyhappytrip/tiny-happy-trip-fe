@@ -3,10 +3,10 @@
     <div class="tab" :class="{ active: activeTab === 'story' }" @click="activeTab = 'story'">이야기</div>
     <div class="tab" :class="{ active: activeTab === 'collection' }" @click="activeTab = 'collection'">모음집</div>
     <div class="tab" :class="{ active: activeTab === 'users' }" @click="activeTab = 'users'">사용자</div>
-    <div class="tab result">검색결과 {?} 개</div>
+    <div class="tab result">검색결과 {{ searchCount }} 개</div>
   </div>
   <div class="tab-content">
-    <component :is="currentTabComponent" :search-keyword="searchKeyword" ref="searchContents"></component>
+    <component @set-search-count="setSearchCount" :is="currentTabComponent" :search-keyword="searchKeyword" ref="searchContents"></component>
   </div>
 </template>
 
@@ -22,6 +22,7 @@ const props = defineProps({
   }
 })
 const activeTab = ref('story')
+const searchCount = ref(0)
 
 const currentTabComponent = computed(() => {
   switch (activeTab.value) {
@@ -39,9 +40,13 @@ const currentTabComponent = computed(() => {
 const { proxy } = getCurrentInstance()
 
 const searchByKeyword = (keyword) => {
-  console.log('하위 메서드 실행됨!!!!!!!!')
   console.log(keyword)
   proxy.$refs.searchContents.searchByKeyword(keyword)
+}
+const setSearchCount = (count) => {
+  console.log('상위뷰 호츄ㅜㄹ')
+  console.log(count)
+  searchCount.value = count
 }
 
 defineExpose({
