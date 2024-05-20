@@ -60,6 +60,11 @@ const setActiveTab = (tab) => {
 const setSearchCount = (count) => {
   searchCount.value = count
 }
+const setSearchCount = (count) => {
+  console.log('상위뷰 호츄ㅜㄹ')
+  console.log(count)
+  searchCount.value = count
+}
 
 defineExpose({
   searchByKeywordFromComponent

@@ -1,10 +1,10 @@
 <template>
   <div class="container">
     <div class="row">
-      <div v-for="(photo, index) in photos" :key="index" class="col">
+      <div v-for="(story, index) in userStories" :key="index" class="col">
         <div class="card">
-          <img :src="photo.url" :alt="photo.title" class="card-img" />
-          <div class="card-title">{{ photo.title }}</div>
+          <img :src="computedImagePath(story.images[0])" :alt="story.content" class="card-img" />
+          <div class="card-title">{{ story.content }}</div>
         </div>
       </div>
     </div>
@@ -31,20 +31,9 @@ userStory(
     console.log(error)
   }
 )
-const photos = ref([
-  { url: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSC1Qw9qKJbrqHv9k1XDHWe0OePKRwXfA4wuX7JWeP2&s', title: 'Photo 1' },
-  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 2' },
-  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 3' },
-  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 4' },
-  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 5' },
-  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 6' },
-  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 1' },
-  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 2' },
-  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 3' },
-  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 4' },
-  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 5' },
-  { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 6' }
-])
+const computedImagePath = (img) => {
+  return `http://localhost:8080/image?path=${img}`
+}
 </script>
 
 <style scoped>

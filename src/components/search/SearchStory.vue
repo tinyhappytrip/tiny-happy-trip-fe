@@ -29,12 +29,12 @@ const searchKeyword = ref(props.searchKeyword)
 const stories = ref({})
 const emit = defineEmits(['setSearchCount'])
 const items = ref([])
-
 const searchByKeyword = (keyword) => {
   console.log(keyword, '키워드 검색 호출됨')
   fetchStories(keyword)
 }
 const fetchStories = (keyword) => {
+  items.value = []
   listStoryBySearchKeyword(
     keyword,
     (result) => {

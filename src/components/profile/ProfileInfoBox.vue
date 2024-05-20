@@ -39,6 +39,7 @@ const authStore = useAuthStore()
 authStore.checkAuth()
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 const loginUserId = computed(() => authStore.userId)
+const isUser = ref(false)
 const profile = ref({})
 const isFollowing = ref(false)
 const userFollowerList = ref([])
@@ -113,11 +114,11 @@ const checkIsFollowing = () => {
     }
   )
 }
-
 // 초기 작업
 onMounted(() => {
   userInfo()
   checkIsFollowing()
+  isUser.value = loginUserId === userId
 })
 </script>
 
