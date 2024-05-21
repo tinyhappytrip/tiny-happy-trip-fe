@@ -3,7 +3,7 @@
     <div class="row">
       <div v-for="(story, index) in userStories" :key="index" class="col">
         <div class="card">
-          <img :src="computedImagePath(story.images[0])" :alt="story.content" class="card-img" />
+          <img :src="imagePath(story.images[0])" :alt="story.content" class="card-img" />
           <div class="card-title">{{ story.content }}</div>
         </div>
       </div>
@@ -12,7 +12,9 @@
 </template>
 
 <script setup>
+import { ref, defineProps } from 'vue'
 import { userStory } from '@/api/story'
+import { imagePath } from '@/util/http-commons'
 const userStories = ref([])
 const { userId } = defineProps({
   userId: {
@@ -31,9 +33,6 @@ userStory(
     console.log(error)
   }
 )
-const computedImagePath = (img) => {
-  return `http://localhost:8080/image?path=${img}`
-}
 </script>
 
 <style scoped>

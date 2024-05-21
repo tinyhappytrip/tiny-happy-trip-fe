@@ -1,41 +1,89 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col v-for="(photo, index) in photos" :key="index" cols="12" sm="6" md="4">
-        <v-card>
-          <v-img :src="photo.url" height="200px"></v-img>
-          <v-card-title>{{ photo.title }}</v-card-title>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <div class="container">
+    <div class="row">
+      <div v-for="(collection, index) in userCollections" :key="index" class="col">
+        <div class="card">
+          <CollectionQuarterImage :items="collection.collectionItems" class="card-img"></CollectionQuarterImage>
+          <div class="card-title">{{ collection.title }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      photos: [
-        { url: 'http://loc alhost:3000/src/assets/main/poorin.png', title: 'Photo 1' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 2' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 3' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 4' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 5' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 6' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 1' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 2' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 3' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 4' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 5' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 6' }
-      ]
-    }
+<script setup>
+import { ref, defineProps } from 'vue'
+import { userCollection } from '@/api/collection'
+const userCollections = ref([])
+const { userId } = defineProps({
+  userId: {
+    type: Number,
+    required: true
   }
-}
+})
+
+userCollection(
+  userId,
+  (result) => {
+    userCollections.value = result.data
+  },
+  (error) => {
+    console.log(error)
+  }
+)
 </script>
 
 <style scoped>
-.v-card {
-  margin-bottom: 16px;
+.container {
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+.col {
+  flex: 1 0 30%;
+  box-sizing: border-box;
+  padding: 10px;
+}
+
+.card {
+  position: relative;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  text-align: center;
+  background: #fff;
+  transition: all 0.3s ease-in-out;
+  width: 300px;
+  height: 300px;
+}
+
+.card-img {
+  filter: blur(3px);
+  transition: filter 0.3s ease-in-out;
+}
+
+.card-title {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: black;
+  font-size: 1.2rem;
+  font-weight: 400;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.card:hover .card-img {
+  filter: blur(0);
+}
+
+.card:hover .card-title {
+  opacity: 0;
 }
 </style>

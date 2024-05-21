@@ -20,4 +20,11 @@ async function listRecommendCollections(success, fail) {
     .then(success)
     .catch(fail)
 }
-export { writeCollection, listCollectionBySearchKeyword, listRecommendCollections }
+
+async function userCollection(userId, success, fail) {
+  await authAxios()
+    .get(BASE_API_PATH + '/user/' + userId)
+    .then(success)
+    .catch(fail)
+}
+export { writeCollection, listCollectionBySearchKeyword, listRecommendCollections, userCollection }

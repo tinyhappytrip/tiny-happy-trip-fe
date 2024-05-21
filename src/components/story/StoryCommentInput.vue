@@ -62,6 +62,7 @@ const sendReply = () => {
     (result) => {
       console.log(result)
       emit('move-detail', storyId.value)
+
     },
     (error) => {
       console.log(error)
