@@ -21,7 +21,7 @@
 </template>
 
 <script setup>
-import { listStory, detailStory } from '@/api/story'
+import { listStory, detailStory } from '@/api/story-api'
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import StoryCard from '@/components/story/StoryCard.vue'

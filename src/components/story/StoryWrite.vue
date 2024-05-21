@@ -23,7 +23,8 @@
 </template>
 
 <script setup>
-import { ref, toRaw } from 'vue'
+import { writeStory } from '@/api/story-api'
+import { ref, watch, toRaw } from 'vue'
 import { useRouter } from 'vue-router'
 import StoryImageUploader from '@/components/story/StoryImageUploader.vue'
 import StoryForm from './StoryForm.vue'

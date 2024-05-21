@@ -4,18 +4,13 @@
       <div class="image-box" @click="openModal">
         <font-awesome-icon :icon="['fas', 'magnifying-glass']" size="2xl" class="icon" />
       </div>
-      <!-- <div class="image-box">
-        <RouterLink to="/story/write">
-          <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
-        </RouterLink>
-      </div> -->
 
       <div class="image-box" @click.stop="togglePlusDropdown">
         <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
         <transition name="slide">
           <div v-if="isPlusDropdownVisible" class="dropdown-menu plus">
             <div @click="showModal" class="dropdown-item">이야기</div>
-            <RouterLink :to="`/mypage/${userId}`" class="dropdown-item">모음집</RouterLink>
+            <RouterLink to="/collection/write" class="dropdown-item">모음집</RouterLink>
           </div>
         </transition>
       </div>

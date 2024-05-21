@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { commentStory, replyStory } from '@/api/story'
+import { commentStory, replyStory } from '@/api/story-api'
 import { defineProps, defineExpose, defineModel, defineEmits, ref, watch } from 'vue'
 
 const commentMessage = ref('')
@@ -37,14 +37,14 @@ const sendComment = () => {
     storyId.value,
     commentMessage.value,
     (result) => {
-      console.log(result.value)
+      console.log(result.data)
+      emit('move-detail', storyId.value)
     },
     (error) => {
       console.log(error)
     }
   )
   commentMessage.value = ''
-  emit('move-detail', storyId.value)
 }
 
 const setReply = (nickname, replyCommentId) => {
@@ -61,6 +61,8 @@ const sendReply = () => {
     resultComment,
     (result) => {
       console.log(result)
+      emit('move-detail', storyId.value)
+
     },
     (error) => {
       console.log(error)
@@ -68,7 +70,6 @@ const sendReply = () => {
   )
   commentMode.value = true
   commentMessage.value = ''
-  emit('move-detail', storyId.value)
 }
 
 // 답글 달다가 태그 지우면 -> 댓글 달기로 전환

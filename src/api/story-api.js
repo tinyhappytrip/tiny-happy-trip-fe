@@ -69,7 +69,7 @@ async function userStory(userId, success, fail) {
 }
 
 async function listStoryBySearchKeyword(searchKeyword, success, fail) {
-  await noAuthAxios()
+  await authAxios()
     .get(BASE_API_PATH + '/search/' + encodeURIComponent(searchKeyword))
     .then(success)
     .catch(fail)
