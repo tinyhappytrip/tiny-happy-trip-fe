@@ -20,11 +20,11 @@
     </div>
     <div class="location-box">
       <img src="@/assets/main/location.png" width="20px" />
-      <span>{{ story.location }}</span>
+      <span>{{ story.placeName }}</span>
     </div>
     <StoryImageCarousel style="height: 456px" :images="story.images" @click.stop="moveDetail(story.storyId)" />
     <StoryLike :story="story"></StoryLike>
-    <div style="display: inline" v-html="displayedContent"></div>
+    <div style="display: inline; line-height: 1.5; font-size: 0.9rem" v-html="displayedContent"></div>
     <div style="display: inline; margin-left: 10px" v-if="hasLineBreaks && !showMore">
       <button @click="showMore = true">더보기 ..</button>
     </div>
@@ -90,21 +90,25 @@ const hasLineBreaks = computed(() => story.content.includes('\n'))
 const firstLine = computed(() => story.content.split('\n')[0])
 
 // formattedContent 계산 속성 추가
-const formattedContent = computed(() => formatContent(story.content))
+const formattedContent = computed(() => formatHashtags(story.content))
 
 // 표시할 컨텐츠 계산 속성
 const displayedContent = computed(() => {
   if (showMore.value) {
     return formattedContent.value
   }
-  return formatContent(firstLine.value)
+  return formatHashtags(firstLine.value)
 })
+
+const formatHashtags = (text) => {
+  return text.replace(/\r\n|\n/g, '<br>').replace(/#(\S+)/g, '<span style="color: #003285; font-weight:bold">#$1</span>')
+}
 </script>
 
 <style scoped>
 .clip-icon {
   position: absolute;
-  z-index: 1000;
+  z-index: 10;
   margin: -20px;
 }
 

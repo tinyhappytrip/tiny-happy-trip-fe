@@ -1,9 +1,8 @@
 <template>
-  <div class="container">
+  <div class="container" @click="handleOutsideClick">
     <div class="weather-and-emotion">
       <div>
         <p class="comment_title">날씨</p>
-        <p class="comment">날씨는 어땠나요?</p>
         <div class="button-group">
           <button @click="changeWeather('sunny')">
             <img :class="{ 'non-selected': story.weather != 'sunny' }" src="/src/assets/weather/sunny.png" width="35px" />
@@ -12,16 +11,17 @@
             <img :class="{ 'non-selected': story.weather != 'cloud' }" src="/src/assets/weather/cloud.png" width="35px" />
           </button>
           <button @click="changeWeather('rain')">
-            <img :class="{ 'non-selected': story.weather != 'rain' }" src="/src/assets/weather/rainy.png" width="35px" />
+            <img :class="{ 'non-selected': story.weather != 'rainy' }" src="/src/assets/weather/rainy.png" width="35px" />
           </button>
           <button @click="changeWeather('snow')">
             <img :class="{ 'non-selected': story.weather != 'snow' }" src="/src/assets/weather/snow.png" width="35px" />
           </button>
         </div>
       </div>
+    </div>
+    <div class="weather-and-emotion">
       <div>
         <p class="comment_title">감정</p>
-        <p class="comment">감정은 어땠나요?</p>
         <div class="button-group">
           <button @click="changeEmotion('happy')">
             <img :class="{ 'non-selected': story.emotion != 'happy' }" src="/src/assets/emotion/happy.png" width="35px" />
@@ -38,47 +38,41 @@
         </div>
       </div>
     </div>
-    <hr />
-    <div class="location" @click="searchMode = !searchMode">
+    <div class="location">
       <div>
         <p class="comment_title">위치</p>
-        <div class="comment">위치를 추가하세요</div>
-      </div>
-      <div class="location-right">
-        <div v-if="isLocationSelected">{{ selectedLocation }}</div>
-        <div v-else>
-          <button class="search-button">검색</button>
-        </div>
-      </div>
-    </div>
-    <hr />
-    <div class="entry-section">
-      <div class="comment-square" v-if="searchMode">
-        <div class="search-container">
+        <div class="comment" @click.stop="toggleSearchMode">{{ isLocationSelected ? selectedLocation : '위치를 추가하세요' }}</div>
+        <button class="search-button" @click.stop="toggleSearchMode">검색</button>
+        <div class="search-container" v-if="searchMode" @click.stop="">
           <div class="search-bar">
-            <input type="text" name="searchKeyword" placeholder="Search..." v-model="searchKeyword" />
+            <input ref="searchInput" type="text" name="searchKeyword" placeholder="검색" :value="searchKeyword" @input="updateSearchKeyword" />
             <button>
               <img src="/src/assets/main/search.png" width="30px" alt="search icon" />
             </button>
           </div>
           <div class="search-results">
-            <div v-for="location in locations" class="result-item" @click="clickedItem(location)">
-              {{ location }}
+            <div v-for="location in locations" :key="location.id" class="result-item" @click="clickedItem(location)">
+              <p style="font-size: 0.8rem">{{ location.place_name }}</p>
+              <span style="font-size: 0.7rem">{{ location.road_address_name }}</span>
             </div>
           </div>
         </div>
       </div>
-      <div class="comment-square" v-else>
+    </div>
+    <div class="entry-section">
+      <div class="comment-square">
         <p class="comment_title">기록</p>
-        <div class="comment">당신의 하루를 기록하세요.</div>
         <textarea v-model="story.content" class="content-textfield"></textarea>
       </div>
       <div class="toggle">
-        <div>공개 범위 설정</div>
-        <div class="radio-group">
-          <label class="radio-option"> <input v-model="story.scope" type="radio" name="visibility" value="PUBLIC" /> 공개 </label>
-          <label class="radio-option"> <input v-model="story.scope" type="radio" name="visibility" value="PRIVATE" /> 비공개 </label>
-          <label class="radio-option"> <input v-model="story.scope" type="radio" name="visibility" value="FOLLOWER" /> 팔로워만 공개 </label>
+        <div class="comment_title">공개 범위 설정</div>
+        <div class="toggle-group">
+          <input type="radio" id="public" name="visibility" v-model="story.scope" value="PUBLIC" />
+          <label for="public" class="toggle-option">공개</label>
+          <input type="radio" id="followers-only" name="visibility" v-model="story.scope" value="FOLLOWER" />
+          <label for="followers-only" class="toggle-option">팔로워 </label>
+          <input type="radio" id="private" name="visibility" v-model="story.scope" value="PRIVATE" />
+          <label for="private" class="toggle-option">비공개</label>
         </div>
       </div>
     </div>
@@ -86,17 +80,22 @@
 </template>
 
 <script setup>
-import { ref, defineProps } from 'vue'
+import { ref, defineProps, onMounted, nextTick } from 'vue'
+import axios from 'axios'
 
 const { story } = defineProps({
   story: Object
 })
 
-const locations = ref(['제주도1', '제주도2', '제주도3', '제주도1', '제주도1', '제주도1'])
 const searchKeyword = ref('')
+const locations = ref([])
 const selectedLocation = ref('')
 const isLocationSelected = ref(false)
 const searchMode = ref(false)
+
+const searchInput = ref(null)
+
+const KAKAO_API_KEY = 'e86f69e6ec0994a1f096b9953c71f6d7'
 
 const changeWeather = (weather) => {
   story.weather = weather
@@ -109,25 +108,78 @@ const changeEmotion = (emotion) => {
 const clickedItem = (location) => {
   isLocationSelected.value = true
   searchMode.value = false
-  selectedLocation.value = location
-  story.location = location
+  selectedLocation.value = location.place_name
+  story.placeName = location.place_name
+  story.placeId = location.id
+  story.roadAddressName = location.road_address_name
+  searchKeyword.value = ''
+  locations.value = []
+  story.latitude = location.x
+  story.longitude = location.y
+}
+
+const handleOutsideClick = (event) => {
+  if (searchMode.value && !event.target.closest('.relative-container')) {
+    searchMode.value = false
+    searchKeyword.value = ''
+    locations.value = []
+  }
+}
+
+const toggleSearchMode = () => {
+  searchMode.value = !searchMode.value
+  if (searchMode.value) {
+    nextTick(() => {
+      searchInput.value.focus()
+    })
+  }
+}
+
+const updateSearchKeyword = (event) => {
+  searchKeyword.value = event.target.value
+  fetchLocations()
+}
+
+const fetchLocations = async () => {
+  // if (searchKeyword.value.trim() === '') {
+  //   locations.value = []
+  //   return
+  // }
+
+  try {
+    const response = await axios.get('https://dapi.kakao.com/v2/local/search/keyword.json', {
+      headers: {
+        Authorization: `KakaoAK ${KAKAO_API_KEY}`
+      },
+      params: {
+        query: searchKeyword.value
+      }
+    })
+    console.log(response.data)
+    story.latitude = response.data
+    story.longitude = response.data.documents.y
+    locations.value = response.data.documents
+  } catch (error) {
+    console.error('Error fetching locations:', error)
+    if (error.response && error.response.status === 401) {
+      console.error('Unauthorized: Check your API key and ensure it is correct.')
+    }
+  }
 }
 </script>
 
 <style scoped>
 .container {
-  max-width: 600px;
-  margin: auto;
+  width: 100%;
+  height: calc(100% - 56px);
   background: white;
+  margin: 56px 0;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  font-family: 'Arial, sans-serif';
 }
 
 .weather-and-emotion {
-  display: flex;
-  justify-content: space-between;
+  border-bottom: 1px solid #ccc;
+  padding-bottom: 10px;
 }
 
 .weather-and-emotion > div {
@@ -142,19 +194,20 @@ const clickedItem = (location) => {
 .comment_title {
   font-size: 18px;
   font-weight: bold;
+  padding: 20px 0;
 }
 
 .comment {
   color: gray;
   font-size: 14px;
+  cursor: pointer;
 }
 
 .location {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  cursor: pointer;
-  margin: 10px 0;
+  position: relative;
+  padding: 10px 0;
+  width: 100%;
+  border-bottom: 1px solid #ccc;
 }
 
 .location-right {
@@ -163,42 +216,37 @@ const clickedItem = (location) => {
 }
 
 .search-button {
+  position: absolute;
   color: black;
-  padding: 8px 16px;
-  border: none;
-  border-radius: 4px;
+  bottom: 0;
   cursor: pointer;
-}
-
-.search-button:hover {
+  right: 0;
+  display: block;
+  padding-bottom: 10px;
 }
 
 .entry-section {
   padding: 10px 0;
 }
 
-.comment-square {
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 4px;
-  margin-bottom: 10px;
-  height: 250px;
-}
-
 .content-textfield {
   width: 100%;
-  height: 80px;
   border: 1px solid #ccc;
   border-radius: 4px;
   padding: 10px;
-  height: 200px;
+  height: 180px;
+  resize: none;
 }
 
 .search-container {
   width: 100%;
   border: 1px solid #ccc;
   padding: 10px;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  background: white;
+  z-index: 10;
+  height: 290px;
+  margin-top: -30px;
 }
 
 .search-bar {
@@ -207,7 +255,8 @@ const clickedItem = (location) => {
   align-items: center;
   border-bottom: 1px solid #ccc;
   padding-bottom: 5px;
-  margin: 10px;
+  margin: 10px 0;
+  height: 10%;
 }
 
 .search-bar input {
@@ -230,12 +279,15 @@ const clickedItem = (location) => {
 
 .search-results {
   margin-top: 10px;
-  max-height: 150px;
-  overflow-y: scroll;
+  height: 80%;
+  overflow-y: auto;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
 }
 
 .result-item {
-  padding: 5px 0;
+  padding: 12px 5px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
 }
@@ -245,19 +297,43 @@ const clickedItem = (location) => {
 }
 
 .toggle {
-  margin-top: 20px;
   display: flex;
   justify-content: space-between;
-}
-
-.radio-group {
-  display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
 
-.radio-option {
-  margin-bottom: 10px;
+.toggle-group {
+  display: flex;
+  width: 70%;
+  justify-content: space-between;
+}
+
+.toggle-group input[type='radio'] {
+  background-color: #333333;
+  color: #fff;
+  border-color: #333333;
+  width: 25%;
+  text-align: center;
+  display: none;
+}
+
+.toggle-option {
+  padding: 10px 20px;
+  border: 1px solid #ccc;
+  border-radius: 25px;
+  cursor: pointer;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.toggle-option:hover {
+  background-color: #f0f0f0;
+}
+
+.toggle-group input[type='radio']:checked + .toggle-option {
+  background-color: #333333;
+  color: #fff;
+  border-color: #333333;
 }
 
 .non-selected {

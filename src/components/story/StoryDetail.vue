@@ -1,6 +1,7 @@
 <template>
-  <div class="modal-overlay" @click.stop="closeModal">
+  <div class="modal-overlay">
     <div class="card" ref="modalContent">
+      <font-awesome-icon :icon="['fas', 'xmark']" size="2xl" class="close-button" @click.stop="closeModal" />
       <div class="content">
         <div class="left-content">
           <StoryImageCarousel :images="story.images" />
@@ -22,16 +23,17 @@
             </div>
           </div>
           <div class="location-box">
-            <img src="@/assets/main/location.png" width="20px" />
-            <span>{{ story.location }}</span>
+            <div ref="map" style="width: 100%; height: 200px"></div>
           </div>
-          <div style="height: 200px; background: pink"></div>
           <div class="scroll-box">
-            <div style="border-bottom: 0.5px solid #ddd; display: block; padding: 20px 0" v-html="formattedContent"></div>
+            <div
+              style="line-height: 1.3; border-bottom: 0.5px solid rgb(221, 221, 221); display: block; padding: 10px 0px; font-size: 0.9rem"
+              v-html="formattedContent"
+            ></div>
             <div v-for="comment in story.storyComments" :key="comment.storyCommentId">
               <div class="comment" style="padding-top: 15px">
                 <RouterLink :to="`/profile/${comment.userId}`">
-                  <img :src="`http://localhost:8080/image?path=${story.userImage}`" width:="10px" style="margin-right: 5px;" class="comment-user-image"/>
+                  <img :src="`http://localhost:8080/image?path=${story.userImage}`" width="10px" style="margin-right: 5px" class="comment-user-image" />
                 </RouterLink>
                 <p style="font-size: 0.8rem; margin-right: 10px; line-height: 1.3">
                   <RouterLink :to="`/profile/${comment.userId}`">
@@ -57,7 +59,6 @@
             </div>
           </div>
           <StoryLike :story="story"></StoryLike>
-
           <div>
             <StoryCommentInput
               ref="commentInput"
@@ -76,7 +77,7 @@
 </template>
 
 <script setup>
-import { toRef, ref, defineProps, defineEmits, computed, onMounted, nextTick, getCurrentInstance } from 'vue'
+import { toRef, ref, defineProps, defineEmits, computed, onMounted, nextTick, getCurrentInstance, onUnmounted } from 'vue'
 import StoryCommentInput from '@/components/story/StoryCommentInput.vue'
 import StoryImageCarousel from './StoryImageCarousel.vue'
 import StoryLike from './StoryLike.vue'
@@ -119,7 +120,8 @@ const closeModal = () => {
 const customStyle = ref({
   width: '90%',
   position: 'absolute',
-  bottom: '0'
+  bottom: '10px',
+  padding: '20px 0'
 })
 
 const computedWeather = computed(() => {
@@ -186,15 +188,60 @@ const formattedDate = computed(() => formatDate(story.value.createdAt))
 const formatContent = (content) => {
   return content.replace(/\n/g, '<br>')
 }
+const formattedContent = computed(() => formatHashtags(story.value.content))
 
-const hasLineBreaks = computed(() => story.value.content.includes('\n'))
+const formatHashtags = (text) => {
+  return text.replace(/\r\n|\n/g, '<br>').replace(/#(\S+)/g, '<span style="color: #003285; font-weight:bold">#$1</span>')
+}
 
-const firstLine = computed(() => story.value.content.split('\n')[0])
+const handleKeyDown = (event) => {
+  if (event.key === 'Escape') {
+    closeModal()
+  }
+}
 
-const formattedContent = computed(() => formatContent(story.value.content))
+onMounted(() => {
+  window.addEventListener('keydown', handleKeyDown)
+  if (window.kakao && window.kakao.maps) {
+    const container = proxy.$refs.map
+    const options = {
+      center: new kakao.maps.LatLng(story.value.longitude, story.value.latitude),
+      level: 4,
+      draggable: false, // 지도를 드래그할 수 없도록 설정
+      scrollwheel: false, // 마우스 휠로 확대/축소할 수 없도록 설정
+      disableDoubleClickZoom: true // 더블클릭 확대를 막습니다.
+    }
+    const map = new kakao.maps.Map(container, options)
 
-const displayedContent = computed(() => {
-  return formatContent(firstLine.value)
+    const markerPosition = new kakao.maps.LatLng(story.value.longitude, story.value.latitude)
+    const marker = new kakao.maps.Marker({
+      position: markerPosition
+    })
+
+    const infowindowContent = `
+      <div style="width: 150px; text-align: center; font-size: 12px; padding: 6px 0;">
+        ${story.value.placeName}
+      </div>
+    `
+
+    const infowindow = new kakao.maps.InfoWindow({
+      content: infowindowContent
+    })
+    infowindow.open(map, marker)
+    marker.setMap(map)
+
+    // Add event listener to marker to open Kakao Map search page
+    kakao.maps.event.addListener(marker, 'click', function () {
+      const searchUrl = `http://place.map.kakao.com/${story.value.placeId}`
+      window.open(searchUrl, '_blank')
+    })
+  } else {
+    console.error('Kakao Maps SDK not loaded')
+  }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeyDown)
 })
 </script>
 
@@ -214,7 +261,7 @@ const displayedContent = computed(() => {
 
 .card {
   background-color: white;
-  width: 1000px;
+  width: 1100px;
   height: 800px;
   margin: 0 auto;
   position: relative;
@@ -245,7 +292,7 @@ const displayedContent = computed(() => {
 .right-content {
   width: 40%;
   position: relative;
-  padding: 10px;
+  padding: 20px 15px;
 }
 
 .title {
@@ -349,12 +396,25 @@ const displayedContent = computed(() => {
 
 .scroll-box {
   overflow-y: auto;
-  height: 430px;
+  height: 400px;
   border-bottom: 0.5px solid #ddd;
 }
 
 a {
   text-decoration: none;
   color: black;
+}
+
+.close-button {
+  position: absolute;
+  cursor: pointer;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+/* 카카오 지도 축척 바 숨기기 */
+#scaleControl {
+  display: none !important;
 }
 </style>

@@ -40,13 +40,13 @@ html::-webkit-scrollbar-track {
 
 <style>
 .v-application__wrap {
-  min-width: 1920px;
-  overflow-x: hidden;
+  width: 100%;
+  overflow: hidden;
 }
 .v-main {
-  width: 1920px;
+  width: 100%;
 }
 .v-footer {
-  min-width: 1920px;
+  width: 100%;
 }
 </style>

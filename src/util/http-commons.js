@@ -26,5 +26,8 @@ function authAxios() {
   return instance
 }
 
+const imagePath = (filePath) => {
+  return `${VITE_VUE_API_URL}/image?path=${filePath}`
+}
 
-export { noAuthAxios, authAxios }
+export { noAuthAxios, authAxios, imagePath }

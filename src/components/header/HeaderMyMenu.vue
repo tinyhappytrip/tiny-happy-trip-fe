@@ -14,7 +14,7 @@
         <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
         <transition name="slide">
           <div v-if="isPlusDropdownVisible" class="dropdown-menu plus">
-            <RouterLink to="/story/write" class="dropdown-item">이야기</RouterLink>
+            <div @click="showModal" class="dropdown-item">이야기</div>
             <RouterLink :to="`/mypage/${userId}`" class="dropdown-item">모음집</RouterLink>
           </div>
         </transition>
@@ -25,7 +25,7 @@
         </RouterLink>
       </div>
       <div v-if="isLoggedIn && userImage" class="my-image-box" @click.stop="toggleProfileDropdown">
-        <img :src="`http://localhost:8080/image?path=${userImage}`" />
+        <img :src="imagePath(userImage)" />
         <transition name="slide">
           <div v-if="isProfileDropdownVisible" class="dropdown-menu">
             <RouterLink :to="`/profile/${userId}`" class="dropdown-item">프로필</RouterLink>
@@ -42,12 +42,15 @@
         <RouterLink to="/signup" class="to-login">회원가입</RouterLink>
       </div>
     </template>
+    <StoryWrite :isVisible="isModalVisible" @update:isVisible="isModalVisible = $event" />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import StoryWrite from '../story/StoryWrite.vue'
+import { imagePath } from '@/util/http-commons'
 
 const emit = defineEmits(['update:modalVisible'])
 const isProfileDropdownVisible = ref(false)
@@ -95,6 +98,12 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener('click', handleClickOutside)
 })
+
+const isModalVisible = ref(false)
+
+const showModal = () => {
+  isModalVisible.value = true
+}
 </script>
 
 <style scoped>

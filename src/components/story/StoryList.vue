@@ -4,10 +4,15 @@
       <StoryCard v-for="story in stories" :key="story.storyId" :story="story" @move-detail="handleMoveDetail(story.storyId)" />
     </div>
     <div class="tabs">
-      <div>여행지 목록</div>
-      <div>저장됨</div>
-      <div>저장됨</div>
-      <div>저장됨</div>
+      <StoryAccordionTab title="Chat 1">
+        <p>내용 1</p>
+      </StoryAccordionTab>
+      <StoryAccordionTab title="Chat 2">
+        <p>내용 2</p>
+      </StoryAccordionTab>
+      <StoryAccordionTab title="Chat 3">
+        <p>내용 3</p>
+      </StoryAccordionTab>
     </div>
   </div>
   <div v-if="showModal" class="modal-overlay">
@@ -21,8 +26,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import StoryCard from '@/components/story/StoryCard.vue'
 import StoryDetail from './StoryDetail.vue'
+import StoryAccordionTab from '@/components/story/StoryAccordionTab.vue'
 
-const router = useRouter()
 const stories = ref([])
 const showModal = ref(false)
 const story = ref({})
@@ -83,7 +88,7 @@ onMounted(() => {
   display: flex;
   margin-top: 100px;
   margin: 150px auto 0 auto;
-  width: 30%;
+  justify-content: center;
 }
 
 .tabs {
@@ -92,7 +97,6 @@ onMounted(() => {
   height: 300px;
   margin-left: auto;
   position: fixed;
-  right: 450px;
-  top: 200px;
+  right: 400px;
 }
 </style>
