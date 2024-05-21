@@ -15,7 +15,7 @@
 
 <script setup>
 import { ref, computed, onMounted, defineEmits } from 'vue'
-import { userStory } from '@/api/story'
+import { userStory } from '@/api/story-api'
 import { useAuthStore } from '@/stores/auth'
 
 const emit = defineEmits(['sendSelectedStories'])

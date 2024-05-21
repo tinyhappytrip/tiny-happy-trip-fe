@@ -13,7 +13,7 @@
 
 <script setup>
 import { ref, defineProps } from 'vue'
-import { userCollection } from '@/api/collection'
+import { userCollection } from '@/api/collection-api'
 const userCollections = ref([])
 const { userId } = defineProps({
   userId: {
@@ -66,6 +66,8 @@ userCollection(
 .card-img {
   filter: blur(3px);
   transition: filter 0.3s ease-in-out;
+  width: 300px;
+  height: 300px;
 }
 
 .card-title {

@@ -9,6 +9,7 @@
 <script setup>
 import { defineProps, onMounted } from 'vue'
 import { imagePath } from '@/util/http-commons'
+
 const props = defineProps({
   items: {
     type: Array,
@@ -18,13 +19,28 @@ const props = defineProps({
 const items = ref(props.items)
 const images = ref([])
 
+const computedImagePath = (img) => {
+  return `http://localhost:8080/image?path=${img}`
+}
 
 onMounted(() => {
-  for (let i = 0; i < items.value.length; i++) {
+  console.log('props.items!!!!@@@')
+  console.log(props.items)
+  for (let i = 0; i < props.items.length; i++) {
     if (i == 4) break
-    images.value.push(items.value[i].imagePath)
+    images.value.push(props.items[i].imagePath)
   }
 })
+
+watch(
+  () => props.items,
+  (newItems) => {
+    if (newItems) {
+      items.value = newItems
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <style scoped>

@@ -6,7 +6,7 @@
 </template>
 
 <script setup>
-import { commentStory, replyStory } from '@/api/story'
+import { commentStory, replyStory } from '@/api/story-api'
 import { defineProps, defineExpose, defineModel, defineEmits, ref, watch } from 'vue'
 
 const commentMessage = ref('')

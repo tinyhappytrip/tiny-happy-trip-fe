@@ -13,7 +13,7 @@
 
 <script setup>
 import { ref, defineProps } from 'vue'
-import { userStory } from '@/api/story'
+import { userStory } from '@/api/story-api'
 import { imagePath } from '@/util/http-commons'
 const userStories = ref([])
 const { userId } = defineProps({

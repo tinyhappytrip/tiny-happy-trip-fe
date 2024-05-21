@@ -80,7 +80,7 @@ import { toRef, ref, defineProps, defineEmits, computed, onMounted, nextTick, ge
 import StoryCommentInput from '@/components/story/StoryCommentInput.vue'
 import StoryImageCarousel from './StoryImageCarousel.vue'
 import StoryLike from './StoryLike.vue'
-import { detailStory } from '@/api/story'
+import { detailStory } from '@/api/story-api'
 import { useRouter } from 'vue-router'
 const router = useRouter()
 

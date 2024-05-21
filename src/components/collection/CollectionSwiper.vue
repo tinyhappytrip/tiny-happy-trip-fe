@@ -1,4 +1,5 @@
 <template>
+  <CollectionDetail :collectionId="collectionId"></CollectionDetail>
   <swiper
     :spaceBetween="40"
     :autoplay="{
@@ -36,14 +37,16 @@ import 'swiper/css/pagination'
 import 'swiper/css/navigation'
 import { EffectCoverflow, Pagination, Keyboard, Navigation, Autoplay } from 'swiper/modules'
 import { ref, onMounted } from 'vue'
-import { listRecommendCollections } from '@/api/collection'
+import { listRecommendCollections } from '@/api/collection-api'
 
 const collections = ref([])
-
-const showDetail = (collection) => {
+// 하위뷰로 내려줄 collectionId
+const collectionId = ref()
+const showDetail = (id) => {
   // 모달 띄워주세여
+  collectionId.value = id
   //CollectionDetail.vue
-  console.log('Collection details:', collection)
+  console.log('Collection details:', id)
 }
 
 onMounted(() => {
@@ -51,6 +54,7 @@ onMounted(() => {
     (result) => {
       collections.value = result.data
       console.log(collections.value)
+      collectionId.value = collections.value[0].collectionId
     },
     (error) => {
       console.log(error)
@@ -63,7 +67,7 @@ const modules = [EffectCoverflow, Pagination, Keyboard, Navigation, Autoplay]
 <style>
 .swiper {
   width: 60%;
-  margin-top: 200px;
+  margin-top: 100px;
   padding-bottom: 50px;
 }
 

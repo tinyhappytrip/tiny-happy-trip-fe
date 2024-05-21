@@ -15,7 +15,7 @@
 
 <script setup>
 import { onMounted, ref, getCurrentInstance, defineEmits } from 'vue'
-import { listCollectionBySearchKeyword } from '@/api/collection'
+import { listCollectionBySearchKeyword } from '@/api/collection-api'
 const props = defineProps({
   searchKeyword: {
     type: String

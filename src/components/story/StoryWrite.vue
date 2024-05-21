@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-import { writeStory } from '@/api/story'
+import { writeStory } from '@/api/story-api'
 import { ref, onMounted, watch, toRaw } from 'vue'
 import { useRouter } from 'vue-router'
 import StoryImageUploader from '@/components/story/StoryImageUploader.vue'

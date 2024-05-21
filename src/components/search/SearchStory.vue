@@ -19,7 +19,7 @@
 
 <script setup>
 import { onMounted, ref, getCurrentInstance, defineEmits } from 'vue'
-import { listStoryBySearchKeyword } from '@/api/story'
+import { listStoryBySearchKeyword } from '@/api/story-api'
 const props = defineProps({
   searchKeyword: {
     type: String

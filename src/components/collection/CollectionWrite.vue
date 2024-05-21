@@ -52,7 +52,7 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { writeCollection } from '@/api/collection'
+import { writeCollection } from '@/api/collection-api'
 import CollectionSelect from '@/components/collection/CollectionSelect.vue'
 import { useAuthStore } from '@/stores/auth'
 

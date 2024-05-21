@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-import { likeStory } from '@/api/story'
+import { likeStory } from '@/api/story-api'
 import { defineProps, onMounted } from 'vue'
 const props = defineProps({
   story: {

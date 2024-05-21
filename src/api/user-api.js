@@ -5,13 +5,13 @@ import router from '@/router'
 import Cookies from 'js-cookie'
 
 const BASE_API_PATH = '/users'
-const store = useAuthStore()
 
 export async function login(data) {
   return await noAuthAxios().post(BASE_API_PATH + '/login', data)
 }
 
 export async function logout() {
+  const store = useAuthStore()
   store.logout()
   window.location.href = '/'
 }
@@ -49,7 +49,7 @@ export async function signup(signupUser, success) {
 }
 
 export async function getUserInfo(userId, success, fail) {
-  await noAuthAxios()
+  await authAxios()
     .get(BASE_API_PATH + '/' + userId)
     .then(success)
     .catch(fail)
@@ -72,6 +72,13 @@ export async function unFollowUser(userId, success, fail) {
 export async function followList(userId, success, fail) {
   await noAuthAxios()
     .get(BASE_API_PATH + '/follow/' + userId + '?type=follower')
+    .then(success)
+    .catch(fail)
+}
+
+export async function userListBySearchKeyword(searchKeyword, success, fail) {
+  await authAxios()
+    .get(BASE_API_PATH + '/search/' + encodeURIComponent(searchKeyword))
     .then(success)
     .catch(fail)
 }
