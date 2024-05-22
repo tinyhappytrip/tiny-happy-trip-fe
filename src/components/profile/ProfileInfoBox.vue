@@ -62,7 +62,6 @@ const unFollow = () => {
   unFollowUser(
     userId,
     (result) => {
-      console.log(result)
       isFollowing.value = false
       userInfo()
     },
@@ -76,7 +75,6 @@ const follow = () => {
   followUser(
     userId,
     (result) => {
-      console.log(result)
       isFollowing.value = true
       userInfo()
     },

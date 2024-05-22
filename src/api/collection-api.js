@@ -3,7 +3,6 @@ import { noAuthAxios, authAxios } from '@/util/http-commons'
 const BASE_API_PATH = '/collections'
 
 async function writeCollection(collection, success, fail) {
-  console.log(collection)
   await authAxios().post(BASE_API_PATH, collection).then(success).catch(fail)
 }
 

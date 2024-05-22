@@ -10,7 +10,7 @@
           <button @click="changeWeather('cloud')">
             <img :class="{ 'non-selected': story.weather != 'cloud' }" src="/src/assets/weather/cloud.png" width="35px" />
           </button>
-          <button @click="changeWeather('rain')">
+          <button @click="changeWeather('rainy')">
             <img :class="{ 'non-selected': story.weather != 'rainy' }" src="/src/assets/weather/rainy.png" width="35px" />
           </button>
           <button @click="changeWeather('snow')">
@@ -155,7 +155,6 @@ const fetchLocations = async () => {
         query: searchKeyword.value
       }
     })
-    console.log(response.data)
     story.latitude = response.data
     story.longitude = response.data.documents.y
     locations.value = response.data.documents
@@ -305,7 +304,7 @@ const fetchLocations = async () => {
 
 .toggle-group {
   display: flex;
-  width: 70%;
+  width: 80%;
   justify-content: space-between;
 }
 
@@ -324,6 +323,8 @@ const fetchLocations = async () => {
   border-radius: 25px;
   cursor: pointer;
   transition: background-color 0.3s, border-color 0.3s;
+  width: 30%;
+  text-align: center;
 }
 
 .toggle-option:hover {

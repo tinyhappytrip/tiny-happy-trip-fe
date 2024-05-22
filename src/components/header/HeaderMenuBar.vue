@@ -2,9 +2,9 @@
   <nav class="nav">
     <ul>
       <li><RouterLink to="/story">이야기</RouterLink></li>
-      <li><a href="/collection">모음집</a></li>
+      <li><RouterLink to="/collection">모음집</RouterLink></li>
       <li><a href="#">추천여행지</a></li>
-      <li><a href="#">여행계획</a></li>
+      <li><RouterLink to="/map">여정</RouterLink></li>
     </ul>
   </nav>
 </template>

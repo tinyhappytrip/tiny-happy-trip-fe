@@ -30,9 +30,8 @@ const searchCount = ref(0)
 const { proxy } = getCurrentInstance()
 
 const searchByKeywordFromComponent = (keyword) => {
-  console.log(keyword)
   nextTick(() => {
-    let component;
+    let component
     if (activeTab.value === 'story') {
       component = proxy.$refs.searchStory
     } else if (activeTab.value === 'collection') {
@@ -40,8 +39,7 @@ const searchByKeywordFromComponent = (keyword) => {
     } else if (activeTab.value === 'users') {
       component = proxy.$refs.searchUser
     }
-    
-    console.log(component)
+
     if (component && component.searchByKeyword) {
       component.searchByKeyword(keyword)
     } else {

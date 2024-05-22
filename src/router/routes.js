@@ -22,11 +22,6 @@ export const routes = [
         path: ':storyId',
         name: 'story-detail',
         component: () => import('@/components/story/StoryDetail.vue')
-      },
-      {
-        path: 'write',
-        name: 'story-write',
-        component: () => import('@/components/story/StoryWrite.vue')
       }
     ]
   },
@@ -36,11 +31,6 @@ export const routes = [
     meta: { layout: DefaultLayout },
     component: () => import('@/views/CollectionView.vue'),
     children: [
-      {
-        path: 'write',
-        name: 'collection-write',
-        component: () => import('@/components/collection/CollectionWrite.vue')
-      },
       {
         path: '',
         name: 'collection-list',
@@ -52,6 +42,7 @@ export const routes = [
         component: () => import('@/components/collection/CollectionDetail.vue')
       }
     ]
-  }
-  // { path: '/messenger', name: 'messenger', component: () => import('@/views/MessengerView.vue'), meta: { layout: DefaultLayout } }
+  },
+  { path: '/messenger', name: 'messenger', component: () => import('@/views/MessengerView.vue'), meta: { layout: DefaultLayout } },
+  { path: '/map', name: 'map', component: () => import('@/views/MapView.vue'), meta: { layout: DefaultLayout } }
 ]

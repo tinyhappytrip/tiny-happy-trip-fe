@@ -1,7 +1,7 @@
 <template>
-  <div class="container">
+  <div class="image-box">
     <div v-for="(image, index) in images" :key="index">
-      <img :src="imagePath(image)" alt="Image" />
+      <img :src="imagePath(image[0])" alt="Image" />
     </div>
   </div>
 </template>
@@ -19,13 +19,7 @@ const props = defineProps({
 const items = ref(props.items)
 const images = ref([])
 
-const computedImagePath = (img) => {
-  return `http://localhost:8080/image?path=${img}`
-}
-
 onMounted(() => {
-  console.log('props.items!!!!@@@')
-  console.log(props.items)
   for (let i = 0; i < props.items.length; i++) {
     if (i == 4) break
     images.value.push(props.items[i].imagePath)
@@ -44,25 +38,23 @@ watch(
 </script>
 
 <style scoped>
-.container {
+.image-box {
+  width: 380px;
+  height: 380px;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   grid-template-rows: repeat(2, 1fr);
 }
 
-.container div {
+.image-box div {
   position: relative;
   overflow: hidden;
 }
 
-.container img {
+.image-box img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
-}
-
-.container div:hover img {
-  transform: scale(1.2); /* 호버 시 이미지 확대 */
 }
 </style>

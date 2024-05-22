@@ -30,7 +30,6 @@ const isFollowing = ref(false)
 const emit = defineEmits(['setSearchCount'])
 const items = ref([])
 const searchByKeyword = (keyword) => {
-  console.log(keyword, '키워드 검색 호출됨')
   fetchUsers(keyword)
 }
 const fetchUsers = (keyword) => {
@@ -40,7 +39,6 @@ const fetchUsers = (keyword) => {
       users.value = []
       for (let i = 0; i < result.data.length; i++) {
         const user = result.data[i]
-        console.log(user)
 
         users.value.push({
           userId: user.userId,

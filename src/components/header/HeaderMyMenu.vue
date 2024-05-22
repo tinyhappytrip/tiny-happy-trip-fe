@@ -9,8 +9,8 @@
         <font-awesome-icon :icon="['far', 'square-plus']" size="2xl" class="icon" />
         <transition name="slide">
           <div v-if="isPlusDropdownVisible" class="dropdown-menu plus">
-            <div @click="showModal" class="dropdown-item">이야기</div>
-            <RouterLink to="/collection/write" class="dropdown-item">모음집</RouterLink>
+            <div @click="showModal('story')" class="dropdown-item">이야기</div>
+            <div @click="showModal('collection')" class="dropdown-item">모음집</div>
           </div>
         </transition>
       </div>
@@ -37,14 +37,15 @@
         <RouterLink to="/signup" class="to-login">회원가입</RouterLink>
       </div>
     </template>
-    <StoryWrite :isVisible="isModalVisible" @update:isVisible="isModalVisible = $event" />
+    <StoryWrite :isVisible="isStoryModalVisible" @update:isVisible="isStoryModalVisible = $event" />
+    <CollectionWrite :isVisible="isCollectionModalVisible" @update:isVisible="isCollectionModalVisible = $event" />
   </div>
 </template>
-
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import StoryWrite from '../story/StoryWrite.vue'
+import CollectionWrite from '../collection/CollectionWrite.vue'
 import { imagePath } from '@/util/http-commons'
 
 const emit = defineEmits(['update:modalVisible'])
@@ -94,10 +95,23 @@ onBeforeUnmount(() => {
   window.removeEventListener('click', handleClickOutside)
 })
 
-const isModalVisible = ref(false)
+const isStoryModalVisible = ref(false)
+const isCollectionModalVisible = ref(false)
 
-const showModal = () => {
-  isModalVisible.value = true
+watch([isStoryModalVisible, isCollectionModalVisible], ([newStoryModal, newCollectionModal]) => {
+  if (newStoryModal || newCollectionModal) {
+    document.body.classList.add('no-scroll')
+  } else {
+    document.body.classList.remove('no-scroll')
+  }
+})
+
+const showModal = (type) => {
+  if (type === 'story') {
+    isStoryModalVisible.value = true
+  } else if (type === 'collection') {
+    isCollectionModalVisible.value = true
+  }
 }
 </script>
 

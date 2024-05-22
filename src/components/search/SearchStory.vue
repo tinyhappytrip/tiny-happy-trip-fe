@@ -30,7 +30,6 @@ const stories = ref({})
 const emit = defineEmits(['setSearchCount'])
 const items = ref([])
 const searchByKeyword = (keyword) => {
-  console.log(keyword, '키워드 검색 호출됨')
   fetchStories(keyword)
 }
 const fetchStories = (keyword) => {
@@ -39,7 +38,6 @@ const fetchStories = (keyword) => {
     keyword,
     (result) => {
       items.value = []
-      console.log(stories.value)
       stories.value = result.data
       for (let i = 0; i < stories.value.length; i++) {
         const story = stories.value[i]
@@ -71,7 +69,6 @@ const computedImagePath = (img) => {
   return `http://localhost:8080/image?path=${img}`
 }
 onMounted(() => {
-  console.log('hi')
   fetchStories(searchKeyword.value)
 })
 

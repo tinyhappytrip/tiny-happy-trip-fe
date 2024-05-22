@@ -22,13 +22,13 @@
       <img src="@/assets/main/location.png" width="20px" />
       <span>{{ story.placeName }}</span>
     </div>
-    <StoryImageCarousel style="height: 456px" :images="story.images" @click.stop="moveDetail(story.storyId)" />
+    <StoryImageCarousel style="height: 456px" :images="story.images" isList="true" @click.stop="moveDetail(story.storyId)" />
     <StoryLike :story="story"></StoryLike>
     <div style="display: inline; line-height: 1.5; font-size: 0.9rem" v-html="displayedContent"></div>
     <div style="display: inline; margin-left: 10px" v-if="hasLineBreaks && !showMore">
       <button @click="showMore = true">더보기 ..</button>
     </div>
-    <StoryCommentInput :storyId="story.storyId" v-model:commentMode="commentMode"> </StoryCommentInput>
+    <!-- <StoryCommentInput :storyId="story.storyId" v-model:commentMode="commentMode"> </StoryCommentInput> -->
   </div>
 </template>
 
@@ -74,7 +74,6 @@ const computedEmotion = computed(() => {
 })
 
 const moveDetail = (storyId) => {
-  console.log(storyId)
   emit('move-detail', storyId)
 }
 

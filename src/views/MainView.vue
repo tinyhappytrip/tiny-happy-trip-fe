@@ -1,58 +1,84 @@
+<!-- MainView.vue -->
 <template>
   <v-app>
-    <!-- <v-container fluid> -->
     <Header class="header" :isModalVisible="isModalVisible" @update:modalVisible="isModalVisible = $event" />
     <div ref="container" class="scroll-container"></div>
-    <Header />
-    <v-main>
-      <v-container>
-        <v-row>
-          <v-col>
-            <h1>Welcome to My Vue App</h1>
-            <v-tabs centered>
-              <v-tab>Home</v-tab>
-              <v-tab>About</v-tab>
-              <v-tab>Contact</v-tab>
-            </v-tabs>
-            <v-divider class="my-4"></v-divider>
-            <v-card>
-              <v-card-title>Main Content Area</v-card-title>
-              <v-card-text>
-                <p>This is the main content of the page.</p>
-              </v-card-text>
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-container>
-    </v-main>
-    <Footer />
   </v-app>
-  <Modal :visible="isModalVisible" @update:visible="isModalVisible = $event" />
 </template>
 
 <script setup>
-import { ref, onMounted, onBeforeUnmount, markRaw } from 'vue'
-import Header from '@/components/common/Header.vue'
-import SectionOne from '@/components/main/SectionOne.vue'
-import SectionTwo from '@/components/main/SectionTwo.vue'
-import SectionThree from '@/components/main/SectionThree.vue'
+// import { ref, onMounted, onBeforeUnmount, markRaw } from 'vue'
+// import Header from '@/components/common/Header.vue'
+// import SectionOne from '@/components/main/SectionOne.vue'
+// import SectionTwo from '@/components/main/SectionTwo.vue'
+// import SectionThree from '@/components/main/SectionThree.vue'
+// import Modal from '@/components/common/Modal.vue'
+// import NavigationDots from '@/components/common/NavigationDots.vue'
 
-const sections = ref([markRaw(SectionOne), markRaw(SectionTwo), markRaw(SectionThree)])
-const currentSection = ref(0)
-const isScrolling = ref(false)
-const container = ref(null)
+// const sections = ref([markRaw(SectionOne), markRaw(SectionTwo), markRaw(SectionThree)])
+// const currentSection = ref(0)
+// const isScrolling = ref(false)
+// const container = ref(null)
 const isModalVisible = ref(false)
+
+// const handleScroll = (event) => {
+//   if (isModalVisible.value) return
+//   event.preventDefault()
+//   if (isScrolling.value) return
+//   isScrolling.value = true
+
+//   const delta = event.deltaY
+//   if (delta > 0) {
+//     nextSection()
+//   } else if (delta < 0) {
+//     previousSection()
+//   }
+
+//   setTimeout(() => {
+//     isScrolling.value = false
+//   }, 700)
+// }
+
+// const nextSection = () => {
+//   if (currentSection.value < sections.value.length - 1) {
+//     currentSection.value++
+//     scrollToSection(currentSection.value)
+//   } else {
+//     isScrolling.value = false
+//   }
+// }
+
+// const previousSection = () => {
+//   if (currentSection.value > 0) {
+//     currentSection.value--
+//     scrollToSection(currentSection.value)
+//   } else {
+//     isScrolling.value = false
+//   }
+// }
+
+// const scrollToSection = (index) => {
+//   currentSection.value = index
+//   const section = container.value.children[currentSection.value]
+//   section.scrollIntoView({ behavior: 'smooth' })
+// }
+
+// onMounted(() => {
+//   window.addEventListener('wheel', handleScroll, { passive: false })
+// })
+
+// onBeforeUnmount(() => {
+//   window.removeEventListener('wheel', handleScroll)
+// })
 </script>
 
 <style scoped>
-.v-container {
-  padding-top: 200px;
-}
-h1 {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 20px;
+html,
+body {
+  margin: 0;
+  padding: 0;
+  overflow: auto;
+  height: 100%;
 }
 
 .v-container {

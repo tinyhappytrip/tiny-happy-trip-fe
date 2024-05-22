@@ -1,17 +1,13 @@
 <template>
   <form @submit.prevent="handleSubmit" class="comment" :style="customStyle">
-    <input @click.stop="" class="comment-input" type="text" placeholder="댓글 달기.." v-model="commentMessage" />
-    <button @click.stop="" class="comment-btn">작성</button>
+    <input ref="inputRef" class="comment-input" type="text" placeholder="댓글 달기.." v-model="commentMessage" style="width: 90%" />
+    <button class="comment-btn">작성</button>
   </form>
 </template>
 
 <script setup>
+import { ref, watch, defineProps, defineExpose, defineModel, defineEmits, nextTick } from 'vue'
 import { commentStory, replyStory } from '@/api/story-api'
-import { defineProps, defineExpose, defineModel, defineEmits, ref, watch } from 'vue'
-
-const commentMessage = ref('')
-const commentMode = defineModel('commentMode')
-const emit = defineEmits(['move-detail'])
 
 const props = defineProps({
   storyId: {
@@ -29,15 +25,20 @@ const props = defineProps({
   }
 })
 
+const commentMessage = ref('')
+const commentMode = defineModel('commentMode')
+const emit = defineEmits(['move-detail'])
+
 const storyId = ref(props.storyId)
 const commentId = ref(props.commentId)
+
+const inputRef = ref(null)
 
 const sendComment = () => {
   commentStory(
     storyId.value,
     commentMessage.value,
     (result) => {
-      console.log(result.data)
       emit('move-detail', storyId.value)
     },
     (error) => {
@@ -47,9 +48,18 @@ const sendComment = () => {
   commentMessage.value = ''
 }
 
-const setReply = (nickname, replyCommentId) => {
+const setReply = async (nickname, replyCommentId) => {
   commentId.value = replyCommentId
   commentMessage.value = '@' + nickname + ' '
+  commentMode.value = false
+  await nextTick() // Await nextTick to ensure DOM updates
+  focusInput()
+}
+
+const focusInput = () => {
+  if (inputRef.value) {
+    inputRef.value.focus()
+  }
 }
 
 const sendReply = () => {
@@ -62,7 +72,6 @@ const sendReply = () => {
     (result) => {
       console.log(result)
       emit('move-detail', storyId.value)
-
     },
     (error) => {
       console.log(error)
@@ -72,14 +81,13 @@ const sendReply = () => {
   commentMessage.value = ''
 }
 
-// 답글 달다가 태그 지우면 -> 댓글 달기로 전환
+// Watch commentMessage to switch back to comment mode if the message is cleared
 watch(commentMessage, (newComment) => {
   if (!commentMode.value && newComment.length === 0) {
     commentMode.value = true
   }
 })
 
-// 폼 제출 핸들러
 const handleSubmit = () => {
   if (commentMode.value) {
     sendComment()
@@ -89,7 +97,14 @@ const handleSubmit = () => {
 }
 
 defineExpose({
-  setReply
+  setReply,
+  focusInput
+})
+
+watch(commentMessage, (newVal) => {
+  if (newVal.length > 45) {
+    commentMessage.value = newVal.slice(0, 45)
+  }
 })
 </script>
 
@@ -103,7 +118,7 @@ defineExpose({
 .comment-input {
   border-bottom: 1px solid black;
   width: 100%;
-  padding: 5px 0;
+  padding: 5px 6px;
 }
 
 .comment-btn {

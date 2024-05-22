@@ -37,7 +37,6 @@ const getStoryList = () => {
   listStory(
     (result) => {
       stories.value = result.data
-      console.log(result.data)
     },
     (error) => {
       console.log(error)

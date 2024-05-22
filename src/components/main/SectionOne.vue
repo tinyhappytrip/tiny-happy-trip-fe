@@ -3,27 +3,42 @@
     <div class="overlay">
       <div class="block">
         <h2><span style="color: red">소소하고</span> <span style="color: coral">확실한</span> <span style="color: beige">여행</span></h2>
-        <h1>당신의 이야기를 들려주세요</h1>
+        <h1 style="font-size: 3rem; margin-bottom: 20px">당신의 이야기를 들려주세요</h1>
       </div>
-      <div class="button" v-if="isLoggedIn" @click="writeStory">작성하기</div>
+      <div class="button" v-if="isLoggedIn" @click="showModal('story')">작성하기</div>
       <RouterLink to="/login">
         <div class="button" v-if="!isLoggedIn">로그인</div>
       </RouterLink>
+      <div class="next-button-box">
+        <font-awesome-icon class="next last" :icon="['fas', 'chevron-down']" @click="nextSection" />
+      </div>
     </div>
+    <StoryWrite :isVisible="isStoryModalVisible" @update:isVisible="isStoryModalVisible = $event" />
   </div>
 </template>
 
 <script setup>
-import { computed, onMounted, onBeforeUnmount } from 'vue'
+import { ref, computed, defineEmits, onMounted, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '@/stores/auth'
+import StoryWrite from '../story/StoryWrite.vue'
+
+const emit = defineEmits(['next-section'])
 
 const authStore = useAuthStore()
 authStore.checkAuth()
 
 const isLoggedIn = computed(() => authStore.isLoggedIn)
 
-const writeStory = () => {
-  alert('이야기 작성 페이지로 이동합니다.')
+const isStoryModalVisible = ref(false)
+
+const showModal = (type) => {
+  if (type === 'story') {
+    isStoryModalVisible.value = true
+  }
+}
+
+const nextSection = () => {
+  emit('next-section')
 }
 
 onMounted(() => {
@@ -97,5 +112,22 @@ a {
   text-align: left;
   margin-bottom: 10px;
   font-size: 1.5rem;
+}
+
+.next-button-box {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  bottom: 40px;
+}
+
+.next {
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+}
+
+.last {
+  margin-top: -15px;
 }
 </style>

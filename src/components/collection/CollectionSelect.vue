@@ -2,10 +2,10 @@
   <div class="container">
     <div class="row">
       <div class="col" v-for="story in stories" :key="story.storyId">
-        <div class="card" :class="{ selected: selectedStories.includes(story) }" @click="toggleSelection(story)">
-          <div class="card-img" :style="{ backgroundImage: `url(${computedImagePath(story.images[0])})` }"></div>
+        <div class="card" :class="{ selected: isSelected(story) }" @click="toggleSelection(story)">
+          <div class="card-img" :style="{ backgroundImage: `url(${imagePath(story.images[0])})` }"></div>
           <div class="card-content">
-            <div class="card-title">{{ computedTitle(story.content) }}</div>
+            <div class="card-title">{{ computedTitle(story.placeName) }}</div>
           </div>
         </div>
       </div>
@@ -14,9 +14,10 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, defineEmits } from 'vue'
+import { ref, computed, onMounted, defineEmits, defineExpose, inject } from 'vue'
 import { userStory } from '@/api/story-api'
 import { useAuthStore } from '@/stores/auth'
+import { imagePath } from '@/util/http-commons'
 
 const emit = defineEmits(['sendSelectedStories'])
 const authStore = useAuthStore()
@@ -28,7 +29,6 @@ const getUserStory = () => {
   userStory(
     loginUserId.value,
     (result) => {
-      console.log(result.data)
       stories.value = result.data
     },
     (error) => console.log(error)
@@ -40,24 +40,28 @@ const searchByKeyword = (keyword) => {
 }
 
 const computedTitle = (title) => {
-  if (title.length > 15) {
-    return title.substring(0, 15) + '...더보기'
+  if (title.length > 10) {
+    return title.substring(0, 10) + '...'
   }
   return title
-}
-
-const computedImagePath = (img) => {
-  return `http://localhost:8080/image?path=${img}`
 }
 
 const toggleSelection = (story) => {
   const index = selectedStories.value.indexOf(story)
   if (index === -1) {
-    selectedStories.value.push(story)
+    if (selectedStories.value.length < 6) {
+      selectedStories.value.push(story)
+    } else {
+      showToast()
+    }
   } else {
     selectedStories.value.splice(index, 1)
   }
   emit('sendSelectedStories', selectedStories.value)
+}
+
+const isSelected = (story) => {
+  return selectedStories.value.includes(story)
 }
 
 onMounted(() => {
@@ -67,25 +71,44 @@ onMounted(() => {
 defineExpose({
   searchByKeyword
 })
+
+const Swal = inject('$swal')
+
+const showToast = () => {
+  Swal.fire({
+    text: '6개 이상 선택할 수 없습니다.',
+    icon: 'error',
+    toast: true,
+    showConfirmButton: false,
+    timer: 2000,
+    customClass: {
+      container: 'custom-swal'
+    }
+  })
+}
 </script>
 
 <style scoped>
 .container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: 1100px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  width: 100%;
+  height: calc(624px - 20px);
+  padding: 0 20px;
+  margin-top: 20px;
 }
 
 .row {
   display: flex;
   flex-wrap: wrap;
-  margin: -8px;
+  height: 100%;
 }
 
 .col {
   flex: 0 0 100%;
   max-width: 100%;
-  padding: 8px;
+  padding: 12px;
   box-sizing: border-box;
 }
 
@@ -105,6 +128,10 @@ defineExpose({
   padding-top: 100%;
 }
 
+.card:hover .card-img {
+  filter: blur(5px);
+}
+
 .card-img {
   position: absolute;
   top: 0;
@@ -114,10 +141,6 @@ defineExpose({
   background-size: cover;
   background-position: center;
   transition: filter 0.3s ease;
-}
-
-.card:hover .card-img {
-  filter: blur(5px);
 }
 
 .card-content {
@@ -139,11 +162,55 @@ defineExpose({
   opacity: 1;
 }
 
+.card-info {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1rem;
+}
+
 .card-title {
+  color: black;
+  font-weight: bold;
+}
+
+.card-info span {
+  margin: 0 10px;
   color: black;
 }
 
 .selected {
-  border: 2px solid #007bff; /* 선택된 카드의 테두리 색상 */
+  outline: 4px solid #007bff;
+  border: 1px solid #007bff;
+}
+
+.check-overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0%;
+  right: 0;
+}
+
+.check-overlay img {
+  width: 100%;
+  height: 100%;
+}
+</style>
+
+<style>
+.swal2-container {
+  top: 8% !important;
+  width: 20% !important;
+}
+
+.swal2-toast {
+  background-color: rgb(47, 52, 56) !important;
+  width: 100%;
+  color: white;
+  display: flex !important;
+  align-items: center !important;
+  height: 50px;
+  font-size: 0.9rem;
 }
 </style>

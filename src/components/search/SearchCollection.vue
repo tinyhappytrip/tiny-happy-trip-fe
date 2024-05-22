@@ -59,7 +59,6 @@ const computedImagePath = (img) => {
   return `http://localhost:8080/image?path=${img}`
 }
 onMounted(() => {
-  console.log('hi')
   fetchCollections(searchKeyword.value)
 })
 

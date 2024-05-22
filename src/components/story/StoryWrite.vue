@@ -1,14 +1,20 @@
 <template>
   <div v-if="isVisible" class="modal-overlay" @click.self="close">
+    <font-awesome-icon :icon="['fas', 'xmark']" size="2xl" class="close-button" @click.stop="close" />
     <div class="modal-content card" :class="{ expanded: isExpanded }">
       <div class="title">
         <div>
-          <button class="delete-btn" v-if="story.imageFiles.length !== 0 && !isExpanded" @click="deleteCurrentImage">삭제</button>
-          <button class="delete-btn" v-if="isExpanded" @click="expandContent">이전</button>
+          <font-awesome-icon :icon="['fas', 'arrow-right']" rotation="180" class="previous-btn" v-if="isExpanded" @click="expandContent" />
+          <font-awesome-icon
+            :icon="['fas', 'trash-arrow-up']"
+            class="delete-btn"
+            v-if="story.imageFiles.length !== 0 && !isExpanded"
+            @click="deleteCurrentImage"
+          />
         </div>
         <h1>새 이야기</h1>
-        <button class="next-button" v-if="!isExpanded" @click="expandContent">다음</button>
-        <button class="write-button" v-if="isExpanded" @click="uploadStory">작성</button>
+        <font-awesome-icon class="next-button" :icon="['fas', 'arrow-right']" v-if="!isExpanded" @click="expandContent" />
+        <button class="write-button" v-if="isExpanded" @click="uploadStory">완료</button>
       </div>
       <div class="content">
         <div class="left-content" :class="{ expanded: !isExpanded }">
@@ -24,12 +30,10 @@
 
 <script setup>
 import { writeStory } from '@/api/story-api'
-import { ref, watch, toRaw } from 'vue'
+import { ref, watch, toRaw, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import StoryImageUploader from '@/components/story/StoryImageUploader.vue'
 import StoryForm from './StoryForm.vue'
-import { watch, inject } from 'vue'
-import { writeStory } from '@/api/story'
 
 const props = defineProps({
   isVisible: Boolean
@@ -48,12 +52,10 @@ const isExpanded = ref(false)
 const router = useRouter()
 
 const uploadStory = () => {
-  console.log(story.value)
   writeStory(
     toRaw(story.value),
     (result) => {
-      console.log(result.data)
-      router.push('/story')
+      window.location.href = '/story'
       close()
     },
     (error) => {
@@ -94,7 +96,7 @@ const resetStory = () => {
 watch(
   () => props.isVisible,
   (newValue) => {
-    document.documentElement.style.overflowY = newValue ? 'hidden' : 'auto'
+    document.documentElement.style.overflow = newValue ? 'hidden' : 'auto'
   }
 )
 
@@ -105,7 +107,7 @@ const showToast = () => {
     icon: 'error',
     toast: true,
     showConfirmButton: false,
-    timer: 2000,
+    timer: 1500,
     customClass: {
       container: 'custom-swal'
     }
@@ -180,6 +182,7 @@ const showToast = () => {
   position: absolute;
   padding: 20px;
   right: 0;
+  cursor: pointer;
 }
 
 .write-button:hover,
@@ -190,10 +193,24 @@ const showToast = () => {
 .delete-btn {
   padding: 20px;
   position: absolute;
+  right: 30px;
+  cursor: pointer;
 }
 
-.delete-btn:hover {
-  font-weight: bold;
+.close-button {
+  position: absolute;
+  cursor: pointer;
+  top: 25px;
+  right: 25px;
+  z-index: 9999;
+  width: 50px;
+  height: 50px;
+}
+
+.previous-btn {
+  position: absolute;
+  cursor: pointer;
+  padding: 20px;
 }
 </style>
 
@@ -201,6 +218,7 @@ const showToast = () => {
 .swal2-container {
   top: 8% !important;
   width: 20% !important;
+  z-index: 9999;
 }
 
 .swal2-toast {

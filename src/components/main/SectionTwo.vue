@@ -8,7 +8,10 @@
         <h3>이야기 모음집</h3>
       </div>
       <SectionTwoGrid />
-      <button @click="writeStory">더보기</button>
+      <button class="button" @click="writeStory">더보기</button>
+      <div class="next-button-box">
+        <font-awesome-icon class="next last" :icon="['fas', 'chevron-down']" @click="nextSection" />
+      </div>
     </div>
   </div>
 </template>
@@ -27,6 +30,12 @@ onMounted(() => {
 onBeforeUnmount(() => {
   document.documentElement.style.overflow = ''
 })
+
+const emit = defineEmits(['next-section'])
+
+const nextSection = () => {
+  emit('next-section')
+}
 </script>
 
 <style scoped>
@@ -54,7 +63,7 @@ onBeforeUnmount(() => {
   color: white;
 }
 
-button {
+.button {
   padding: 10px 20px;
   font-size: 1.2rem;
   color: white;
@@ -65,7 +74,7 @@ button {
   text-align: right;
 }
 
-button:hover {
+.button:hover {
   background-color: white;
   color: black;
 }
@@ -90,5 +99,22 @@ button:hover {
 
 .sub-block h3 {
   font-size: 2rem;
+}
+
+.next-button-box {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  bottom: 40px;
+}
+
+.next {
+  width: 35px;
+  height: 35px;
+  cursor: pointer;
+}
+
+.last {
+  margin-top: -15px;
 }
 </style>

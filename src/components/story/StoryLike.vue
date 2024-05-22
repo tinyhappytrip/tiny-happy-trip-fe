@@ -19,7 +19,6 @@ const props = defineProps({
 const { story } = toRefs(props)
 
 const like = () => {
-  console.log('좋아요 누름')
   likeStory(props.story.storyId, (result) => {
     story.value.like = !story.value.like
     if (!story.value.like) {

@@ -4,69 +4,90 @@
       <header class="header">
         <div class="music-icon">🎵</div>
         <div class="song-name">
-          {{ collection.musicKeyword }}
+          {{ collectionData.musicKeyword }}
         </div>
       </header>
       <main class="main-content">
         <div class="collection-image">
           <div class="container">
-            <img :src="imagePath(images[imageIndex])" alt="Image" />
+            <Swiper :slides-per-view="1" v-if="images.length" @slideChange="onSlideChange" :initial-slide="imageIndex" @swiper="onSwiperInit">
+              <SwiperSlide style="height: 500px; width: 500px" v-for="(image, index) in images" :key="index">
+                <div class="slider-box"><img :src="imagePath(image)" class="image" /></div>
+              </SwiperSlide>
+            </Swiper>
           </div>
         </div>
         <div class="story-list">
-          <h2>{{ collection.title }}</h2>
+          <div class="info-box">
+            <div class="image-box">
+              <img width="30px" height="30px" :src="imagePath(collectionData.profileImagePath)" />
+            </div>
+            <div class="user-box">
+              <span class="title">{{ collectionData.nickname }}</span>
+              <span class="sub">
+                {{ collectionData.title }}
+              </span>
+            </div>
+          </div>
           <ul>
-            <li v-for="(story, index) in collection.collectionItems" :key="index" :class="{ active: index === imageIndex }" @click="setImageIndex(index)">
+            <li
+              v-for="(collectionItem, itemIndex) in collectionData.collectionItems"
+              :key="itemIndex"
+              :class="{ active: imageToItemMap[imageIndex] === itemIndex }"
+              @click="setImageIndex(images.indexOf(collectionItem.imagePath[0]))"
+            >
               <div class="story-info">
-                <span class="story-number">{{ index + 1 }}</span>
-                <span class="story-title">{{ story.location }}</span>
-                <span class="story-duration">{{ computedDate(story.createdAt) }}</span>
+                <span class="story-number">{{ itemIndex + 1 }}</span>
+                <span class="story-title">{{ collectionItem.placeName }}</span>
+                <span class="story-duration">{{ computedDate(collectionItem.createdAt) }}</span>
               </div>
             </li>
           </ul>
         </div>
       </main>
       <div class="control-buttons">
-        <button @click="prevImage" class="control-button">⏮️</button>
-        <button @click="playSong" class="control-button">▶️</button>
-        <button @click="nextImage" class="control-button">⏭️</button>
+        <button class="control-button" @click="prevSlide"><img src=@/assets/collection/fast-play.png></button>
+        <button class="control-button" @click="playPause">
+          <img :src="imageSrc" />
+        </button>
+        <button class="control-button" @click="nextSlide"><img style="transform: rotate(180deg);" src=@/assets/collection/fast-play.png></button>
       </div>
     </div>
+  </div>
+  <div v-if="videoId">
+    <iframe
+      :width="0"
+      :height="0"
+      :src="videoUrl"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      ref="youtubeaPlayer"
+    ></iframe>
   </div>
 </template>
 
 <script setup>
-import { detailCollection } from '@/api/collection-api'
-import { ref, defineProps, onMounted, watch } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
+import { Swiper, SwiperSlide } from 'swiper/vue'
+import 'swiper/swiper-bundle.css'
+import { defineProps } from 'vue'
 import { imagePath } from '@/util/http-commons'
+import axios from 'axios'
 
 const props = defineProps({
-  collectionId: {
-    type: Number,
-    required: true
+  collectionData: {
+    required: true,
+    type: Object
   }
 })
 
-const collection = ref({})
 const images = ref([])
 const imageIndex = ref(0)
-const fetchCollectionDetails = async (id) => {
-  await detailCollection(
-    id,
-    (result) => {
-      collection.value = result.data
-      console.log(collection.value)
-      images.value = []
-      for (let i = 0; i < collection.value.collectionItems.length; i++) {
-        if (i == 4) break
-        images.value.push(collection.value.collectionItems[i].imagePath)
-      }
-    },
-    (error) => {
-      console.log(error)
-    }
-  )
-}
+let swiperInstance = null
+let autoPlayInterval = null
+const isPlaying = ref(false)
 
 const computedDate = (rawDate) => {
   const date = new Date(rawDate)
@@ -76,34 +97,105 @@ const computedDate = (rawDate) => {
   return `${year}년 ${month}월 ${day}일`
 }
 
-const playSong = () => {
-  console.log('Play song')
+const imageSrc = computed(() => {
+  return isPlaying.value ? './src/assets/collection/pause.png' : './src/assets/collection/play.png'
+})
+
+// Map to keep track of which image belongs to which collectionItem
+const imageToItemMap = ref([])
+
+watch(
+  () => props.collectionData,
+  () => {
+    images.value = []
+    imageToItemMap.value = []
+    props.collectionData.collectionItems.forEach((item, itemIndex) => {
+      item.imagePath.forEach((imagePath) => {
+        images.value.push(imagePath)
+        imageToItemMap.value.push(itemIndex)
+      })
+    })
+  },
+  { immediate: true }
+)
+
+const onSlideChange = (swiper) => {
+  imageIndex.value = swiper.activeIndex
 }
 
-const prevImage = () => {
-  imageIndex.value = (imageIndex.value - 1 + images.value.length) % images.value.length
+const prevSlide = () => {
+  if (swiperInstance) {
+    swiperInstance.slidePrev()
+  }
 }
 
-const nextImage = () => {
-  imageIndex.value = (imageIndex.value + 1) % images.value.length
+const nextSlide = () => {
+  if (swiperInstance) {
+    swiperInstance.slideNext()
+  }
+}
+
+const playPause = () => {
+  isPlaying.value = !isPlaying.value
+  if (isPlaying.value) {
+    autoPlayInterval = setInterval(() => {
+      nextSlide()
+    }, 3000)
+  } else {
+    clearInterval(autoPlayInterval)
+    autoPlayInterval = null
+  }
 }
 
 const setImageIndex = (index) => {
   imageIndex.value = index
+  if (swiperInstance) {
+    swiperInstance.slideTo(index)
+  }
 }
 
-watch(
-  () => props.collectionId,
-  (newId) => {
-    console.log(newId)
-    if (newId) {
-      fetchCollectionDetails(newId)
-    }
-  }
-)
+const onSwiperInit = (swiper) => {
+  swiperInstance = swiper
+}
 
+const searchQuery = ref('')
+const videoId = ref('')
+const youtubePlayer = ref(null)
+
+const searchVideos = async () => {
+  console.log('안녕')
+  try {
+    const response = await axios.get(`http://localhost:8080/youtube?keyword=${props.collectionData.musicKeyword}` + '에 어울리는 노래')
+    const videoInfo = response.data
+    if (videoInfo.includes('URL:')) {
+      const urlIndex = videoInfo.indexOf('URL:') + 5
+      const videoUrl = videoInfo.substring(urlIndex)
+      const videoIdIndex = videoUrl.indexOf('=') + 1
+      videoId.value = videoUrl.substring(videoIdIndex)
+
+      if (youtubePlayer.value) {
+        youtubePlayer.value.contentWindow.postMessage('{"event":"command","func":"' + 'setVolume' + '","args":[' + 10 + ']}', '*')
+      }
+    } else {
+      videoId.value = ''
+    }
+  } catch (error) {
+    console.error('Error while searching videos:', error)
+  }
+}
+
+const videoUrl = computed(() => {
+  if (videoId.value) {
+    return `https://www.youtube.com/embed/${videoId.value}?autoplay=1`
+  } else {
+    return ''
+  }
+})
+
+// searchVideos 함수를 컴포넌트가 렌더링될 때 호출
 onMounted(() => {
-  fetchCollectionDetails(props.collectionId)
+  searchVideos()
+  playPause() // Start playing automatically when the component mounts
 })
 </script>
 
@@ -127,7 +219,7 @@ onMounted(() => {
 }
 
 .header {
-  width: 100%;
+  width: 95%;
   display: flex;
   align-items: center;
   margin-bottom: 20px;
@@ -148,6 +240,10 @@ onMounted(() => {
   font-size: 30px;
   margin: 5px;
 }
+.control-button img {
+  width: 30px;
+  height: 30px;
+}
 
 .music-icon {
   font-size: 24px;
@@ -161,9 +257,9 @@ onMounted(() => {
 
 .main-content {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: flex-start;
-  width: 100%;
+  width: 95%;
   gap: 20px;
 }
 
@@ -171,11 +267,18 @@ onMounted(() => {
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 500px;
+}
+
+.collection-image .swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .collection-image img {
-  width: 300px;
-  height: 300px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
   border-radius: 10px;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
@@ -188,6 +291,24 @@ onMounted(() => {
   border-radius: 10px;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
   border-radius: 10px;
+}
+
+.story-list .info-box {
+  display: flex;
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.story-list .info-box .image-box {
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+}
+
+.story-list .info-box .image-box img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 .story-list h2 {
@@ -235,8 +356,9 @@ onMounted(() => {
 }
 
 .image {
-  width: 300px;
-  height: 300px;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .container {
@@ -256,10 +378,6 @@ onMounted(() => {
   transition: transform 0.3s ease;
 }
 
-.container div:hover img {
-  transform: scale(1.2); /* 호버 시 이미지 확대 */
-}
-
 .story-list li.active {
   background-color: #000;
   color: #fff;
@@ -276,5 +394,35 @@ onMounted(() => {
   border-radius: 50%;
   padding: 5px;
   cursor: pointer;
+}
+
+.slider-box {
+  width: 100%;
+  height: 100%;
+}
+
+.story-list .user-box {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-left: 10px;
+  width: 100%;
+}
+
+.story-list .user-box .title {
+  width: 100%;
+  color: black;
+  font-weight: bold;
+  display: block;
+  position: relative;
+}
+
+.story-list .user-box .sub {
+  width: 100%;
+  color: grey;
+  font-weight: bold;
+  display: block;
+  position: relative;
+  font-size: 0.9rem;
 }
 </style>

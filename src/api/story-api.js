@@ -14,7 +14,6 @@ async function detailStory(storyId, success, fail) {
 }
 
 async function writeStory(story, success, fail) {
-  console.log(story)
   await authAxios()
     .post(BASE_API_PATH, story, {
       headers: {
@@ -33,7 +32,6 @@ async function likeStory(storyId, success, fail) {
 }
 
 async function commentStory(storyId, comment, success, fail) {
-  console.log(comment)
   await authAxios()
     .post(BASE_API_PATH + '/comments/' + storyId, comment)
     .then(success)

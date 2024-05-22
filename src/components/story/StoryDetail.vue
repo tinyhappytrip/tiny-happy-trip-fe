@@ -31,30 +31,53 @@
               v-html="formattedContent"
             ></div>
             <div v-for="comment in story.storyComments" :key="comment.storyCommentId">
-              <div class="comment" style="padding-top: 15px">
-                <RouterLink :to="`/profile/${comment.userId}`">
-                  <img :src="`http://localhost:8080/image?path=${story.userImage}`" width="10px" style="margin-right: 5px" class="comment-user-image" />
-                </RouterLink>
-                <p style="font-size: 0.8rem; margin-right: 10px; line-height: 1.3">
+              <div class="comment" style="padding-top: 30px">
+                <div>
                   <RouterLink :to="`/profile/${comment.userId}`">
-                    {{ comment.nickname }}
+                    <img :src="`http://localhost:8080/image?path=${story.userImage}`" width="10px" style="margin-right: 5px" class="comment-user-image" />
                   </RouterLink>
-                  &nbsp;&nbsp;
-                  {{ comment.content }}
-                </p>
-              </div>
-              <div>
-                <span class="alert_content date">{{ computedDate(comment.createdAt) }}</span>
-                <button style="font-size: 0.8rem; margin-left: 10px" @click.stop="reply(comment.nickname, comment.storyCommentId)">답글달기</button>
-              </div>
-              <div class="reply" v-for="reply in comment.replies" :key="reply.storyReplyId">
-                <span><p>-></p></span>
-                <div class="storyComment">
-                  <img width="10px" class="storyComment_img" :src="reply.userImage ? reply.userImage : '/src/assets/main/user.png'" />
-                  <p>{{ reply.nickname }}</p>
                 </div>
-                <span class="alert_content">{{ reply.content }}</span>
-                <span class="alert_content date">{{ computedDate(reply.createdAt) }}</span>
+                <div style="display: inline">
+                  <p style="font-size: 0.8rem; margin-right: 10px; line-height: 1.3">
+                    <RouterLink :to="`/profile/${comment.userId}`">
+                      {{ comment.nickname }}
+                    </RouterLink>
+                    &nbsp;&nbsp;
+                    {{ comment.content }}
+                  </p>
+                  <div>
+                    <span class="alert_content date">{{ computedDate(comment.createdAt) }}</span>
+                    <button style="font-size: 0.7rem; margin-left: 10px" @click.stop="reply(comment.nickname, comment.storyCommentId)">답글달기</button>
+                    <button
+                      v-if="comment.replies.length !== 0"
+                      style="font-size: 0.7rem; margin-left: 10px"
+                      @click.stop="toggleReplies(comment.storyCommentId)"
+                    >
+                      {{ replyVisibility[comment.storyCommentId] ? '닫기' : '답글보기' }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <div v-if="replyVisibility[comment.storyCommentId]" class="reply" v-for="reply in comment.replies" :key="reply.storyReplyId">
+                <div class="comment" style="padding-top: 10px">
+                  <div>
+                    <RouterLink :to="`/profile/${reply.userId}`">
+                      <img :src="`http://localhost:8080/image?path=${reply.userImage}`" width="10px" style="margin-right: 5px" class="comment-user-image" />
+                    </RouterLink>
+                  </div>
+                  <div style="display: inline">
+                    <p style="font-size: 0.8rem; margin-right: 10px; line-height: 1.3">
+                      <RouterLink :to="`/profile/${reply.userId}`">
+                        {{ reply.nickname }}
+                      </RouterLink>
+                      &nbsp;&nbsp;
+                      {{ reply.content }}
+                    </p>
+                    <div>
+                      <span class="alert_content date">{{ computedDate(reply.createdAt) }}</span>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -68,7 +91,7 @@
               v-model:commentMode="commentMode"
               @move-detail="getStoryDetail"
               :customStyle="customStyle"
-            ></StoryCommentInput>
+            />
           </div>
         </div>
       </div>
@@ -148,9 +171,12 @@ const reply = (commentNickname, replyCommentId) => {
     scrollToBottom()
     const commentInput = proxy.$refs.commentInput
     if (commentInput && typeof commentInput.setReply === 'function') {
-      commentInput.setReply(nickname.value, commentId.value)
+      commentInput.setReply(commentNickname, replyCommentId)
+      nextTick(() => {
+        commentInput.focusInput() // Ensure the focusInput method is called after setReply
+      })
     } else {
-      console.error('commentInput ref is not found or setReply is not a function')
+      console.error('commentInput ref is not found or methods are not available')
     }
   })
 }
@@ -167,8 +193,6 @@ const scrollToBottom = () => {
 }
 
 const getStoryDetail = (storyId) => {
-  console.log('디테일 불러오기')
-  console.log(storyId)
   detailStory(
     storyId,
     (result) => {
@@ -201,6 +225,12 @@ const handleKeyDown = (event) => {
   if (event.key === 'Escape') {
     closeModal()
   }
+}
+
+const replyVisibility = ref({})
+
+const toggleReplies = (commentId) => {
+  replyVisibility.value[commentId] = !replyVisibility.value[commentId]
 }
 
 onMounted(() => {
@@ -309,10 +339,9 @@ onUnmounted(() => {
 }
 
 .reply {
-  margin-left: 20px;
+  margin-left: 30px;
   display: flex;
   align-items: center;
-  background: pink;
 }
 
 .storyComment {
@@ -419,5 +448,9 @@ a {
 /* 카카오 지도 축척 바 숨기기 */
 #scaleControl {
   display: none !important;
+}
+
+.alert_content {
+  font-size: 0.7rem;
 }
 </style>

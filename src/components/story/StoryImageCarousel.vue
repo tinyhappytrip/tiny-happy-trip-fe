@@ -12,7 +12,7 @@
       <font-awesome-icon v-if="currentSlide !== 0" :icon="['fas', 'arrow-right']" rotation="180" class="custom-arrow prev-arrow" @click.stop="goToPrev" />
     </template>
     <v-carousel-item v-for="(image, i) in images" :key="i">
-      <img width="100%" height="100%" :src="`http://localhost:8080/image?path=${image}`" />
+      <img :style="{ cursor: isList ? 'pointer' : 'default' }" width="100%" height="100%" :src="`http://localhost:8080/image?path=${image}`" />
     </v-carousel-item>
   </v-carousel>
 </template>
@@ -21,6 +21,7 @@
 import { ref } from 'vue'
 
 const props = defineProps({
+  isList: {},
   images: {
     type: Array,
     required: true
@@ -40,8 +41,8 @@ const goToNext = () => {
 
 <style scoped>
 .custom-arrow {
-  width: 16px;
-  height: 16px;
+  width: 24px;
+  height: 24px;
   opacity: 0;
   cursor: pointer;
   transition: opacity 0.3s ease;
@@ -50,14 +51,14 @@ const goToNext = () => {
 }
 
 .v-carousel:hover .custom-arrow {
-  opacity: 0.5;
+  opacity: 1;
 }
 
 .next-arrow {
-  right: 16px;
+  right: 30px;
 }
 
 .prev-arrow {
-  left: 16px;
+  left: 30px;
 }
 </style>
