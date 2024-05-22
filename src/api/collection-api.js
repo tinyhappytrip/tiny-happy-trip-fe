@@ -27,10 +27,16 @@ async function userCollection(userId, success, fail) {
     .catch(fail)
 }
 
+async function userLikeCollection(userId, success, fail) {
+  await authAxios()
+    .get(BASE_API_PATH + '/likes')
+    .then(success)
+    .catch(fail)
+}
 async function detailCollection(collectionId, success, fail) {
   await authAxios()
     .get(BASE_API_PATH + '/' + collectionId)
     .then(success)
     .catch(fail)
 }
-export { writeCollection, listCollectionBySearchKeyword, listRecommendCollections, userCollection, detailCollection }
+export { writeCollection, listCollectionBySearchKeyword, listRecommendCollections, userCollection, detailCollection, userLikeCollection }

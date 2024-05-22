@@ -2,13 +2,18 @@
   <div class="container">
     <div class="row">
       <div class="col" v-for="(item, index) in items" :key="index">
-        <div class="card" @click="showDetail(item.storyId)">
-          <div class="card-img" :style="{ backgroundImage: `url(${imagePath(item.image)})` }"></div>
+        <div class="card" @click="showDetail(item.collectionId)">
+          <div class="card-img">
+            <div class="image-container">
+              <div v-for="(image, index) in item.images" :key="index">
+                <img :src="imagePath(image)" alt="Image" />
+              </div>
+            </div>
+          </div>
           <div class="card-content">
             <div class="card-title">{{ computedTitle(item.title) }}</div>
             <div class="card-info">
               <span>👍 {{ item.likes }}</span>
-              <span>💬 {{ item.comments }}</span>
             </div>
           </div>
         </div>
@@ -19,37 +24,38 @@
 
 <script setup>
 import { onMounted, ref, getCurrentInstance, defineEmits } from 'vue'
-import { listStoryBySearchKeyword } from '@/api/story-api'
+import { userCollection } from '@/api/collection-api'
+import { useAuthStore } from '@/stores/auth'
 import { imagePath } from '@/util/http-commons'
-const props = defineProps({
-  searchKeyword: {
-    type: String
-  }
-})
-const searchKeyword = ref(props.searchKeyword)
+
+const authStore = useAuthStore()
+const userId = computed(() => authStore.userId)
+
+const stories = ref({})
 const emit = defineEmits(['setSearchCount'])
 const items = ref([])
-const searchByKeyword = (keyword) => {
-  fetchStories(keyword)
-}
-const fetchStories = (keyword) => {
+const fetchStories = (userId) => {
   items.value = []
-  listStoryBySearchKeyword(
-    keyword,
+  userCollection(
+    userId,
     (result) => {
       items.value = []
       for (let i = 0; i < result.data.length; i++) {
-        const story = result.data[i]
-        let replyCount = 0
-        for (let j = 0; j < story.storyComments.length; j++) {
-          replyCount += story.storyComments[j].storyReplies.length
+        const collection = result.data[i]
+        const collectionImages = []
+        if (collection.collectionItems != undefined) {
+          if (collection.collectionItems != undefined) {
+            for (let i = 0; i < collection.collectionItems.length; i++) {
+              collectionImages.push(collection.collectionItems[i].imagePath)
+            }
+          }
         }
+
         items.value.push({
-          storyId: story.storyId,
-          title: story.content,
-          image: story.images[0],
-          likes: story.likeCount,
-          comments: story.storyComments.length + replyCount
+          title: collection.title,
+          collectionId: collection.collectionId,
+          description: collection.description,
+          images: collectionImages
         })
       }
       emit('setSearchCount', items.value.length)
@@ -66,11 +72,7 @@ const computedTitle = (title) => {
 }
 
 onMounted(() => {
-  fetchStories(searchKeyword.value)
-})
-
-defineExpose({
-  searchByKeyword
+  fetchStories(userId.value)
 })
 </script>
 
@@ -156,5 +158,27 @@ defineExpose({
 .card-info span {
   margin: 0 10px;
   color: black;
+}
+
+.image-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+.image-container div {
+  position: relative;
+  overflow: hidden;
+}
+
+.image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.image-container div:hover img {
+  transform: scale(1.2); /* 호버 시 이미지 확대 */
 }
 </style>

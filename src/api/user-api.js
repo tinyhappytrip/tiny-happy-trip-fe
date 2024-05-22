@@ -6,8 +6,11 @@ import Cookies from 'js-cookie'
 
 const BASE_API_PATH = '/users'
 
-export async function login(data) {
-  return await noAuthAxios().post(BASE_API_PATH + '/login', data)
+export async function login(data, success, fail) {
+  return await noAuthAxios()
+    .post(BASE_API_PATH + '/login', data)
+    .then(success)
+    .catch(fail)
 }
 
 export async function logout() {
@@ -34,6 +37,13 @@ export async function getType(email) {
 
 export async function getValidate(type, value) {
   return await noAuthAxios().get(`${BASE_API_PATH}/validate?type=${type}&value=${value}`)
+}
+
+export async function checkPassword(password, success, fail) {
+  await authAxios()
+    .post(BASE_API_PATH + '/password', password)
+    .then(success)
+    .catch(fail)
 }
 
 export async function socialSignup(data) {
@@ -81,4 +91,35 @@ export async function userListBySearchKeyword(searchKeyword, success, fail) {
     .get(BASE_API_PATH + '/search/' + encodeURIComponent(searchKeyword))
     .then(success)
     .catch(fail)
+}
+
+export async function updateUserInfo(nickname, introduction, success, fail) {
+  await authAxios().patch(BASE_API_PATH, { nickname: nickname, introduction: introduction }).then(success).catch(fail)
+}
+export async function updateUserPassword(password, success, fail) {
+  console.log(password)
+  await authAxios().patch(BASE_API_PATH, { password: password }).then(success).catch(fail)
+}
+export async function updateUserImage(image, success, fail) {
+  console.log('image', image)
+  await authAxios()
+    .patch(
+      BASE_API_PATH + '/image',
+      { userImageFile: image },
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
+    )
+    .then(success)
+    .catch(fail)
+}
+
+export async function updatePassword(password, success, fail) {
+  await authAxios().patch(BASE_API_PATH, { password: password }).then(success).catch(fail)
+}
+
+export async function exitUser(success, fail) {
+  await authAxios().delete(BASE_API_PATH).then(success).catch(fail)
 }

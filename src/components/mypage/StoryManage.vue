@@ -19,38 +19,45 @@
 
 <script setup>
 import { onMounted, ref, getCurrentInstance, defineEmits } from 'vue'
-import { listStoryBySearchKeyword } from '@/api/story-api'
+import { userStory } from '@/api/story-api'
+import { useAuthStore } from '@/stores/auth'
 import { imagePath } from '@/util/http-commons'
-const props = defineProps({
-  searchKeyword: {
-    type: String
-  }
-})
-const searchKeyword = ref(props.searchKeyword)
+
+const authStore = useAuthStore()
+const userId = computed(() => authStore.userId)
+
+const stories = ref({})
 const emit = defineEmits(['setSearchCount'])
 const items = ref([])
-const searchByKeyword = (keyword) => {
-  fetchStories(keyword)
-}
-const fetchStories = (keyword) => {
-  items.value = []
-  listStoryBySearchKeyword(
-    keyword,
+const fetchStories = (userId) => {
+  userStory(
+    userId,
     (result) => {
       items.value = []
-      for (let i = 0; i < result.data.length; i++) {
-        const story = result.data[i]
-        let replyCount = 0
-        for (let j = 0; j < story.storyComments.length; j++) {
-          replyCount += story.storyComments[j].storyReplies.length
+      stories.value = result.data
+      for (let i = 0; i < stories.value.length; i++) {
+        const story = stories.value[i]
+        if (story.storyComments.target == undefined) {
+          items.value.push({
+            storyId: story.storyId,
+            title: story.content,
+            image: story.images[0],
+            likes: story.likeCount,
+            comments: 0
+          })
+        } else {
+          let replyCount = 0
+          for (let j = 0; j < story.storyComments.value.length; j++) {
+            replyCount += story.storyComments.value[j].storyReplies.length
+          }
+          items.value.push({
+            storyId: story.storyId,
+            title: story.content,
+            image: story.images[0],
+            likes: story.likeCount,
+            comments: story.storyComments.length + replyCount
+          })
         }
-        items.value.push({
-          storyId: story.storyId,
-          title: story.content,
-          image: story.images[0],
-          likes: story.likeCount,
-          comments: story.storyComments.length + replyCount
-        })
       }
       emit('setSearchCount', items.value.length)
     },
@@ -66,11 +73,7 @@ const computedTitle = (title) => {
 }
 
 onMounted(() => {
-  fetchStories(searchKeyword.value)
-})
-
-defineExpose({
-  searchByKeyword
+  fetchStories(userId.value)
 })
 </script>
 
@@ -79,6 +82,7 @@ defineExpose({
   max-width: 1200px;
   margin: 0 auto;
   padding: 16px;
+  /* overflow-y: scroll; */
 }
 
 .row {
