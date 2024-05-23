@@ -95,7 +95,7 @@ const searchMode = ref(false)
 
 const searchInput = ref(null)
 
-const KAKAO_API_KEY = 'e86f69e6ec0994a1f096b9953c71f6d7'
+const KAKAO_API_KEY = '78544c4fa524eb860eea35deffb9d03a'
 
 const changeWeather = (weather) => {
   story.weather = weather

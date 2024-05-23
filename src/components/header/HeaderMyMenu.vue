@@ -48,6 +48,13 @@ import StoryWrite from '../story/StoryWrite.vue'
 import CollectionWrite from '../collection/CollectionWrite.vue'
 import { imagePath } from '@/util/http-commons'
 
+const authStore = useAuthStore()
+// authStore.checkAuth()
+
+const isLoggedIn = computed(() => authStore.isLoggedIn)
+const userId = computed(() => authStore.userId)
+const userImage = computed(() => authStore.userImage)
+
 const emit = defineEmits(['update:modalVisible'])
 const isProfileDropdownVisible = ref(false)
 const isPlusDropdownVisible = ref(false)
@@ -79,13 +86,6 @@ const handleClickOutside = (event) => {
     isPlusDropdownVisible.value = false
   }
 }
-
-const authStore = useAuthStore()
-authStore.checkAuth()
-
-const isLoggedIn = computed(() => authStore.isLoggedIn)
-const userId = computed(() => authStore.userId)
-const userImage = computed(() => authStore.userImage)
 
 onMounted(() => {
   window.addEventListener('click', handleClickOutside)

@@ -19,11 +19,9 @@
         </div>
         <div class="story-list">
           <div class="info-box">
-            <RouterLink :to="`/profile/${collectionData.userId}`">
-              <div class="image-box">
-                <img width="30px" height="30px" :src="imagePath(collectionData.profileImagePath)" />
-              </div>
-            </RouterLink>
+            <div class="image-box">
+              <img width="30px" height="30px" :src="imagePath(collectionData.profileImagePath)" />
+            </div>
             <div class="user-box">
               <span class="title">{{ collectionData.nickname }}</span>
               <span class="sub">
@@ -159,9 +157,9 @@ const videoId = ref('')
 const youtubePlayer = ref(null)
 
 const searchVideos = async () => {
+  console.log('안녕')
   try {
-    const response = await axios.get(`http://172.30.1.41:8080/youtube?keyword=${props.collectionData.musicKeyword}` + '에 어울리는 노래')
-    console.log(response)
+    const response = await axios.get(`http://192.168.120.75:8080/youtube?keyword=${props.collectionData.musicKeyword}` + '에 어울리는 노래')
     const videoInfo = response.data
     if (videoInfo.includes('URL:')) {
       const urlIndex = videoInfo.indexOf('URL:') + 5
@@ -334,7 +332,6 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  cursor: default;
 }
 
 .story-number {

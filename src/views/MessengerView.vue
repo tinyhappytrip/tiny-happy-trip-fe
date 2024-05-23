@@ -10,13 +10,13 @@
       <div class="chatroom">
         <div class="notification" v-for="(chatRoom, index) in chatRooms" :key="index">
           <RouterLink class="notification" :to="`/messenger/${chatRoom.chatRoomId}`">
-            <img :src="chatRoom.userImage" alt="avatar" />
+            <img :src="imagePath(chatRoom.userImage)" alt="avatar" />
             <div class="chatroom-content">
               <div class="chatroom-header">
                 <span class="name">{{ chatRoom.nickname }}</span>
                 <span class="date">{{ formatDate(chatRoom.lastSentAt) }}</span>
               </div>
-              <p>{{ chatRoom.lastMessage }}</p>
+              <p style="padding-top: 10px">{{ chatRoom.lastMessage }}</p>
             </div>
           </RouterLink>
         </div>
@@ -40,6 +40,7 @@ import ChatModal from '@/components/messenger/ChatModal.vue'
 import { followList, followingList } from '@/api/user-api'
 import { useAuthStore } from '@/stores/auth'
 import { getChatRoomList } from '@/api/chat-api'
+import { imagePath } from '@/util/http-commons'
 
 const currentTab = ref('chat')
 const showModal = ref(false)
@@ -49,7 +50,6 @@ const followers = ref([])
 const following = ref([])
 const userId = ref()
 const chatRooms = ref([])
-const messages = ref([])
 
 const fetchData = async () => {
   const authStore = useAuthStore()
@@ -144,7 +144,9 @@ onMounted(fetchData)
   display: flex;
   align-items: center;
   padding: 10px 0;
+  text-decoration: none;
   cursor: default;
+  color: black;
 }
 
 .notification img {

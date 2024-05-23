@@ -18,12 +18,7 @@
       :modules="modules"
       class="mySwiper"
     >
-      <swiper-slide
-        style="width: 380px; height: 430px; background-color: white"
-        @click="showDetail(collection)"
-        v-for="(collection, index) in collections"
-        :key="index"
-      >
+      <swiper-slide style="background-color: white" @click="showDetail(collection)" v-for="(collection, index) in collections" :key="index">
         <div class="info-box">
           <div class="image-box">
             <img width="30px" height="30px" :src="imagePath(collection.profileImagePath)" />
@@ -200,5 +195,10 @@ const modules = [EffectCoverflow, Pagination, Keyboard, Navigation, Autoplay]
   right: 0;
   border: 0;
   font-size: 0.8rem;
+}
+
+.container .swiper-slide {
+  width: 380px !important;
+  height: 430px;
 }
 </style>

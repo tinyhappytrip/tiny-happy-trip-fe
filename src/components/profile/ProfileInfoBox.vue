@@ -1,14 +1,14 @@
 <template>
   <div class="profile-container">
     <div class="profile-header">
-      <img class="profile-picture" src="@/assets/main/poorin.png" alt="Profile Picture" />
+      <img class="profile-picture" :src="imagePath(profile.userImage)" />
       <div class="profile-info"></div>
     </div>
     <h2 class="profile-name">{{ profile.nickname }}</h2>
     <p class="profile-description">{{ profile.description }}</p>
     <div class="profile-stats">
       <div class="stat">
-        <span class="stat-number">245</span>
+        <span class="stat-number">{{ postCount }}</span>
         <span class="stat-label">게시물</span>
       </div>
       <div class="stat">
@@ -25,7 +25,7 @@
       <button class="message-button">메시지</button>
     </div>
     <div v-else class="profile-actions">
-      <button class="follow-button">프로필변경</button>
+      <button @click="goToMyPage" class="follow-button">프로필변경</button>
     </div>
   </div>
 </template>
@@ -33,8 +33,11 @@
 <script setup>
 import { ref, defineProps, onMounted, computed } from 'vue'
 import { getUserInfo, followUser, unFollowUser, followList } from '@/api/user-api'
+import { userStory } from '@/api/story-api'
+import { userCollection } from '@/api/collection-api'
 import { useAuthStore } from '@/stores/auth'
-
+import { imagePath } from '@/util/http-commons'
+import { useRouter, useRoute } from 'vue-router'
 const authStore = useAuthStore()
 authStore.checkAuth()
 const isLoggedIn = computed(() => authStore.isLoggedIn)
@@ -42,13 +45,10 @@ const loginUserId = computed(() => authStore.userId)
 const isUser = ref(false)
 const profile = ref({})
 const isFollowing = ref(false)
+const postCount = ref(0)
 const userFollowerList = ref([])
-const { userId } = defineProps({
-  userId: {
-    type: Number,
-    required: true
-  }
-})
+const router = useRouter()
+const route = useRoute()
 
 const clickFollowBtn = () => {
   if (isFollowing.value) {
@@ -60,7 +60,7 @@ const clickFollowBtn = () => {
 
 const unFollow = () => {
   unFollowUser(
-    userId,
+    route.params.userId,
     (result) => {
       isFollowing.value = false
       userInfo()
@@ -73,7 +73,7 @@ const unFollow = () => {
 
 const follow = () => {
   followUser(
-    userId,
+    route.params.userId,
     (result) => {
       isFollowing.value = true
       userInfo()
@@ -85,7 +85,7 @@ const follow = () => {
 }
 const userInfo = () => {
   getUserInfo(
-    userId,
+    route.params.userId,
     (result) => {
       profile.value = result.data
     },
@@ -97,11 +97,11 @@ const userInfo = () => {
 
 const checkIsFollowing = () => {
   followList(
-    userId,
+    route.params.userId,
     (result) => {
       userFollowerList.value = result.data
       for (let i = 0; i < userFollowerList.value.length; i++) {
-        if (userFollowerList.value[i].userId == loginUserId.value) {
+        if (userFollowerList.value[i].route.params.userId == loginUserId.value) {
           isFollowing.value = true
           break
         }
@@ -112,11 +112,33 @@ const checkIsFollowing = () => {
     }
   )
 }
+
+const goToMyPage = () => {
+  router.push('/mypage/' + loginUserId)
+}
 // 초기 작업
 onMounted(() => {
   userInfo()
   checkIsFollowing()
-  isUser.value = loginUserId === userId
+  isUser.value = loginUserId === route.params.userId
+  console.log(isUser.value)
+  console.log(route.params.userId)
+
+  userStory(
+    route.params.userId,
+    (result) => {
+      postCount.value += result.data.length
+    },
+    (error) => console.log(error)
+  )
+
+  userCollection(
+    route.params.userId,
+    (result) => {
+      postCount.value += result.data.length
+    },
+    (error) => console.log(error)
+  )
 })
 </script>
 

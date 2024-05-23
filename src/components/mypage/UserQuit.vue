@@ -69,8 +69,8 @@ const deleteUserInfo = () => {
 }
 
 const deleteSocialLogin = (provider) => {
-  const redirectUri = encodeURIComponent('http://localhost:3000&mode=unlink')
-  window.location.href = `http://localhost:8080/oauth2/authorization/${provider}?redirect_uri=${redirectUri}`
+  const redirectUri = encodeURIComponent('http://172.30.1.41:3000&mode=unlink')
+  window.location.href = `http://172.30.1.41:8080/oauth2/authorization/${provider}?redirect_uri=${redirectUri}`
 }
 
 const Swal = inject('$swal')

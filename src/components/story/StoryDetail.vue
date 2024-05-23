@@ -9,7 +9,7 @@
         <div class="right-content">
           <div class="subcard">
             <div class="title">
-              <img :src="`http://localhost:8080/image?path=${story.userImage}`" class="user-image" />
+              <img :src="imagePath(story.userImage)" class="user-image" />
               <div class="user-info-box">
                 <div>{{ story.nickname }}</div>
                 <div style="color: #808080">{{ formattedDate }}</div>
@@ -34,7 +34,7 @@
               <div class="comment" style="padding-top: 30px">
                 <div>
                   <RouterLink :to="`/profile/${comment.userId}`">
-                    <img :src="`http://localhost:8080/image?path=${story.userImage}`" width="10px" style="margin-right: 5px" class="comment-user-image" />
+                    <img :src="imagePath(story.userImage)" width="10px" style="margin-right: 5px" class="comment-user-image" />
                   </RouterLink>
                 </div>
                 <div style="display: inline">
@@ -62,7 +62,7 @@
                 <div class="comment" style="padding-top: 10px">
                   <div>
                     <RouterLink :to="`/profile/${reply.userId}`">
-                      <img :src="`http://localhost:8080/image?path=${reply.userImage}`" width="10px" style="margin-right: 5px" class="comment-user-image" />
+                      <img :src="imagePath(reply.userImage)" width="10px" style="margin-right: 5px" class="comment-user-image" />
                     </RouterLink>
                   </div>
                   <div style="display: inline">
@@ -106,6 +106,7 @@ import StoryImageCarousel from './StoryImageCarousel.vue'
 import StoryLike from './StoryLike.vue'
 import { detailStory } from '@/api/story-api'
 import { useRouter } from 'vue-router'
+import { imagePath } from '@/util/http-commons'
 const router = useRouter()
 
 const getProfileUrl = (nickname) => {

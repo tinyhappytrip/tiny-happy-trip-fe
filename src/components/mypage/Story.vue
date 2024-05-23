@@ -43,13 +43,14 @@ userStory(
 }
 
 .row {
+  width: 33%;
   display: flex;
   flex-wrap: wrap;
   width: 100%;
 }
 
 .col {
-  flex: 1 0 30%;
+  width: 33%;
   box-sizing: border-box;
   padding: 10px;
 }
@@ -62,11 +63,13 @@ userStory(
   text-align: center;
   background: #fff;
   transition: all 0.3s ease-in-out;
+  height: 200px;
+  width: 200px;
 }
 
 .card-img {
   width: 100%;
-  height: auto;
+  height: 100%;
   filter: blur(3px);
   transition: filter 0.3s ease-in-out;
 }

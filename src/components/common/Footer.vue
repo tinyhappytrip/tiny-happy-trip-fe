@@ -1,6 +1,6 @@
 <template>
   <footer>
-    <div class="footerContainer">
+    <!-- <div class="footerContainer">
       <div class="socialIcons">
         <a href="https://github.com/sumin305">
           <div>
@@ -30,7 +30,7 @@
           </li>
         </ul>
       </div>
-    </div>
+    </div> -->
     <div class="footerBottom">
       <p>Copyright &copy;2024; Designed by <span class="designer">SOOMBIM</span></p>
     </div>

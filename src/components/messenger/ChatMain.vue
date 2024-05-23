@@ -1,27 +1,30 @@
 <template>
   <div class="chat-main">
     <div class="messages">
-      <div class="message" v-for="(message, index) in chatMessages" :key="index" :class="{ sent: message.sentByUser }">
-        <img :src="message.avatar" alt="avatar" v-if="!message.sentByUser" />
+      <div class="message" v-for="(message, index) in messages" :key="index" :class="{ sent: userId === message.senderId }">
+        <img :src="imagePath(message.receiverImage)" alt="avatar" v-if="!userId === message.senderId" />
         <div class="message-content">
           <div class="message-header">
-            <span class="name">{{ message.name }}</span>
-            <span class="date">{{ message.date }}</span>
+            <span class="name">{{ message.message }}</span>
+            <span class="date">{{ message.sentAt }}</span>
           </div>
           <p>{{ message.text }}</p>
         </div>
-        <img :src="message.avatar" alt="avatar" v-if="message.sentByUser" />
+        <img :src="imagePath(message.senderImage)" alt="avatar" v-if="userId === message.senderId" />
       </div>
     </div>
     <div class="input-area">
-      <input v-model="newMessage" type="text" placeholder="메시지를 입력하세요" @keyup.enter="sendMessage" />
-      <button @click="sendMessage">전송</button>
+      <!-- <input v-model="newMessage" type="text" placeholder="메시지를 입력하세요" @keyup.enter="sendMessage" />
+      <button @click="sendMessage">전송</button> -->
     </div>
     <slot></slot>
   </div>
 </template>
 
 <script setup>
+import { getMessageList } from '@/api/chat-api'
+import { useAuthStore } from '@/stores/auth'
+import { imagePath } from '@/util/http-commons'
 import { ref, onMounted, nextTick } from 'vue'
 import { useRoute } from 'vue-router'
 
@@ -29,36 +32,54 @@ const route = useRoute()
 const chatRoomId = ref(route.params.chatRoomId)
 
 const newMessage = ref('')
-const chatMessages = ref([
-  { name: '이름', text: '안녕하세요 반갑습니다.', date: '4월 12일', avatar: './src/assets/main/poorin.png', sentByUser: false },
-  { name: '이름', text: '네 반갑습니다.', date: '4월 12일', avatar: './src/assets/main/poorin.png', sentByUser: false }
-  // 다른 메시지들 추가 가능
-])
+const userId = ref('')
+const messages = ref([])
 
-const sendMessage = () => {
-  if (newMessage.value.trim() !== '') {
-    chatMessages.value.unshift({
-      name: '조성빈', // 유저 이름, 필요에 따라 동적으로 변경 가능
-      text: newMessage.value,
-      date: new Date().toLocaleDateString(),
-      avatar: './src/assets/main/poorin.png', // 유저 아바타, 필요에 따라 동적으로 변경 가능
-      sentByUser: true
-    })
-    newMessage.value = ''
-    nextTick(() => {
-      scrollToEnd()
-    })
-  }
-}
+// const sendMessage = () => {
+//   if (newMessage.value.trim() !== '') {
+//     chatMessages.value.unshift({
+//       name: '조성빈', // 유저 이름, 필요에 따라 동적으로 변경 가능
+//       text: newMessage.value,
+//       date: new Date().toLocaleDateString(),
+//       avatar: './src/assets/main/poorin.png', // 유저 아바타, 필요에 따라 동적으로 변경 가능
+//       sentByUser: true
+//     })
+//     newMessage.value = ''
+//     nextTick(() => {
+//       scrollToEnd()
+//     })
+//   }
+// }
 
 const scrollToEnd = () => {
   const container = document.querySelector('.messages')
   container.scrollTop = container.scrollHeight
 }
 
+const fetchData = async (chatRoomId) => {
+  const authStore = useAuthStore()
+  userId.value = authStore.userId
+  await getMessageList(
+    chatRoomId,
+    (result) => {
+      messages.value = result.data
+      console.log(result)
+    },
+    (error) => {}
+  )
+}
+
 onMounted(() => {
-  scrollToEnd()
+  fetchData(chatRoomId.value)
 })
+
+watch(
+  () => route.params.chatRoomId,
+  (newChatRoomId) => {
+    chatRoomId.value = newChatRoomId
+    fetchData(newChatRoomId)
+  }
+)
 </script>
 
 <style scoped>

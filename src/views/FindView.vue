@@ -28,7 +28,6 @@ import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const email = ref('')
 const isEmailValid = ref(false)
-const isSuccess = ref(false)
 const emailSuccess = ref('')
 const emailError = ref('')
 

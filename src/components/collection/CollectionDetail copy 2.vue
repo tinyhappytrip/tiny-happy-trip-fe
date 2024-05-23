@@ -1,4 +1,16 @@
 <template>
+  <div v-if="videoId">
+    <iframe
+      :width="0"
+      :height="0"
+      :src="videoUrl"
+      title="YouTube video player"
+      frameborder="0"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+      allowfullscreen
+      ref="youtubePlayer"
+    ></iframe>
+  </div>
   <div class="music-container">
     <div class="music-player">
       <header class="header">
@@ -19,11 +31,9 @@
         </div>
         <div class="story-list">
           <div class="info-box">
-            <RouterLink :to="`/profile/${collectionData.userId}`">
-              <div class="image-box">
-                <img width="30px" height="30px" :src="imagePath(collectionData.profileImagePath)" />
-              </div>
-            </RouterLink>
+            <div class="image-box">
+              <img width="30px" height="30px" :src="imagePath(collectionData.profileImagePath)" />
+            </div>
             <div class="user-box">
               <span class="title">{{ collectionData.nickname }}</span>
               <span class="sub">
@@ -53,18 +63,6 @@
         <button class="control-button" @click="nextSlide">⏭️</button>
       </div>
     </div>
-  </div>
-  <div v-if="videoId">
-    <iframe
-      :width="0"
-      :height="0"
-      :src="videoUrl"
-      title="YouTube video player"
-      frameborder="0"
-      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-      allowfullscreen
-      ref="youtubeaPlayer"
-    ></iframe>
   </div>
 </template>
 
@@ -160,8 +158,9 @@ const youtubePlayer = ref(null)
 
 const searchVideos = async () => {
   try {
-    const response = await axios.get(`http://172.30.1.41:8080/youtube?keyword=${props.collectionData.musicKeyword}` + '에 어울리는 노래')
-    console.log(response)
+    if (!searchQuery.value.trim()) return
+
+    const response = await axios.get(`http://localhost:8080/youtube?keyword=${props.collectionData.musicKeyword}` + '에 어울리는 노래')
     const videoInfo = response.data
     if (videoInfo.includes('URL:')) {
       const urlIndex = videoInfo.indexOf('URL:') + 5
@@ -191,7 +190,6 @@ const videoUrl = computed(() => {
 // searchVideos 함수를 컴포넌트가 렌더링될 때 호출
 onMounted(() => {
   searchVideos()
-  playPause() // Start the slideshow automatically
 })
 </script>
 
@@ -290,7 +288,6 @@ onMounted(() => {
 }
 
 .story-list .info-box {
-  cursor: default;
   display: flex;
   width: 100%;
   margin-bottom: 20px;
@@ -334,7 +331,6 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   width: 100%;
-  cursor: default;
 }
 
 .story-number {

@@ -9,7 +9,7 @@
           <p>{{ user.description }}</p>
         </div>
 
-        <button class="follow-button">{{ user.isFollowing ? '팔로우중' : '팔로우' }}</button>
+        <button class="follow-button" @click=setFollow>{{ user.isFollowing ? '팔로우중' : '팔로우' }}</button>
       </li>
     </ul>
   </div>
@@ -20,6 +20,10 @@ import { onMounted, ref, defineEmits } from 'vue'
 import { userListBySearchKeyword } from '@/api/user-api'
 import { imagePath } from '@/util/http-commons'
 import { useAuthStore } from '@/stores/auth'
+
+const setFollow = () => {
+  
+}
 
 const authStore = useAuthStore()
 const currentUserId = computed(() => authStore.userId)

@@ -22,10 +22,11 @@ import { login } from '@/api/user-api'
 import { inject } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
+import router from '@/router'
 const authStore = useAuthStore()
 const email = ref('')
 const password = ref('')
-const router = useRouter()
+// const router = useRouter()
 const emailError = ref('')
 const passwordError = ref('')
 

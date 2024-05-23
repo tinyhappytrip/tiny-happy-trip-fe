@@ -18,6 +18,7 @@ function perRouteGuardForCheckLogin(to, from) {
       }
     })
   }
+
   authStore.checkAuth()
   if (authStore.isLoggedIn) {
     return true

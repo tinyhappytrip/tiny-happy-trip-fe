@@ -46,6 +46,7 @@ import { getUserInfo, updateUserImage } from '@/api/user-api'
 import { imagePath } from '@/util/http-commons'
 import PasswordChange from '@/components/mypage/PasswordChange.vue'
 import UserQuit from '@/components/mypage/UserQuit.vue'
+import router from '@/router'
 const user = ref({})
 const isUserLoaded = ref(false)
 const activeTab = ref('editProfile')
@@ -96,7 +97,8 @@ const changeUserImage = () => {
   updateUserImage(
     imageFile.value,
     (result) => {
-      window.location.reload()
+      userInfo(user.value.id)
+      router.replace(window.location.pathname)
     },
     (error) => {
       console.log(error)

@@ -5,7 +5,7 @@
   <div class="card">
     <div class="subcard">
       <div class="title">
-        <img :src="`http://localhost:8080/image?path=${story.userImage}`" class="user-image" />
+        <img :src="imagePath(story.userImage)" class="user-image" />
         <div class="user-info-box">
           <div>{{ story.nickname }}</div>
           <div style="color: #808080">{{ formattedDate }}</div>
@@ -37,7 +37,7 @@ import StoryLike from '@/components/story/StoryLike.vue'
 import StoryImageCarousel from '@/components/story/StoryImageCarousel.vue'
 import StoryCommentInput from './StoryCommentInput.vue'
 import { useAuthStore } from '@/stores/auth'
-
+import { imagePath } from '@/util/http-commons'
 const authStore = useAuthStore()
 authStore.checkAuth()
 const userId = computed(() => authStore.userId)

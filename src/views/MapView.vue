@@ -80,7 +80,7 @@ let ps
 let markers = []
 let map
 
-const KAKAO_IMAGE_API_KEY = 'e86f69e6ec0994a1f096b9953c71f6d7'
+const KAKAO_IMAGE_API_KEY = '78544c4fa524eb860eea35deffb9d03a'
 
 onMounted(() => {
   try {

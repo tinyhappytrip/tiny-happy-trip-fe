@@ -30,7 +30,7 @@ export const useAuthStore = defineStore('auth', {
       this.userImage = ''
       this.nickname = ''
       disconnectWebSocket()
-      router.replace('/')
+      // router.replace('/')
     },
     setAuth(isLoggedIn, userId, role) {
       this.isLoggedIn = isLoggedIn
@@ -46,7 +46,9 @@ export const useAuthStore = defineStore('auth', {
         connectWebSocket(this.userId)
         subscribeNotification(this.userId)
       } else {
-        this.logout()
+        if (this.isLoggedIn) {
+          this.logout()
+        }
       }
     }
   }

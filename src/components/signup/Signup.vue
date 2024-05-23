@@ -171,9 +171,10 @@ const validateEmail = async () => {
 }
 
 const validatePassword = () => {
-  const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
+  // Regex pattern to include at least one letter, one number, and one special character, and be at least 10 characters long
+  const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{10,}$/
   if (!passwordPattern.test(password.value)) {
-    passwordError.value = '비밀번호는 영문과 숫자를 포함하여 8자 이상이어야 합니다.'
+    passwordError.value = '비밀번호는 영문, 숫자 및 특수문자를 포함하여 10자 이상이어야 합니다.'
     return false
   }
   passwordError.value = ''

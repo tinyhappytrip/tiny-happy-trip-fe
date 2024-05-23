@@ -12,14 +12,14 @@
       <font-awesome-icon v-if="currentSlide !== 0" :icon="['fas', 'arrow-right']" rotation="180" class="custom-arrow prev-arrow" @click.stop="goToPrev" />
     </template>
     <v-carousel-item v-for="(image, i) in images" :key="i">
-      <img :style="{ cursor: isList ? 'pointer' : 'default' }" width="100%" height="100%" :src="`http://localhost:8080/image?path=${image}`" />
+      <img :style="{ cursor: isList ? 'pointer' : 'default' }" width="100%" height="100%" :src="imagePath(image)" />
     </v-carousel-item>
   </v-carousel>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-
+import { imagePath } from '@/util/http-commons'
 const props = defineProps({
   isList: {},
   images: {

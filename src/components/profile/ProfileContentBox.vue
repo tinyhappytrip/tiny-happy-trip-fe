@@ -15,6 +15,9 @@
 
 <script setup>
 import { ref, defineProps } from 'vue'
+import Story from '../mypage/Story.vue'
+import Collection from '../mypage/Collection.vue'
+import Likes from '../mypage/Likes.vue'
 
 const activeTab = ref('story')
 
@@ -24,7 +27,6 @@ const { userId } = defineProps({
     required: true
   }
 })
-
 </script>
 
 <style scoped>

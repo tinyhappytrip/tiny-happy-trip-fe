@@ -27,7 +27,7 @@ function authAxios() {
 }
 
 const imagePath = (filePath) => {
-  return `${VITE_VUE_API_URL}/image?path=${filePath}`
+  return `http://172.30.1.41:8080/image?path=${filePath}`
 }
 
 const proxyImagePath = (filePath) => {
