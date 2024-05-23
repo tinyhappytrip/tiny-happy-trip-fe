@@ -4,13 +4,13 @@
       <span class="separator-text">간편 로그인 / 회원가입</span>
     </div>
     <div class="social-icons">
-      <a class="social-icon" href="http://172.30.1.41:8080/oauth2/authorization/google?redirect_uri=http://172.30.1.41:3000&mode=login">
+      <a class="social-icon" href="http://192.168.0.243:8080/oauth2/authorization/google?redirect_uri=http://192.168.0.243:3000&mode=login">
         <img src="@/assets/login/google.png" alt="Google" class="icon" />
       </a>
-      <a class="social-icon" href="http://172.30.1.41:8080/oauth2/authorization/kakao?redirect_uri=http://172.30.1.41:3000&mode=login">
+      <a class="social-icon" href="http://192.168.0.243:8080/oauth2/authorization/kakao?redirect_uri=http://192.168.0.243:3000&mode=login">
         <img src="@/assets/login/kakao.png" alt="Kakao" class="icon" />
       </a>
-      <a class="social-icon" href="http://172.30.1.41:8080/oauth2/authorization/naver?redirect_uri=http://172.30.1.41:3000&mode=login">
+      <a class="social-icon" href="http://192.168.0.243:8080/oauth2/authorization/naver?redirect_uri=http://192.168.0.243:3000&mode=login">
         <img src="@/assets/login/naver.webp" alt="Naver" class="icon" />
       </a>
     </div>

@@ -1,59 +1,59 @@
 <template>
   <div class="chat-main">
     <div class="messages">
-      <div class="message" v-for="(message, index) in messages" :key="index" :class="{ sent: userId === message.senderId }">
-        <img :src="imagePath(message.receiverImage)" alt="avatar" v-if="!userId === message.senderId" />
+      <div class="message" v-for="(message, index) in messages" :key="index" :class="{ sent: Number(userId) === Number(message.senderId) }">
+        <img :src="imagePath(message.senderImage)" alt="avatar" v-if="Number(userId) !== Number(message.senderId)" />
         <div class="message-content">
           <div class="message-header">
-            <span class="name">{{ message.message }}</span>
+            <span class="name">{{ message.senderNickname }}</span>
             <span class="date">{{ message.sentAt }}</span>
           </div>
-          <p>{{ message.text }}</p>
+          <p>{{ message.message }}</p>
         </div>
-        <img :src="imagePath(message.senderImage)" alt="avatar" v-if="userId === message.senderId" />
+        <img :src="imagePath(message.senderImage)" alt="avatar" v-if="Number(userId) === Number(message.senderId)" />
       </div>
     </div>
     <div class="input-area">
-      <!-- <input v-model="newMessage" type="text" placeholder="메시지를 입력하세요" @keyup.enter="sendMessage" />
-      <button @click="sendMessage">전송</button> -->
+      <input v-model="newMessage" type="text" placeholder="메시지를 입력하세요" @keyup.enter="sendMessage" />
+      <button @click="sendMessage">전송</button>
     </div>
     <slot></slot>
   </div>
 </template>
 
 <script setup>
-import { getMessageList } from '@/api/chat-api'
-import { useAuthStore } from '@/stores/auth'
-import { imagePath } from '@/util/http-commons'
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import { useRoute } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+import { getMessageList } from '@/api/chat-api'
+import { subscribeChat, unsubscribeChat, sendMessage as websocketSendMessage } from '@/util/web-socket'
+import { imagePath } from '@/util/http-commons'
+import { defineProps } from 'vue'
+import { getUserInfo } from '@/api/user-api'
+
+const props = defineProps({
+  receiverId: {
+    required: true
+  },
+  chatRoomId: {
+    required: true
+  }
+})
 
 const route = useRoute()
-const chatRoomId = ref(route.params.chatRoomId)
-
+const chatRoomId = ref(props.chatRoomId)
 const newMessage = ref('')
 const userId = ref('')
 const messages = ref([])
-
-// const sendMessage = () => {
-//   if (newMessage.value.trim() !== '') {
-//     chatMessages.value.unshift({
-//       name: '조성빈', // 유저 이름, 필요에 따라 동적으로 변경 가능
-//       text: newMessage.value,
-//       date: new Date().toLocaleDateString(),
-//       avatar: './src/assets/main/poorin.png', // 유저 아바타, 필요에 따라 동적으로 변경 가능
-//       sentByUser: true
-//     })
-//     newMessage.value = ''
-//     nextTick(() => {
-//       scrollToEnd()
-//     })
-//   }
-// }
+const receiverId = ref(props.receiverId)
+const currentSubscription = ref(null)
+const sender = ref({})
 
 const scrollToEnd = () => {
   const container = document.querySelector('.messages')
-  container.scrollTop = container.scrollHeight
+  if (container) {
+    container.scrollTop = container.scrollHeight
+  }
 }
 
 const fetchData = async (chatRoomId) => {
@@ -63,21 +63,85 @@ const fetchData = async (chatRoomId) => {
     chatRoomId,
     (result) => {
       messages.value = result.data
-      console.log(result)
+      nextTick(() => {
+        scrollToEnd()
+      })
     },
-    (error) => {}
+    (error) => {
+      console.error(error)
+    }
   )
+  await getUserInfo(
+    userId.value,
+    (success) => {
+      sender.value = success.data
+      console.log(success)
+    },
+    (error) => {
+      console.error(error)
+    }
+  )
+}
+
+const onMessageReceived = (newMessage) => {
+  messages.value.unshift(newMessage)
+  nextTick(() => {
+    scrollToEnd()
+  })
+}
+
+const sendMessage = () => {
+  if (newMessage.value.trim() !== '') {
+    const message = {
+      chatRoomId: currentSubscription.value,
+      senderId: userId.value,
+      receiverId: receiverId.value, // props로 받은 receiverId 사용
+      message: newMessage.value,
+      content: sender.value.nickname + '님이 ' + '메세지를 보냈습니다.',
+      senderNickname: sender.value.nickname,
+      senderImage: sender.value.userImage,
+      sentAt: formatDate(new Date())
+    }
+    console.log(message)
+    websocketSendMessage(message)
+    newMessage.value = ''
+  }
+}
+
+const formatDate = (date) => {
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  const hours = date.getHours().toString().padStart(2, '0')
+  const minutes = date.getMinutes().toString().padStart(2, '0')
+  const seconds = date.getSeconds().toString().padStart(2, '0')
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
+}
+
+const subscribeToChatRoom = (chatRoomId) => {
+  if (currentSubscription.value) {
+    unsubscribeChat(currentSubscription.value)
+  }
+  currentSubscription.value = chatRoomId
+  subscribeChat(chatRoomId, onMessageReceived)
 }
 
 onMounted(() => {
   fetchData(chatRoomId.value)
+  subscribeToChatRoom(chatRoomId.value)
 })
 
 watch(
   () => route.params.chatRoomId,
-  (newChatRoomId) => {
+  (newChatRoomId, oldChatRoomId) => {
+    if (oldChatRoomId) {
+      unsubscribeChat(oldChatRoomId)
+    }
+
+    receiverId.value = props.receiverId
     chatRoomId.value = newChatRoomId
     fetchData(newChatRoomId)
+    subscribeToChatRoom(newChatRoomId)
   }
 )
 </script>
@@ -90,6 +154,7 @@ watch(
   height: 100%;
   width: 100%;
   padding: 10px;
+  border-left: 1px solid #ddd;
 }
 
 .messages {

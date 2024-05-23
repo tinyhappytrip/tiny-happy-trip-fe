@@ -1,5 +1,5 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { faSquarePlus, faPaperPlane, faCircleCheck } from '@fortawesome/free-regular-svg-icons'
+import { faSquarePlus, faPaperPlane, faCircleCheck, faMessage } from '@fortawesome/free-regular-svg-icons'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import {
   faMagnifyingGlass,
@@ -14,6 +14,7 @@ import {
 } from '@fortawesome/free-solid-svg-icons'
 
 library.add(
+  faMessage,
   faSquarePlus,
   faPaperPlane,
   faMagnifyingGlass,

@@ -2,14 +2,19 @@
   <div class="messenger">
     <div class="chat-sidebar">
       <div class="tabs">
-        <button @click="currentTab = 'chat'" :class="{ 'active-tab': currentTab === 'chat' }">채팅</button>
-        <button @click="currentTab = 'notifications'" :class="{ 'active-tab': currentTab === 'notifications' }">알림</button>
-        <!-- <button class="start-chat-button" @click="showModal = true">+</button> -->
-        <font-awesome-icon :icon="['fas', 'plus']" class="start-chat-button" @click="showModal = true" />
+        <button @click="currentTab = 'chat'" :class="{ 'active-tab': currentTab === 'chat' }">메시지</button>
+        <!-- <button @click="currentTab = 'notifications'" :class="{ 'active-tab': currentTab === 'notifications' }">알림</button> -->
+        <font-awesome-icon :icon="['far', 'message']" class="start-chat-button" @click="showModal = true" />
       </div>
       <div class="chatroom">
         <div class="notification" v-for="(chatRoom, index) in chatRooms" :key="index">
-          <RouterLink class="notification" :to="`/messenger/${chatRoom.chatRoomId}`">
+          <RouterLink
+            class="notification"
+            :to="{
+              path: `/messenger/${chatRoom.chatRoomId}`,
+              query: { receiverId: chatRoom.userId }
+            }"
+          >
             <img :src="imagePath(chatRoom.userImage)" alt="avatar" />
             <div class="chatroom-content">
               <div class="chatroom-header">
@@ -24,7 +29,9 @@
     </div>
     <div class="content">
       <RouterView v-if="currentTab === 'chat'" @close="showModal = false" :userName="userName" :followers="followers" :following="following"></RouterView>
-      <div>안녕하세요</div>
+      <div class="basic-box" v-if="showBasicBox">
+        <div @click="showModal = true">메시지 보내기</div>
+      </div>
       <!-- <ChatMain v-if="currentTab === 'chat'" @close="showModal = false" :userName="userName" :followers="followers" :following="following"> </ChatMain> -->
       <NotificationsMain v-if="currentTab === 'notifications'" @close="showModal = false" :userName="userName" :followers="followers" :following="following" />
     </div>
@@ -41,16 +48,17 @@ import { followList, followingList } from '@/api/user-api'
 import { useAuthStore } from '@/stores/auth'
 import { getChatRoomList } from '@/api/chat-api'
 import { imagePath } from '@/util/http-commons'
+import { useRoute } from 'vue-router'
 
 const currentTab = ref('chat')
 const showModal = ref(false)
 const loading = ref(false)
-
 const followers = ref([])
 const following = ref([])
 const userId = ref()
 const chatRooms = ref([])
-
+const route = useRoute()
+const receiverId = ref()
 const fetchData = async () => {
   const authStore = useAuthStore()
   userId.value = authStore.userId
@@ -74,7 +82,8 @@ const fetchData = async () => {
   await getChatRoomList(
     (result) => {
       chatRooms.value = result.data
-      console.log(result)
+      console.log(result.data)
+      receiverId.value = result.data.userId
     },
     (error) => {}
   )
@@ -88,7 +97,13 @@ const formatDate = (rawDate) => {
   return `${year}년 ${month}월 ${day}일`
 }
 
-onMounted(fetchData)
+const showBasicBox = computed(() => {
+  return route.path === '/messenger'
+})
+
+onMounted(() => {
+  fetchData()
+})
 </script>
 
 <style scoped>
@@ -103,6 +118,8 @@ onMounted(fetchData)
 .chat-sidebar {
   width: 300px;
   height: 65vh;
+  border-bottom: 1px solid #ddd;
+  border-left: 1px solid #ddd;
 }
 
 .tabs {
@@ -110,10 +127,8 @@ onMounted(fetchData)
   height: 10%;
   display: flex;
   align-items: center;
-  border-left: 1px solid #ddd;
-  border-right: 1px solid #ddd;
   border-top: 1px solid #ddd;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 .tabs button {
@@ -196,17 +211,43 @@ onMounted(fetchData)
   border-top: 1px solid #ddd;
 }
 
-.start-chat-button {
-  padding: 10px;
-  border: 1px solid;
+.content .basic-box {
+  width: 100%;
+  height: 100%;
+  border-left: 1px solid #ddd;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+}
+
+.content .basic-box div {
+  padding: 14px 16px;
+  border: 1px solid #ddd;
   border-radius: 10px;
+}
+
+.content .basic-box div:hover {
+  color: white;
+  background-color: black;
+  cursor: pointer;
+}
+
+.start-chat-button {
+  /* padding: 5px; */
+  /* border: 1px solid; */
+  /* border-radius: 10px; */
   cursor: pointer;
   margin-right: 20px;
-  margin-left: auto;
+  font-size: 1.3rem;
 }
 
 .start-chat-button:hover {
-  background-color: black;
-  color: white;
+  font-size: 1.5rem;
+}
+
+.chatroom {
+  height: 90%;
+  overflow: auto;
 }
 </style>

@@ -1,20 +1,24 @@
 <template>
   <div id="app" class="section-container">
+    <video autoPlay muted loop>
+      <source src="@/assets/main/summer4.mp4" type="video/mp4" />
+    </video>
     <div class="overlay">
       <div class="block">
-        <h1>여기는</h1>
-        <h1>아직이에여</h1>
-        <button @click="writeStory">큰일</button>
+        <h1>어디를 가야할지</h1>
+        <h1>모르겠다면</h1>
+        <button @click="writeStory">추천 여행지</button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
+import router from '@/router'
 import { onMounted, onBeforeUnmount } from 'vue'
 
 function writeStory() {
-  alert('이야기 작성 페이지로 이동합니다.')
+  router.push('/attraction')
 }
 
 onMounted(() => {

@@ -6,7 +6,7 @@ let connected = false
 
 export function connectWebSocket() {
   if (connected) return
-  const socket = new WebSocket('ws://172.30.1.41:8080/ws')
+  const socket = new WebSocket('ws://192.168.0.243:8080/ws')
   stompClient = Stomp.over(socket)
   stompClient.connect({}, () => {
     console.log('WebSocket connected')

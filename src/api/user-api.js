@@ -48,7 +48,7 @@ export async function checkPassword(password, success, fail) {
 export async function socialSignup(data) {
   await noAuthAxios().post(BASE_API_PATH + '/signup', data)
   const socialType = Cookies.get('socialType')
-  window.location.href = `http://172.30.1.41:8080/oauth2/authorization/${socialType.toLowerCase()}?redirect_uri=http://172.30.1.41:3000&mode=login`
+  window.location.href = `http://192.168.0.243:8080/oauth2/authorization/${socialType.toLowerCase()}?redirect_uri=http://192.168.0.243:3000&mode=login`
 }
 
 export async function signup(signupUser, success) {

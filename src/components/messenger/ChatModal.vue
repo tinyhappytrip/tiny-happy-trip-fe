@@ -2,7 +2,6 @@
   <div class="modal-backdrop" @click.self="closeModal">
     <div class="modal">
       <div class="modal-header">
-        <!-- <h3>{{ userName }}</h3> -->
         <h3>메시지</h3>
         <button @click="closeModal" class="close-button">X</button>
       </div>
@@ -24,7 +23,7 @@
             <div class="profile">
               <p class="name">{{ user.nickname }}</p>
             </div>
-            <button class="chat-button">채팅</button>
+            <button class="chat-button" @click="createChatRoom(user.userId)">채팅</button>
           </div>
         </div>
         <div v-else>
@@ -34,7 +33,8 @@
             <div class="profile">
               <p class="name">{{ user.nickname }}</p>
             </div>
-            <button class="chat-button">채팅</button>
+
+            <button class="chat-button" @click="createChatRoom(user.userId)">채팅</button>
           </div>
         </div>
       </div>
@@ -43,21 +43,36 @@
 </template>
 
 <script setup>
+import { getChatRoomId } from '@/api/chat-api'
+import router from '@/router'
 import { imagePath } from '@/util/http-commons'
 import { ref } from 'vue'
 
 const props = defineProps({
-  userName: String,
   followers: Array,
   following: Array
 })
-console.log(props.following.value)
 const currentTab = ref('followers')
 
 const emit = defineEmits(['close'])
 
 const closeModal = () => {
   emit('close')
+}
+
+const createChatRoom = (user1) => {
+  console.log(user1)
+  getChatRoomId(
+    user1,
+    (success) => {
+      console.log(success.data)
+      router.push(`/messenger/${success.data}`)
+      emit('close')
+    },
+    (error) => {
+      console.log(error)
+    }
+  )
 }
 </script>
 

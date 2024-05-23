@@ -1,18 +1,30 @@
 <template>
   <div class="memory-card">
-    <img :src="image" alt="Memory Image" />
+    <img :src="imagePath(image)" alt="Memory Image" />
     <div class="card-info">
       <h2>{{ title }}</h2>
+      <p>{{ description }}</p>
     </div>
   </div>
 </template>
 
 <script setup>
 import { defineProps } from 'vue'
+import { imagePath } from '@/util/http-commons'
 
 const props = defineProps({
-  image: String,
-  title: String
+  image: {
+    type: String,
+    required: true
+  },
+  title: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  }
 })
 </script>
 
@@ -22,13 +34,15 @@ const props = defineProps({
   overflow: hidden;
   text-align: center;
   width: 250px;
-  margin: 0 45px;
+  margin: 20px;
   cursor: pointer;
+  background: white;
 }
 
 .memory-card img {
   width: 250px;
   height: 250px;
+  object-fit: cover;
 }
 
 .card-info {
@@ -45,19 +59,5 @@ const props = defineProps({
 .card-info p {
   font-size: 0.9em;
   color: #555;
-}
-
-.card-info a {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 5px 10px;
-  background-color: #007bff;
-  color: white;
-  text-decoration: none;
-  border-radius: 4px;
-}
-
-.card-info a:hover {
-  background-color: #0056b3;
 }
 </style>

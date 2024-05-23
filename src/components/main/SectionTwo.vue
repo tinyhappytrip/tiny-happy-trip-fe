@@ -7,7 +7,7 @@
       <div class="sub-block">
         <h3>이야기 모음집</h3>
       </div>
-      <SectionTwoGrid />
+      <SectionTwoGrid :collections="collections" />
       <button class="button" @click="writeStory">더보기</button>
       <div class="next-button-box">
         <font-awesome-icon class="next last" :icon="['fas', 'chevron-down']" @click="nextSection" />
@@ -17,16 +17,26 @@
 </template>
 
 <script setup>
-import { onMounted, onBeforeUnmount } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import { listRecommendCollections } from '@/api/collection-api'
+import SectionTwoGrid from './SectionTwoGrid.vue'
+import router from '@/router'
 
 const collections = ref([])
+
 function writeStory() {
-  alert('이야기 작성 페이지로 이동합니다.')
+  router.replace('/collection')
 }
 
 onMounted(() => {
   document.documentElement.style.overflow = 'auto'
+  listRecommendCollections((result) => {
+    for (let i = 0; i < result.data.length; i++) {
+      if (i == 3) break
+      collections.value.push(result.data[i])
+    }
+  })
+  console.log(collections.value[0])
 })
 
 onBeforeUnmount(() => {
@@ -38,13 +48,6 @@ const emit = defineEmits(['next-section'])
 const nextSection = () => {
   emit('next-section')
 }
-
-listRecommendCollections((result) => {
-  for (let i = 0; i < result.data.length; i++) {
-    if (i == 3) break
-    collections.value.push(result.data[i])
-  }
-})
 </script>
 
 <style scoped>
@@ -56,8 +59,6 @@ listRecommendCollections((result) => {
   opacity: 0.8;
 }
 
-/* https://cdn.pixabay.com/photo/2020/05/09/07/59/cassettes-5148645_1280.jpg */
-/* https://get.wallhere.com/photo/books-vintage-1920x1080-px-product-design-780122.jpg */
 .overlay {
   position: absolute;
   top: 0;

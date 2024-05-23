@@ -27,7 +27,7 @@ function authAxios() {
 }
 
 const imagePath = (filePath) => {
-  return `http://172.30.1.41:8080/image?path=${filePath}`
+  return `http://192.168.0.243:8080/image?path=${filePath}`
 }
 
 const proxyImagePath = (filePath) => {

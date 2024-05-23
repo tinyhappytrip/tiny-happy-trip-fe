@@ -47,6 +47,8 @@ import { imagePath } from '@/util/http-commons'
 import PasswordChange from '@/components/mypage/PasswordChange.vue'
 import UserQuit from '@/components/mypage/UserQuit.vue'
 import router from '@/router'
+import ProfileEdit from './ProfileEdit.vue'
+
 const user = ref({})
 const isUserLoaded = ref(false)
 const activeTab = ref('editProfile')
@@ -174,6 +176,7 @@ body {
   font-weight: 400;
   transition: opacity 0.2s ease-in-out;
   opacity: 0;
+  cursor: pointer;
 }
 
 .profile-card:hover .profile-image {

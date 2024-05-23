@@ -112,7 +112,7 @@ const write = () => {
     collection.value,
     () => {
       emit('update:isVisible', false)
-      router.push('/collection')
+      window.location.href = '/collection'
     },
     (error) => {
       console.error(error)

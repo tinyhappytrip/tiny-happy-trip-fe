@@ -1,0 +1,16 @@
+.custom-toast-popup {
+  top: 5% !important;
+  width: 90% !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.swal2-toast {
+  background-color: rgb(47, 52, 56) !important;
+  width: 100%;
+  color: white;
+  display: flex !important;
+  align-items: center !important;
+  height: 50px;
+  font-size: 0.9rem;
+}

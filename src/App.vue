@@ -9,7 +9,7 @@ import { computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { setCookie } from './util/cookie'
-
+import './styles/swal.css'
 const router = useRouter()
 const authStore = useAuthStore()
 const route = useRoute()

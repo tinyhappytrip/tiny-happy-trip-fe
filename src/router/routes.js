@@ -102,6 +102,10 @@ export const routes = [
       {
         path: ':chatRoomId',
         name: 'messenger-detail',
+        props: (route) => ({
+          receiverId: route.query.receiverId,
+          chatRoomId: route.params.chatRoomId
+        }),
         component: () => import('@/components/messenger/ChatMain.vue')
       }
     ]

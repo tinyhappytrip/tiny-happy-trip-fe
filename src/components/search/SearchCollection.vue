@@ -56,7 +56,7 @@ const computedTitle = (title) => {
   return title
 }
 const computedImagePath = (img) => {
-  return `http://172.30.1.41:8080/image?path=${img}`
+  return `http://192.168.0.243:8080/image?path=${img}`
 }
 onMounted(() => {
   fetchCollections(searchKeyword.value)

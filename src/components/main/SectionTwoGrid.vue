@@ -1,40 +1,32 @@
 <template>
   <div class="memory-grid">
     <SectionTwoCard
-      v-for="(memory, index) in memories"
+      v-for="(collection, index) in collections"
       :key="index"
-      :image="memory.image"
-      :title="memory.title"
-      :description="memory.description"
-      :link="memory.link"
+      :image="collection.collectionItems[0].imagePath[0]"
+      :title="collection.title"
+      :description="collection.description"
     />
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
 import SectionTwoCard from './SectionTwoCard.vue'
 
-const memories = ref([
-  {
-    image: 'src/assets/main/poorin.png',
-    title: '제주도'
-  },
-  {
-    image: 'src/assets/main/poorin.png',
-    title: '2024년'
-  },
-  {
-    image: 'src/assets/main/poorin.png',
-    title: '일본 여행기'
+const props = defineProps({
+  collections: {
+    type: Array,
+    required: true
   }
-  // Add more memories as needed
-])
+})
+console.log(props.collections)
 </script>
 
 <style scoped>
 .memory-grid {
   display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   margin-top: 100px;
 }
 </style>
