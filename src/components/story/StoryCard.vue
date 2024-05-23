@@ -28,7 +28,6 @@
     <div style="display: inline; margin-left: 10px" v-if="hasLineBreaks && !showMore">
       <button @click="showMore = true">더보기 ..</button>
     </div>
-    <!-- <StoryCommentInput :storyId="story.storyId" v-model:commentMode="commentMode"> </StoryCommentInput> -->
   </div>
 </template>
 

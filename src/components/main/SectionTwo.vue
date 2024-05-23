@@ -18,7 +18,9 @@
 
 <script setup>
 import { onMounted, onBeforeUnmount } from 'vue'
+import { listRecommendCollections } from '@/api/collection-api'
 
+const collections = ref([])
 function writeStory() {
   alert('이야기 작성 페이지로 이동합니다.')
 }
@@ -36,6 +38,13 @@ const emit = defineEmits(['next-section'])
 const nextSection = () => {
   emit('next-section')
 }
+
+listRecommendCollections((result) => {
+  for (let i = 0; i < result.data.length; i++) {
+    if (i == 3) break
+    collections.value.push(result.data[i])
+  }
+})
 </script>
 
 <style scoped>
