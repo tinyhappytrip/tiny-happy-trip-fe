@@ -3,17 +3,6 @@
     <div class="story-list">
       <StoryCard v-for="story in stories" :key="story.storyId" :story="story" @move-detail="handleMoveDetail(story.storyId)" />
     </div>
-    <div class="tabs">
-      <StoryAccordionTab title="Chat 1">
-        <p>내용 1</p>
-      </StoryAccordionTab>
-      <StoryAccordionTab title="Chat 2">
-        <p>내용 2</p>
-      </StoryAccordionTab>
-      <StoryAccordionTab title="Chat 3">
-        <p>내용 3</p>
-      </StoryAccordionTab>
-    </div>
   </div>
   <div v-if="showModal" class="modal-overlay">
     <StoryDetail :story="story" :storyId="storyId" @close="closeModal" />

@@ -1,5 +1,7 @@
+import router from '@/router'
 import { getAccessToken, getRefreshToken, removeCookie, setCookie } from '@/util/cookie'
 import { authAxios } from '@/util/http-commons'
+import { connectWebSocket, disconnectWebSocket, subscribeNotification } from '@/util/web-socket'
 import { jwtDecode } from 'jwt-decode'
 import { defineStore } from 'pinia'
 
@@ -27,6 +29,8 @@ export const useAuthStore = defineStore('auth', {
       this.setAuth(false, '', '')
       this.userImage = ''
       this.nickname = ''
+      disconnectWebSocket()
+      router.replace('/')
     },
     setAuth(isLoggedIn, userId, role) {
       this.isLoggedIn = isLoggedIn
@@ -39,6 +43,8 @@ export const useAuthStore = defineStore('auth', {
         this.setAuth(true, userId, role.split('_')[1])
         this.userImage = (await authAxios().get(`/users/${this.userId}`)).data.userImage
         this.nickname = (await authAxios().get(`/users/${this.userId}`)).data.nickname
+        connectWebSocket(this.userId)
+        subscribeNotification(this.userId)
       } else {
         this.logout()
       }

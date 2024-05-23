@@ -16,7 +16,6 @@ export async function login(data, success, fail) {
 export async function logout() {
   const store = useAuthStore()
   store.logout()
-  window.location.href = '/'
 }
 
 export async function getType(email) {
@@ -82,6 +81,13 @@ export async function unFollowUser(userId, success, fail) {
 export async function followList(userId, success, fail) {
   await noAuthAxios()
     .get(BASE_API_PATH + '/follow/' + userId + '?type=follower')
+    .then(success)
+    .catch(fail)
+}
+
+export async function followingList(userId, success, fail) {
+  await noAuthAxios()
+    .get(BASE_API_PATH + '/follow/' + userId + '?type=following')
     .then(success)
     .catch(fail)
 }

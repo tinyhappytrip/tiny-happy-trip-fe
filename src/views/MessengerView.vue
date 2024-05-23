@@ -7,73 +7,90 @@
         <!-- <button class="start-chat-button" @click="showModal = true">+</button> -->
         <font-awesome-icon :icon="['fas', 'plus']" class="start-chat-button" @click="showModal = true" />
       </div>
-      <div class="messages">
-        <div class="notification" v-for="(message, index) in messages" :key="index">
-          <img :src="message.avatar" alt="avatar" />
-          <div class="message-content">
-            <div class="message-header">
-              <span class="name">{{ message.name }}</span>
-              <span class="date">{{ message.date }}</span>
+      <div class="chatroom">
+        <div class="notification" v-for="(chatRoom, index) in chatRooms" :key="index">
+          <RouterLink class="notification" :to="`/messenger/${chatRoom.chatRoomId}`">
+            <img :src="chatRoom.userImage" alt="avatar" />
+            <div class="chatroom-content">
+              <div class="chatroom-header">
+                <span class="name">{{ chatRoom.nickname }}</span>
+                <span class="date">{{ formatDate(chatRoom.lastSentAt) }}</span>
+              </div>
+              <p>{{ chatRoom.lastMessage }}</p>
             </div>
-            <p>{{ message.text }}</p>
-          </div>
+          </RouterLink>
         </div>
       </div>
     </div>
     <div class="content">
-      <ChatMain v-if="currentTab === 'chat'" @close="showModal = false" :userName="userName" :followers="followers" :following="following"> </ChatMain>
+      <RouterView v-if="currentTab === 'chat'" @close="showModal = false" :userName="userName" :followers="followers" :following="following"></RouterView>
+      <div>안녕하세요</div>
+      <!-- <ChatMain v-if="currentTab === 'chat'" @close="showModal = false" :userName="userName" :followers="followers" :following="following"> </ChatMain> -->
       <NotificationsMain v-if="currentTab === 'notifications'" @close="showModal = false" :userName="userName" :followers="followers" :following="following" />
     </div>
   </div>
   <ChatModal v-if="showModal" @close="showModal = false" :userName="userName" :followers="followers" :following="following" />
 </template>
+
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import ChatMain from '@/components/messenger/ChatMain.vue'
 import NotificationsMain from '@/components/messenger/NotificationsMain.vue'
 import ChatModal from '@/components/messenger/ChatModal.vue'
+import { followList, followingList } from '@/api/user-api'
+import { useAuthStore } from '@/stores/auth'
+import { getChatRoomList } from '@/api/chat-api'
 
 const currentTab = ref('chat')
 const showModal = ref(false)
-const userName = ref('조성빈')
+const loading = ref(false)
 
-const followers = ref([
-  { name: '내팔로우1', title: 'NAVER 소프트웨어 엔지니어', avatar: './src/assets/main/poorin.png' },
-  { name: '내팔로우2', title: '컬리 백엔드 개발자', avatar: './src/assets/main/poorin.png' },
-  { name: '내팔로우1', title: 'NAVER 소프트웨어 엔지니어', avatar: './src/assets/main/poorin.png' },
-  { name: '내팔로우1', title: 'NAVER 소프트웨어 엔지니어', avatar: './src/assets/main/poorin.png' },
-  { name: '내팔로우1', title: 'NAVER 소프트웨어 엔지니어', avatar: './src/assets/main/poorin.png' },
-  { name: '내팔로우1', title: 'NAVER 소프트웨어 엔지니어', avatar: './src/assets/main/poorin.png' },
-  { name: '내팔로우1', title: 'NAVER 소프트웨어 엔지니어', avatar: './src/assets/main/poorin.png' }
-])
+const followers = ref([])
+const following = ref([])
+const userId = ref()
+const chatRooms = ref([])
+const messages = ref([])
 
-const following = ref([
-  { name: '내가팔로잉', title: 'Staff Back-end Engineer L6-2 IC', avatar: './src/assets/main/poorin.png' },
-  { name: '내가팔로잉', title: 'Staff Back-end Engineer L6-2 IC', avatar: './src/assets/main/poorin.png' },
-  { name: '내가팔로잉', title: 'Staff Back-end Engineer L6-2 IC', avatar: './src/assets/main/poorin.png' },
-  { name: '내가팔로잉', title: 'Staff Back-end Engineer L6-2 IC', avatar: './src/assets/main/poorin.png' },
-  { name: '내가팔로잉', title: 'Staff Back-end Engineer L6-2 IC', avatar: './src/assets/main/poorin.png' },
-  { name: '내가팔로잉', title: 'Staff Back-end Engineer L6-2 IC', avatar: './src/assets/main/poorin.png' },
-  { name: '내가팔로잉', title: 'Staff Back-end Engineer L6-2 IC', avatar: './src/assets/main/poorin.png' },
-  { name: '내가팔로잉', title: 'Staff Back-end Engineer L6-2 IC', avatar: './src/assets/main/poorin.png' },
-  { name: '내가팔로잉', title: 'Staff Back-end Engineer L6-2 IC', avatar: './src/assets/main/poorin.png' }
-])
+const fetchData = async () => {
+  const authStore = useAuthStore()
+  userId.value = authStore.userId
+  loading.value = true
+  await followList(
+    userId.value,
+    (result) => {
+      followers.value = result.data
+      console.log(result)
+    },
+    (error) => {}
+  )
+  await followingList(
+    userId.value,
+    (result) => {
+      following.value = result.data
+      console.log(result)
+    },
+    (error) => {}
+  )
+  await getChatRoomList(
+    (result) => {
+      chatRooms.value = result.data
+      console.log(result)
+    },
+    (error) => {}
+  )
+}
 
-const messages = ref([
-  { name: '이름', text: '안녕하세요 반갑습니다........', date: '4월 12일', avatar: './src/assets/main/poorin.png' },
-  { name: '이름', text: '안녕하세요 반갑습니다........', date: '4월 12일', avatar: './src/assets/main/poorin.png' },
-  { name: '이름', text: '안녕하세요 반갑습니다........', date: '4월 12일', avatar: './src/assets/main/poorin.png' },
-  { name: '이름', text: '안녕하세요 반갑습니다........', date: '4월 12일', avatar: './src/assets/main/poorin.png' },
-  { name: '이름', text: '안녕하세요 반갑습니다........', date: '4월 12일', avatar: './src/assets/main/poorin.png' },
-  { name: '이름', text: '안녕하세요 반갑습니다........', date: '4월 12일', avatar: './src/assets/main/poorin.png' },
-  { name: '이름', text: '안녕하세요 반갑습니다........', date: '4월 12일', avatar: './src/assets/main/poorin.png' },
-  { name: '이름', text: '안녕하세요 반갑습니다........', date: '4월 12일', avatar: './src/assets/main/poorin.png' },
-  { name: '이름', text: '안녕하세요 반갑습니다........', date: '4월 12일', avatar: './src/assets/main/poorin.png' },
-  { name: '이름', text: '안녕하세요 반갑습니다........', date: '4월 12일', avatar: './src/assets/main/poorin.png' },
-  { name: '이름', text: '안녕하세요 반갑습니다........', date: '4월 12일', avatar: './src/assets/main/poorin.png' }
-  // 다른 메시지들 추가
-])
+const formatDate = (rawDate) => {
+  const date = new Date(rawDate)
+  const year = date.getFullYear()
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const day = date.getDate().toString().padStart(2, '0')
+  return `${year}년 ${month}월 ${day}일`
+}
+
+onMounted(fetchData)
 </script>
+
 <style scoped>
 .messenger {
   display: flex;
@@ -114,7 +131,7 @@ const messages = ref([
   font-weight: bold;
 }
 
-.messages {
+.chat-room {
   border-right: 1px solid #ddd;
   border-left: 1px solid #ddd;
   border-bottom: 1px solid #ddd;
@@ -127,6 +144,7 @@ const messages = ref([
   display: flex;
   align-items: center;
   padding: 10px 0;
+  cursor: default;
 }
 
 .notification img {
@@ -134,20 +152,24 @@ const messages = ref([
   height: 50px;
   border-radius: 50%;
   margin-right: 10px;
+  cursor: pointer;
 }
 
 .message-content {
+  cursor: pointer;
   flex: 1;
 }
 
 .message-header {
   display: flex;
   align-items: center;
+  cursor: pointer;
   margin-bottom: 5px;
 }
 
 .name {
   font-weight: bold;
+  cursor: pointer;
   margin-right: 10px;
 }
 
@@ -158,6 +180,7 @@ const messages = ref([
 
 .message-content p {
   margin: 0;
+  cursor: pointer;
   font-size: 14px;
 }
 

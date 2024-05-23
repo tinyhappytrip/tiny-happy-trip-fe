@@ -53,7 +53,6 @@ export const routes = [
       }
     ]
   },
-
   {
     path: '/story',
     name: 'story',
@@ -92,6 +91,19 @@ export const routes = [
       }
     ]
   },
-  { path: '/messenger', name: 'messenger', component: () => import('@/views/MessengerView.vue'), meta: { layout: DefaultLayout } },
-  { path: '/map', name: 'map', component: () => import('@/views/MapView.vue'), meta: { layout: DefaultLayout } }
+  {
+    path: '/messenger',
+    name: 'messenger',
+    beforeEnter: [perRouteGuardForCheckLogin],
+    component: () => import('@/views/MessengerView.vue'),
+    meta: { layout: DefaultLayout },
+    children: [
+      {
+        path: ':chatRoomId',
+        name: 'messenger-detail',
+        component: () => import('@/components/messenger/ChatMain.vue')
+      }
+    ]
+  },
+  { path: '/map', name: 'map', component: () => import('@/views/MapView.vue') }
 ]

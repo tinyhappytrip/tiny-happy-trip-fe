@@ -21,48 +21,46 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'ChatMain',
-  data() {
-    return {
-      newMessage: '',
-      chatMessages: [
-        { name: '이름', text: '안녕하세요 반갑습니다.', date: '4월 12일', avatar: './src/assets/main/poorin.png', sentByUser: false },
-        { name: '이름', text: '네 반갑습니다.', date: '4월 12일', avatar: './src/assets/main/poorin.png', sentByUser: false }
-        // 다른 메시지들 추가 가능
-      ]
-    }
-  },
-  methods: {
-    sendMessage() {
-      if (this.newMessage.trim() !== '') {
-        this.chatMessages.unshift({
-          name: '조성빈', // 유저 이름, 필요에 따라 동적으로 변경 가능
-          text: this.newMessage,
-          date: new Date().toLocaleDateString(),
-          avatar: './src/assets/main/poorin.png', // 유저 아바타, 필요에 따라 동적으로 변경 가능
-          sentByUser: true
-        })
-        this.newMessage = ''
-        this.$nextTick(() => {
-          this.scrollToEnd()
-        })
-      }
-    },
-    scrollToEnd() {
-      const container = this.$el.querySelector('.messages')
-      container.scrollTop = container.scrollHeight
-    }
-  },
-  mounted() {
-    this.scrollToEnd()
-  },
-  updated() {
-    this.scrollToEnd()
+<script setup>
+import { ref, onMounted, nextTick } from 'vue'
+import { useRoute } from 'vue-router'
+
+const route = useRoute()
+const chatRoomId = ref(route.params.chatRoomId)
+
+const newMessage = ref('')
+const chatMessages = ref([
+  { name: '이름', text: '안녕하세요 반갑습니다.', date: '4월 12일', avatar: './src/assets/main/poorin.png', sentByUser: false },
+  { name: '이름', text: '네 반갑습니다.', date: '4월 12일', avatar: './src/assets/main/poorin.png', sentByUser: false }
+  // 다른 메시지들 추가 가능
+])
+
+const sendMessage = () => {
+  if (newMessage.value.trim() !== '') {
+    chatMessages.value.unshift({
+      name: '조성빈', // 유저 이름, 필요에 따라 동적으로 변경 가능
+      text: newMessage.value,
+      date: new Date().toLocaleDateString(),
+      avatar: './src/assets/main/poorin.png', // 유저 아바타, 필요에 따라 동적으로 변경 가능
+      sentByUser: true
+    })
+    newMessage.value = ''
+    nextTick(() => {
+      scrollToEnd()
+    })
   }
 }
+
+const scrollToEnd = () => {
+  const container = document.querySelector('.messages')
+  container.scrollTop = container.scrollHeight
+}
+
+onMounted(() => {
+  scrollToEnd()
+})
 </script>
+
 <style scoped>
 .chat-main {
   display: flex;

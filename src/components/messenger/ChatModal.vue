@@ -19,20 +19,20 @@
       <div class="modal-content">
         <div v-if="currentTab === 'followers'">
           <!-- 팔로워 리스트 -->
-          <div class="user" v-for="(user, index) in followers" :key="index">
-            <img :src="user.avatar" alt="avatar" />
+          <div class="user" v-for="(user, index) in props.followers" :key="index">
+            <img :src="user.userImage" alt="avatar" />
             <div class="profile">
-              <p class="name">{{ user.name }}</p>
+              <p class="name">{{ user.nickname }}</p>
             </div>
             <button class="chat-button">채팅</button>
           </div>
         </div>
         <div v-else>
           <!-- 팔로잉 리스트 -->
-          <div class="user" v-for="(user, index) in following" :key="index">
-            <img :src="user.avatar" alt="avatar" />
+          <div class="user" v-for="(user, index) in props.following" :key="index">
+            <img :src="imagePath(user.userImage)" alt="avatar" />
             <div class="profile">
-              <p class="name">{{ user.name }}</p>
+              <p class="name">{{ user.nickname }}</p>
             </div>
             <button class="chat-button">채팅</button>
           </div>
@@ -43,6 +43,7 @@
 </template>
 
 <script setup>
+import { imagePath } from '@/util/http-commons'
 import { ref } from 'vue'
 
 const props = defineProps({
@@ -50,7 +51,7 @@ const props = defineProps({
   followers: Array,
   following: Array
 })
-
+console.log(props.following.value)
 const currentTab = ref('followers')
 
 const emit = defineEmits(['close'])
