@@ -110,10 +110,8 @@ watch(
     images.value = []
     imageToItemMap.value = []
     props.collectionData.collectionItems.forEach((item, itemIndex) => {
-      item.imagePath.forEach((imagePath) => {
-        images.value.push(imagePath)
-        imageToItemMap.value.push(itemIndex)
-      })
+      images.value.push(item.imagePath)
+      imageToItemMap.value.push(itemIndex)
     })
   },
   { immediate: true }
@@ -136,6 +134,7 @@ const nextSlide = () => {
 }
 
 const playPause = () => {
+  console.log('pause')
   isPlaying.value = !isPlaying.value
   if (isPlaying.value) {
     autoPlayInterval = setInterval(() => {

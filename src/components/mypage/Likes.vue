@@ -1,36 +1,88 @@
 <template>
-  <div class="container">
-    <div class="row">
-      <div v-for="(photo, index) in photos" :key="index" class="col">
-        <div class="card">
-          <img :src="photo.url" :alt="photo.title" class="card-img" />
-          <div class="card-title">{{ photo.title }}</div>
-        </div>
-      </div>
+  <div class="map-panel">
+    <div class="right-container">
+      <div id="map" class="map"></div>
     </div>
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      photos: [
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 1' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 2' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 3' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 4' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 5' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 6' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 1' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 2' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 3' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 4' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 5' },
-        { url: 'http://localhost:3000/src/assets/main/poorin.png', title: 'Photo 6' }
-      ]
-    }
+<script setup>
+import { userStory } from '@/api/story-api'
+const userStories = ref([])
+
+let map
+let ps
+let markers = [] // 마커를 담을 배열
+var midx = 0,
+  midy = 0
+
+const { userId } = defineProps({
+  userId: {
+    type: Number,
+    required: true
   }
+})
+
+userStory(
+  userId,
+  (result) => {
+    userStories.value = result.data
+    for (let i = 0; i < userStories.value.length; i++) {
+      let story = userStories.value[i]
+      midx += parseFloat(parseFloat(story.latitude).toFixed(6))
+      midy += parseFloat(parseFloat(story.longitude).toFixed(6))
+    }
+    midx = midx / userStories.value.length
+    midy = midy / userStories.value.length
+
+    initializeKakaoMap(midx, midy)
+    createMarkers(userStories.value)
+  },
+  (error) => {
+    console.log(error)
+  }
+)
+
+const initializeKakaoMap = (midx, midy) => {
+  try {
+    const container = document.getElementById('map')
+    const options = {
+      center: new kakao.maps.LatLng(midy, midx),
+      level: 14
+    }
+    map = new kakao.maps.Map(container, options)
+
+    const zoomControl = new kakao.maps.ZoomControl()
+    map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT)
+
+    ps = new kakao.maps.services.Places()
+  } catch (error) {
+    console.error('Error initializing Kakao Map:', error)
+  }
+}
+
+const createMarkers = (items) => {
+  // 기존에 추가된 마커들 제거
+  markers.forEach((marker) => {
+    marker.setMap(null)
+  })
+  markers = [] // 배열 비우기
+  for (let i = 0; i < items.length; i++) {
+    let item = items[i]
+    const position = new kakao.maps.LatLng(item.longitude, item.latitude) // 장소의 위도, 경도
+    const title = item.place_name // 장소 이름
+    addMarker(position, title)
+  }
+}
+
+const addMarker = (position, title) => {
+  const marker = new kakao.maps.Marker({
+    position: position,
+    title: title
+  })
+
+  marker.setMap(map) // 생성한 마커를 지도에 추가
+  markers.push(marker) // 마커 배열에 추가
 }
 </script>
 
@@ -41,34 +93,23 @@ export default {
   justify-content: space-between;
 }
 
-.row {
+.right-container {
+  width: 100%;
+}
+
+.map {
+  width: 100%;
+  height: 400px;
+  border-radius: 10px;
+}
+
+.map-panel {
+  margin-top: 20px;
+  height: 400px;
+  background-color: #eaeaea;
+  border-radius: 10px;
   display: flex;
-  flex-wrap: wrap;
-  width: 100%;
-}
-
-.col {
-  flex: 1 0 30%;
-  box-sizing: border-box;
-  padding: 10px;
-}
-
-.card {
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  text-align: center;
-  background: #fff;
-  padding: 5px;
-}
-
-.card-img {
-  width: 100%;
-  height: auto;
-}
-
-.card-title {
-  padding: 10px;
-  font-size: 1.2rem;
+  justify-content: center;
+  align-items: center;
 }
 </style>

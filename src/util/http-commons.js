@@ -30,4 +30,8 @@ const imagePath = (filePath) => {
   return `${VITE_VUE_API_URL}/image?path=${filePath}`
 }
 
-export { noAuthAxios, authAxios, imagePath }
+const proxyImagePath = (filePath) => {
+  return `${VITE_VUE_API_URL}/proxy?url=${encodeURI(filePath)}`
+}
+
+export { noAuthAxios, authAxios, imagePath, proxyImagePath }

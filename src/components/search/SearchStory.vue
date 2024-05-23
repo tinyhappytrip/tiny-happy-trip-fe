@@ -18,7 +18,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref, getCurrentInstance, defineEmits } from 'vue'
+import { onMounted, ref, defineEmits } from 'vue'
 import { listStoryBySearchKeyword } from '@/api/story-api'
 import { imagePath } from '@/util/http-commons'
 const props = defineProps({
@@ -52,6 +52,7 @@ const fetchStories = (keyword) => {
           comments: story.storyComments.length + replyCount
         })
       }
+      console.log('usercount', items.value.length)
       emit('setSearchCount', items.value.length)
     },
     (error) => console.log(error)

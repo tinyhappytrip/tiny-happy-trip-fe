@@ -16,9 +16,13 @@
 </template>
 
 <script setup>
-import { onMounted, ref, getCurrentInstance, defineEmits } from 'vue'
+import { onMounted, ref, defineEmits } from 'vue'
 import { userListBySearchKeyword } from '@/api/user-api'
 import { imagePath } from '@/util/http-commons'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+const currentUserId = computed(() => authStore.userId)
 const props = defineProps({
   searchKeyword: {
     type: String
@@ -40,6 +44,8 @@ const fetchUsers = (keyword) => {
       for (let i = 0; i < result.data.length; i++) {
         const user = result.data[i]
 
+        // 현재 접속한 유저는 나타내지 않는다
+        if (user.userId == currentUserId.value) continue
         users.value.push({
           userId: user.userId,
           nickname: user.nickname,

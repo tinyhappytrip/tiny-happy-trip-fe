@@ -18,10 +18,8 @@ function perRouteGuardForCheckLogin(to, from) {
       }
     })
   }
-
-  console.log(`from: ${from.path} => to: ${to.path}`)
+  authStore.checkAuth()
   if (authStore.isLoggedIn) {
-    console.log('로그인 되어 있음 ')
     return true
   } else {
     showToast()
@@ -34,7 +32,8 @@ export const routes = [
   { path: '/', name: 'main', component: () => import('@/views/MainView.vue') },
   { path: '/login', name: 'login', component: () => import('@/views/LoginView.vue') },
   { path: '/signup', name: 'signup', component: () => import('@/views/SignupView.vue') },
-  { path: '/find', name: 'find', component: () => import('@/views/FindView.vue'), meta: { layout: DefaultLayout }, beforeEnter: [perRouteGuardForCheckLogin] },
+  { path: '/find', name: 'find', component: () => import('@/views/FindView.vue'), meta: { layout: DefaultLayout } },
+  { path: '/attraction', name: 'attraction', component: () => import('@/views/AttractionView.vue'), meta: { layout: DefaultLayout } },
   {
     path: '/profile/:userId',
     name: 'profile',
@@ -46,7 +45,6 @@ export const routes = [
     name: 'mypage',
     component: () => import('@/views/MyPageView.vue'),
     meta: { layout: DefaultLayout },
-    beforeEnter: [perRouteGuardForCheckLogin],
     children: [
       {
         path: '',
