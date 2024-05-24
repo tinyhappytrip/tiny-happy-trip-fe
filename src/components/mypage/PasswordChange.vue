@@ -9,7 +9,7 @@
 
   <div v-else class="container">
     <label for="password" class="label">비밀번호</label>
-    <div class="description">영문, 숫자를 포함하여 비밀번호를 입력해주세요. (8자 이상)</div>
+    <div class="description">비밀번호는 영문, 숫자 및 특수문자를 포함하여 8자 이상이어야 합니다.</div>
     <div class="input-group-change-password">
       <input v-model="newPassword" id="password" name="newPassword" type="password" required placeholder="비밀번호" @input="validatePassword" />
       <div class="error-message">{{ passwordError }}</div>
@@ -100,7 +100,7 @@ const changePassword = () => {
 const validatePassword = () => {
   const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/
   if (!passwordPattern.test(newPassword.value)) {
-    passwordError.value = '비밀번호는 영문과 숫자를 포함하여 8자 이상이어야 합니다.'
+    passwordError.value = '비밀번호는 영문, 숫자 및 특수문자를 포함하여 8자 이상이어야 합니다.'
     return false
   }
   passwordError.value = ''
@@ -208,7 +208,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 .submit-btn {
   width: 50%;
-  background-color: #f44336;
+  background-color: #af8f6f;
   color: white;
   border: none;
   border-radius: 4px;
@@ -223,7 +223,7 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
 .submit-btn.active {
-  background-color: #f44336;
+  background-color: #af8f6f;
 }
 
 .submit-btn.inactive {
@@ -231,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
 }
 
 .submit-btn:hover:not(:disabled) {
-  background-color: #d32f2f;
+  background-color: #74512d;
 }
 </style>
 

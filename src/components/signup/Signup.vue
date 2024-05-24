@@ -60,7 +60,7 @@
           <button v-else class="send-btn" type="button" @click="verifyEmail" :disabled="!isEmailComplete">인증하기</button>
         </div>
         <label for="password" class="label">비밀번호</label>
-        <div class="description">영문, 숫자를 포함하여 비밀번호를 입력해주세요. (8자 이상)</div>
+        <div class="description">비밀번호는 영문, 숫자 및 특수문자를 포함하여 8자 이상이어야 합니다.</div>
         <div class="input-group">
           <input v-model="password" id="password" name="password" type="password" required placeholder="비밀번호" @input="validatePassword" />
           <div class="error-message">{{ passwordError }}</div>
@@ -418,13 +418,13 @@ const formattedTime = computed(() => {
 .select-wrapper select:focus,
 .custom-domain-input:focus {
   outline: none;
-  border-color: #333333;
+  border-color: #af8f6f;
 }
 
 .send-btn {
   width: 100%;
   padding: 14px 16px;
-  background-color: #333333;
+  background-color: #af8f6f;
   color: #ffffff;
   border: none;
   border-radius: 4px;
@@ -462,7 +462,7 @@ const formattedTime = computed(() => {
 .signup-btn {
   width: 100%;
   padding: 14px 16px;
-  background-color: #333333;
+  background-color: #af8f6f;
   color: #ffffff;
   border: none;
   border-radius: 4px;

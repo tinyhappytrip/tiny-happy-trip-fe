@@ -23,11 +23,12 @@ const props = defineProps({
 
 <style scoped>
 .header {
+  background-color: #f8f4e1;
+
   position: fixed;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: white;
   color: black;
   box-sizing: border-box;
   width: 1920px;

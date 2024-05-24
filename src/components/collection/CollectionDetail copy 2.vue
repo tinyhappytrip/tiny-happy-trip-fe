@@ -160,7 +160,7 @@ const searchVideos = async () => {
   try {
     if (!searchQuery.value.trim()) return
 
-    const response = await axios.get(`http://localhost:8080/youtube?keyword=${props.collectionData.musicKeyword}` + '에 어울리는 노래')
+    const response = await axios.get(`http://192.168.120.75:8080/youtube?keyword=${props.collectionData.musicKeyword}` + '에 어울리는 노래')
     const videoInfo = response.data
     if (videoInfo.includes('URL:')) {
       const urlIndex = videoInfo.indexOf('URL:') + 5

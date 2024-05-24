@@ -40,12 +40,52 @@ onMounted(() => {
 </script>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Sans+KR&family=Jua&display=swap');
+/* @import url('https://fastly.jsdelivr.net/gh/projectnoonnu/2405-2@1.0/Ownglyph_jooreeletter-Rg.woff2');
 
 #app {
-  font-family: 'IBM Plex Sans KR', sans-serif;
+  font-family: 'Ownglyph_jooreeletter-Rg';
   font-weight: 500;
   font-style: normal;
   height: 100%;
+} */
+@font-face {
+  font-family: 'KCC-Hanbit';
+  src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/2403-2@1.0/KCC-Hanbit.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+}
+#app {
+  font-weight: 500;
+  font-family: 'KCC-Hanbit';
+  font-style: normal;
+  /* font-size: 25px; */
+}
+
+div::-webkit-scrollbar {
+  width: 0.6em;
+  height: 0.6em;
+}
+
+div::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+}
+
+div::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+ul::-webkit-scrollbar {
+  width: 0.6em;
+  height: 0.6em;
+}
+
+ul::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+}
+
+ul::-webkit-scrollbar-track {
+  background: transparent;
 }
 </style>

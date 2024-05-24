@@ -109,7 +109,7 @@ watch(
 
 .submit-btn {
   width: 50%;
-  background-color: #f44336;
+  background-color: #af8f6f;
   color: white;
   border: none;
   border-radius: 4px;
@@ -124,7 +124,7 @@ watch(
 }
 
 .submit-btn.active {
-  background-color: #f44336;
+  background-color: #af8f6f;
 }
 
 .submit-btn.inactive {
@@ -132,7 +132,7 @@ watch(
 }
 
 .submit-btn:hover:not(:disabled) {
-  background-color: #d32f2f;
+  background-color: #74512d;
 }
 </style>
 

@@ -1,5 +1,10 @@
 <template>
   <div id="app" class="section-container">
+    <div style="width: 100vw; height: 100%">
+      <video style="width: 100%; height: 100%; object-fit: none" autoPlay muted loop>
+        <source src="@/assets/main/collection.mp4" type="video/mp4" />
+      </video>
+    </div>
     <div class="overlay">
       <div class="block">
         <h2>행복했던 순간들을 모아서</h2>

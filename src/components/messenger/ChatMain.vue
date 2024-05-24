@@ -15,7 +15,7 @@
     </div>
     <div class="input-area">
       <input v-model="newMessage" type="text" placeholder="메시지를 입력하세요" @keyup.enter="sendMessage" />
-      <button @click="sendMessage">전송</button>
+      <button class="btn" @click="sendMessage">전송</button>
     </div>
     <slot></slot>
   </div>
@@ -154,6 +154,7 @@ watch(
   height: 100%;
   width: 100%;
   padding: 10px;
+  background: floralwhite;
   border-left: 1px solid #ddd;
 }
 
@@ -179,7 +180,6 @@ watch(
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  margin-right: 10px;
 }
 
 .message.sent img {
@@ -188,14 +188,14 @@ watch(
 }
 
 .message-content {
-  background-color: #f1f1f1;
+  background-color: white;
   padding: 10px;
   border-radius: 5px;
   max-width: 80%;
 }
 
 .message.sent .message-content {
-  background-color: #d1e7dd;
+  background-color: white;
 }
 
 .message-header {
@@ -231,7 +231,7 @@ input {
 
 button {
   padding: 10px 20px;
-  background-color: #007bff;
+  background-color: #af8f6f;
   color: white;
   border: none;
   border-radius: 4px;
@@ -239,6 +239,6 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #74512d;
 }
 </style>

@@ -119,8 +119,9 @@ const formatHashtags = (text) => {
   padding: 20px;
   border-radius: 5px;
   margin-bottom: 100px;
-  width: 500px;
+  width: 600px;
   border: 2px solid #ddd;
+  background-color: white;
 }
 
 .subcard {

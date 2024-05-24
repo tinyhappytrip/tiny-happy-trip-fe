@@ -19,7 +19,7 @@
         <div v-if="currentTab === 'followers'">
           <!-- 팔로워 리스트 -->
           <div class="user" v-for="(user, index) in props.followers" :key="index">
-            <img :src="user.userImage" alt="avatar" />
+            <img :src="imagePath(user.userImage)" alt="avatar" />
             <div class="profile">
               <p class="name">{{ user.nickname }}</p>
             </div>

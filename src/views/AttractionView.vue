@@ -47,7 +47,6 @@
       </div>
       <div v-if="loading" class="spinner-container">
         <div class="spinner"></div>
-        <div>chatGPT에게 물어보는중</div>
       </div>
     </div>
 
@@ -77,218 +76,7 @@
     </div>
   </div>
 </template>
-<!-- 
-<script setup>
-import { ref, onMounted, computed } from 'vue'
-import { Swiper, SwiperSlide } from 'swiper/vue'
-import { proxyImagePath } from '@/util/http-commons'
-import 'swiper/swiper-bundle.css'
-const { VITE_OPENAI_API_KEY } = import.meta.env
-import axios from 'axios'
-import OpenAI from 'openai'
 
-const KAKAO_API_KEY = '78544c4fa524eb860eea35deffb9d03a'
-const destination = ref('')
-const departureDate = ref('')
-const companion = ref('')
-const responseText = ref('')
-const attractions = ref([])
-const items = ref([])
-const fetchSuccess = ref(false)
-const loading = ref(false)
-const travelType = ref('')
-var midx = 0,
-  midy = 0
-let map
-let ps
-let markers = [] // 마커를 담을 배열
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms))
-
-const getGPTAttractionResponse = async () => {
-  loading.value = true
-  try {
-    const openai = new OpenAI({
-      apiKey: VITE_OPENAI_API_KEY,
-      dangerouslyAllowBrowser: true
-    })
-
-    const question = `
-            ${destination.value}에
-            ${departureDate.value} 날짜에
-            ${companion.value}와 함께 
-            ${travelType.value} 하기 위해 여행가는데 추천여행지 장소만 꼭 ,로만 구분해서 다른 말이나  단어만 10개 이상 말해줘
-            `
-
-    await delay(1000) // Wait for 1 second before making the request
-    const response = await openai.chat.completions.create({
-      messages: [
-        {
-          role: 'user',
-          content: question
-        }
-      ],
-      model: 'gpt-3.5-turbo'
-    })
-
-    console.log('chatGPT 결과: ', response.choices[0].message.content)
-    responseText.value = response.choices[0].message.content
-    attractions.value = responseText.value.split(',').map((str) => str.trim())
-
-    for (let i = 0; i < attractions.value.length; i++) {
-      await fetchLocation(attractions.value[i])
-    }
-
-    for (let i = 0; i < items.value.length; i++) {
-      let item = items.value[i]
-      midx += parseFloat(parseFloat(item.x).toFixed(6))
-      midy += parseFloat(parseFloat(item.y).toFixed(6))
-    }
-    midx = midx / items.value.length
-    midy = midy / items.value.length
-
-    fetchSuccess.value = true // 상태가 바뀌면서 화면을 그린다
-    initializeKakaoMap(midx, midy)
-    createMarkers(items.value)
-  } catch (error) {
-    console.log('chatgpt error')
-  } finally {
-    loading.value = false
-  }
-}
-
-const fetchLocation = async (location) => {
-  try {
-    const response = await axios.get('https://dapi.kakao.com/v2/local/search/keyword.json', {
-      headers: {
-        Authorization: `KakaoAK ${KAKAO_API_KEY}`
-      },
-      params: {
-        query: location
-      }
-    })
-    const loc = response.data.documents[0]
-    if (loc != undefined) {
-      // 모든 이미지 검색 결과를 기다린 후 이미지 URL 배열 설정
-      const imageUrl = await imagePromise(location)
-      if (imageUrl != 0) {
-        items.value.push({
-          title: location,
-          x: loc.x,
-          y: loc.y,
-          image: imageUrl
-        })
-      }
-    }
-  } catch (error) {
-    console.error('Error fetching locations:', error)
-    if (error.response && error.response.status === 401) {
-      console.error('Unauthorized: Check your API key and ensure it is correct.')
-    }
-  }
-}
-
-// 각 장소의 이름으로 카카오 이미지 검색 API 호출하여 대표 이미지 URL 가져오기
-const imagePromise = async (name) => {
-  const imageResponse = await axios.get('https://dapi.kakao.com/v2/search/image', {
-    headers: {
-      Authorization: `KakaoAK 78544c4fa524eb860eea35deffb9d03a`
-    },
-    params: {
-      query: name + '풍경 사진'
-    }
-  })
-
-  // 대표 이미지 URL 배열 반환
-  const imageUrls = imageResponse.data.documents
-  for (let i = 0; i < imageUrls.length; i++) {
-    let isImg = true
-    let img = imageUrls[i].image_url
-    let imgArr = img.split('//')[1].split('.')
-    for (let j = 0; j < imgArr.length; j++) {
-      // 스킵할 이미지 단어
-      if (
-        imgArr.length == 1 ||
-        imgArr[j] == 'scrap' ||
-        imgArr[j] == 'edit' ||
-        imgArr[j] == 'pstatic' ||
-        imgArr[j] == 'ohmynews' ||
-        imgArr[j] == 'chosun' ||
-        imgArr[j] == 'daumcdn' ||
-        imgArr[j] == 'daum' ||
-        imgArr[j] == 'visitkorea' ||
-        imgArr[j] == 'egloos'
-      ) {
-        isImg = false
-        break
-      }
-    }
-    if (isImg) {
-      return img
-    }
-    continue
-  }
-  return 0
-}
-
-const showForm = computed(() => {
-  console.log(loading, fetchSuccess)
-  return !loading.value && !fetchSuccess.value
-})
-
-const initializeKakaoMap = (midx, midy) => {
-  try {
-    console.log('맵 초기화!')
-    console.log(midy, midx)
-    const container = document.getElementById('map')
-    const options = {
-      center: new kakao.maps.LatLng(midy, midx),
-      level: 10
-    }
-    map = new kakao.maps.Map(container, options)
-
-    const zoomControl = new kakao.maps.ZoomControl()
-    map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT)
-
-    ps = new kakao.maps.services.Places()
-  } catch (error) {
-    console.error('Error initializing Kakao Map:', error)
-  }
-}
-
-const createMarkers = (items) => {
-  // 기존에 추가된 마커들 제거
-  markers.forEach((marker) => {
-    marker.setMap(null)
-  })
-  markers = [] // 배열 비우기
-  for (let i = 0; i < items.length; i++) {
-    let item = items[i]
-    console.log(item.y, item.x)
-    const position = new kakao.maps.LatLng(item.y, item.x) // 장소의 위도, 경도
-    const title = item.place_name // 장소 이름
-    addMarker(position, title)
-  }
-}
-
-const addMarker = (position, title) => {
-  const marker = new kakao.maps.Marker({
-    position: position,
-    title: title
-  })
-
-  console.log('addmarker!')
-  marker.setMap(map) // 생성한 마커를 지도에 추가
-  markers.push(marker) // 마커 배열에 추가
-}
-
-watch(fetchSuccess, async (newValue) => {
-  if (newValue) {
-    await nextTick() // DOM이 업데이트된 후 실행
-    initializeKakaoMap(midx, midy)
-    createMarkers(items.value)
-  }
-})
-</script> -->
 <script setup>
 import { ref, onMounted, computed, nextTick, watch } from 'vue'
 import { Swiper, SwiperSlide } from 'swiper/vue'
@@ -468,7 +256,7 @@ const initializeKakaoMap = async (midx, midy) => {
     const container = document.getElementById('map')
     const options = {
       center: new kakao.maps.LatLng(midy, midx),
-      level: 10
+      level: 13
     }
     map = new kakao.maps.Map(container, options)
 
@@ -587,7 +375,7 @@ watch(fetchSuccess, async (newValue) => {
   padding: 20px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
+  background-color: #af8f6f;
   color: white;
   font-size: 16px;
   cursor: pointer;
@@ -598,7 +386,7 @@ button {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
+  background-color: #af8f6f;
   color: white;
   font-size: 16px;
   cursor: pointer;
@@ -606,7 +394,7 @@ button {
 }
 
 button:hover {
-  background-color: #0056b3;
+  background-color: #74512d;
 }
 .right-container {
   width: 100%;
@@ -652,7 +440,7 @@ button:hover {
   width: 80px;
   height: 80px;
   border: 8px solid rgba(0, 0, 0, 0.1);
-  border-left-color: #3498db;
+  border-left-color: #af8f6f;
   border-radius: 50%;
   animation: spin 1.2s linear infinite;
 }
@@ -752,7 +540,7 @@ button:hover {
   padding: 10px 20px;
   border: none;
   border-radius: 5px;
-  background-color: #007bff;
+  background-color: #af8f6f;
   color: white;
   font-size: 16px;
   cursor: pointer;
@@ -760,6 +548,6 @@ button:hover {
 }
 
 .card-button:hover {
-  background-color: #0056b3;
+  background-color: #74512d;
 }
 </style>

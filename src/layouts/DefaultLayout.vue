@@ -44,9 +44,26 @@ html::-webkit-scrollbar-track {
   overflow: hidden;
 }
 .v-main {
+  background-color: #f8f4e1;
   width: 100%;
 }
 .v-footer {
   width: 100%;
+}
+</style>
+
+<style>
+html::-webkit-scrollbar {
+  width: 0.6em;
+  height: 0.6em;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 20px;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
 }
 </style>

@@ -59,8 +59,8 @@ const validateForm = () => {
   isFormValid.value = false
 
   // 닉네임 길이 유효성 검사
-  if (nickname.value.length < 3 || nickname.value.length > 10) {
-    nicknameError.value = '닉네임은 3자에서 10자 사이여야 합니다.'
+  if (nickname.value.length < 3 || nickname.value.length > 8) {
+    nicknameError.value = '닉네임은 3자에서 8자 사이여야 합니다.'
     return
   }
 
@@ -173,7 +173,7 @@ watch(
 }
 
 .edit-btn {
-  background-color: #f44336;
+  background-color: #af8f6f;
   color: white;
   border: none;
   border-radius: 4px;
@@ -189,7 +189,7 @@ watch(
 }
 
 .edit-btn.active {
-  background-color: #f44336;
+  background-color: #af8f6f;
 }
 
 .edit-btn.inactive {
@@ -197,6 +197,6 @@ watch(
 }
 
 .edit-btn:hover:not(:disabled) {
-  background-color: #d32f2f;
+  background-color: #74512d;
 }
 </style>

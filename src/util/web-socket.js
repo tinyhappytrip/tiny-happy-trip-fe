@@ -8,7 +8,7 @@ let subscriptions = {}
 
 export function connectWebSocket() {
   if (connected) return
-  const socket = new WebSocket('ws://192.168.0.243:8080/ws')
+  const socket = new WebSocket('ws://192.168.120.75:8080/ws')
   stompClient = Stomp.over(socket)
   stompClient.connect({}, () => {
     console.log('WebSocket connected')
@@ -29,6 +29,11 @@ export function subscribeChat(chatRoomId, onMessageReceived) {
 }
 
 export function subscribeNotification(userId) {
+  if (subscriptions[`notifications_${userId}`]) {
+    console.log(`Already subscribed to notifications for user ${userId}`)
+    return
+  }
+
   if (stompClient && connected) {
     const subscription = stompClient.subscribe(`/sub/notifications/${userId}`, (message) => {
       console.log('Received message:', message.body)
@@ -38,7 +43,7 @@ export function subscribeNotification(userId) {
         title: `${message.body}`,
         showConfirmButton: false,
         closeOnClickOutside: true,
-        timer: 1000,
+        timer: 1500,
         timerProgressBar: true,
         background: 'black', // Custom background color
         color: 'white', // Custom text color

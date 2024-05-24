@@ -7,7 +7,7 @@
     </div>
     <div class="overlay">
       <div class="block">
-        <h2><span style="color: red">소소하고</span> <span style="color: coral">확실한</span> <span style="color: beige">여행</span></h2>
+        <h2><span style="color: beige;">소소하고</span> <span style="color: beige">확실한</span> <span style="color: beige">여행</span></h2>
         <h1 style="font-size: 3rem; margin-bottom: 20px">당신의 이야기를 써보세요</h1>
       </div>
       <div class="button" v-if="isLoggedIn" @click="showModal('story')">작성하기</div>

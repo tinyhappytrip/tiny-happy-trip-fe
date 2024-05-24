@@ -172,7 +172,7 @@ onMounted(() => {
 .login-button {
   width: 100%;
   padding: 14px 16px;
-  background-color: #333333;
+  background-color: #af8f6f;
   color: #ffffff;
   border: none;
   border-radius: 4px;
@@ -181,6 +181,10 @@ onMounted(() => {
   cursor: pointer;
   margin-bottom: 1rem;
   transition: background-color 0.3s;
+}
+
+.login-button:hover {
+  background-color: #74512d;
 }
 
 .login-button.disabled {

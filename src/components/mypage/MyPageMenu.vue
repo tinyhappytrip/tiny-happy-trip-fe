@@ -291,7 +291,7 @@ body {
 }
 
 button {
-  background-color: #f44336;
+  background-color: #AF8F6F;
   color: white;
   border: none;
   border-radius: 4px;
@@ -300,6 +300,6 @@ button {
 }
 
 button:hover {
-  background-color: darken(#f44336, 10%);
+  background-color: darken(#74512D, 10%);
 }
 </style>

@@ -20,7 +20,7 @@
         <span class="stat-label">팔로잉</span>
       </div>
     </div>
-    <div v-if="isUser" class="profile-actions">
+    <div v-if="!isCurrentUser" class="profile-actions">
       <button @click="clickFollowBtn" class="follow-button">{{ isFollowing ? '팔로우 취소' : '팔로우' }}</button>
       <button class="message-button">메시지</button>
     </div>
@@ -95,6 +95,11 @@ const userInfo = () => {
   )
 }
 
+const isCurrentUser = computed(() => {
+  console.log(loginUserId.value)
+  console.log(route.params.userId)
+  return loginUserId.value === route.params.userId
+})
 const checkIsFollowing = () => {
   followList(
     route.params.userId,
@@ -219,7 +224,7 @@ onMounted(() => {
 }
 
 .follow-button {
-  background-color: #f44336;
+  background-color: #af8f6f;
   color: white;
 }
 

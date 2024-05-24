@@ -160,7 +160,7 @@ const youtubePlayer = ref(null)
 
 const searchVideos = async () => {
   try {
-    const response = await axios.get(`http://192.168.0.243:8080/youtube?keyword=${props.collectionData.musicKeyword}` + '에 어울리는 노래')
+    const response = await axios.get(`http://192.168.120.75:8080/youtube?keyword=${props.collectionData.musicKeyword}` + '에 어울리는 노래')
     console.log(response)
     const videoInfo = response.data
     if (videoInfo.includes('URL:')) {

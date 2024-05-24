@@ -1,113 +1,113 @@
 <template>
   <Header />
   <div class="app-container">
-    <div class="left-container">
-      <div class="tabs">
-        <button @click="changeTab('search')" :class="{ active: tab === 'search' }">검색 목록</button>
-        <button @click="changeTab('saved')" :class="{ active: tab === 'saved' }">저장 목록</button>
-      </div>
+    <div class="app-wrap">
+      <div class="left-container">
+        <div class="tabs">
+          <button @click="changeTab('search')" :class="{ active: tab === 'search' }">검색 목록</button>
+        </div>
 
-      <div v-if="tab === 'search'" class="tab-content">
-        <select v-model="selectedRegion" @change="updateRegionCoordinates">
-          <option value="">지역 선택</option>
-          <option value="seoul">서울</option>
-          <option value="busan">부산</option>
-          <option value="daegu">대구</option>
-          <option value="incheon">인천</option>
-          <option value="gwangju">광주</option>
-          <option value="daejeon">대전</option>
-          <option value="ulsan">울산</option>
-          <option value="sejong">세종</option>
-          <option value="gyeonggi">경기</option>
-          <option value="gangwon">강원</option>
-          <option value="chungbuk">충북</option>
-          <option value="chungnam">충남</option>
-          <option value="jeonbuk">전북</option>
-          <option value="jeonnam">전남</option>
-          <option value="gyeongbuk">경북</option>
-          <option value="gyeongnam">경남</option>
-          <option value="jeju">제주</option>
-        </select>
-        <input v-model="searchQuery" @keyup.enter="searchPlaces" placeholder="검색어를 입력하세요" />
-        <ul class="list">
-          <li v-for="(item, index) in searchList" :key="index" class="list-item">
-            <div>
-              <swiper :slides-per-view="3" space-between="10" :navigation="true" :modules="modules">
-                <swiper-slide v-for="(imageUrl, imgIndex) in item.image_urls" :key="imgIndex" @click="moveToMarker(item.marker)">
-                  <img :src="imageUrl" alt="대표 이미지" class="list-item-image" />
-                </swiper-slide>
-              </swiper>
-              <strong>{{ item.place_name }}</strong>
-              <p>{{ item.road_address_name }}</p>
-              <a :href="'https://map.kakao.com/link/map/' + item.id" target="_blank">자세히 보기</a>
-              <!-- Save Button -->
-              <button @click="openSaveModal(item)">저장</button>
-            </div>
-          </li>
-        </ul>
-        <div v-if="isLoading" class="loading">로딩 중...</div>
-        <div v-if="noMoreResults" class="no-results">더 이상 결과가 없습니다.</div>
-      </div>
+        <div v-if="tab === 'search'" class="tab-content">
+          <select v-model="selectedRegion" @change="updateRegionCoordinates">
+            <option value="">지역 선택</option>
+            <option value="seoul">서울</option>
+            <option value="busan">부산</option>
+            <option value="daegu">대구</option>
+            <option value="incheon">인천</option>
+            <option value="gwangju">광주</option>
+            <option value="daejeon">대전</option>
+            <option value="ulsan">울산</option>
+            <option value="sejong">세종</option>
+            <option value="gyeonggi">경기</option>
+            <option value="gangwon">강원</option>
+            <option value="chungbuk">충북</option>
+            <option value="chungnam">충남</option>
+            <option value="jeonbuk">전북</option>
+            <option value="jeonnam">전남</option>
+            <option value="gyeongbuk">경북</option>
+            <option value="gyeongnam">경남</option>
+            <option value="jeju">제주</option>
+          </select>
+          <input v-model="searchQuery" @keyup.enter="searchPlaces" placeholder="검색어를 입력하세요" />
+          <ul class="list">
+            <li v-for="(item, index) in searchList" :key="index" class="list-item">
+              <div>
+                <swiper :slides-per-view="3" space-between="10" :navigation="true" :modules="modules">
+                  <swiper-slide v-for="(imageUrl, imgIndex) in item.image_urls" :key="imgIndex" @click="moveToMarker(item.marker)">
+                    <img :src="imageUrl" alt="대표 이미지" class="list-item-image" />
+                  </swiper-slide>
+                </swiper>
+                <strong>{{ item.place_name }}</strong>
+                <p style="padding: 10px 0">{{ item.road_address_name }}</p>
+                <a :href="'https://map.kakao.com/link/map/' + item.id" target="_blank">자세히 보기</a>
+                <!-- Save Button -->
+              </div>
+            </li>
+          </ul>
+          <div v-if="isLoading" class="loading">로딩 중...</div>
+          <div v-if="noMoreResults" class="no-results">더 이상 결과가 없습니다.</div>
+        </div>
 
-      <div v-if="tab === 'saved' && selectedList === null" class="tab-content">
-        <h3 style="font-size: 1.2rem">전체 여정 목록: {{ lists.length }}</h3>
-        <button @click="showModal = true">새 여정 목록 만들기</button>
-        <ul class="list">
-          <li v-for="list in lists" :key="list.id" @click="openList(list)" class="list-item">
-            {{ list.title }}
-          </li>
-        </ul>
-      </div>
-      <div v-if="selectedList" class="tab-content">
-        <button @click="selectedList = null">뒤로가기</button>
-        <h3>{{ selectedList.title }}</h3>
-        <ul class="list">
-          <li v-for="item in selectedList.items" :key="item.id" class="list-item">
-            <div>
-              <swiper :slides-per-view="3" space-between="10" :navigation="true" :modules="modules">
-                <swiper-slide v-for="(imageUrl, imgIndex) in item.image_urls" :key="imgIndex" @click="moveToMarker(item.marker)">
-                  <img :src="imageUrl" alt="대표 이미지" class="list-item-image" />
-                </swiper-slide>
-              </swiper>
-              <strong>{{ item.place_name }}</strong>
-              <p>{{ item.road_address_name }}</p>
-              <a :href="'https://map.kakao.com/link/map/' + item.id" target="_blank">자세히 보기</a>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div class="right-container">
-      <div id="map" class="map"></div>
-      <div class="category-buttons">
-        <button @click="selectCategory('CE7', '카페')">카페</button>
-        <button @click="selectCategory('FD6', '음식점')">음식점</button>
-        <button @click="selectCategory('AD5', '숙박')">숙박</button>
-        <button @click="selectCategory('AT4', '관광명소')">관광명소</button>
-        <button @click="selectCategory('CS2', '편의점')">편의점</button>
-      </div>
-      <button class="search-button" v-if="showSearchButton" @click="searchPlacesByBounds">현재 지도에서 검색</button>
-    </div>
-    <div v-if="showModal" class="modal">
-      <div class="modal-content">
-        <h3 class="modal-header">새 여정 목록 만들기</h3>
-        <input class="modal-input" v-model="newListTitle" placeholder="여정 제목 입력" />
-        <div class="modal-button-box">
-          <button @click="createList">만들기</button>
-          <button @click="showModal = false">취소</button>
+        <div v-if="tab === 'saved' && selectedList === null" class="tab-content">
+          <h3 style="font-size: 1.2rem">전체 여정 목록: {{ lists.length }}</h3>
+          <button @click="showModal = true">새 여정 목록 만들기</button>
+          <ul class="list">
+            <li v-for="list in lists" :key="list.id" @click="openList(list)" class="list-item">
+              {{ list.title }}
+            </li>
+          </ul>
+        </div>
+        <div v-if="selectedList" class="tab-content">
+          <button @click="selectedList = null">뒤로가기</button>
+          <h3>{{ selectedList.title }}</h3>
+          <ul class="list">
+            <li v-for="item in selectedList.items" :key="item.id" class="list-item">
+              <div>
+                <swiper :slides-per-view="3" space-between="10" :navigation="true" :modules="modules">
+                  <swiper-slide v-for="(imageUrl, imgIndex) in item.image_urls" :key="imgIndex" @click="moveToMarker(item.marker)">
+                    <img :src="imageUrl" alt="대표 이미지" class="list-item-image" />
+                  </swiper-slide>
+                </swiper>
+                <strong>{{ item.place_name }}</strong>
+                <p>{{ item.road_address_name }}</p>
+                <a :href="'https://map.kakao.com/link/map/' + item.id" target="_blank">자세히 보기</a>
+              </div>
+            </li>
+          </ul>
         </div>
       </div>
-    </div>
-    <div v-if="showSaveModal" class="modal">
-      <div class="modal-content">
-        <h3 class="modal-header">저장할 목록 선택</h3>
-        <ul class="list">
-          <li v-for="list in lists" :key="list.id" @click="saveToList(list)" class="list-item">
-            {{ list.title }}
-          </li>
-        </ul>
-        <div class="modal-button-box">
-          <button @click="showSaveModal = false">취소</button>
+      <div class="right-container">
+        <div id="map" class="map"></div>
+        <div class="category-buttons">
+          <button @click="selectCategory('CE7', '카페')">카페</button>
+          <button @click="selectCategory('FD6', '음식점')">음식점</button>
+          <button @click="selectCategory('AD5', '숙박')">숙박</button>
+          <button @click="selectCategory('AT4', '관광명소')">관광명소</button>
+          <button @click="selectCategory('CS2', '편의점')">편의점</button>
+        </div>
+        <button class="search-button" v-if="showSearchButton" @click="searchPlacesByBounds">현재 지도에서 검색</button>
+      </div>
+      <div v-if="showModal" class="modal">
+        <div class="modal-content">
+          <h3 class="modal-header">새 여정 목록 만들기</h3>
+          <input class="modal-input" v-model="newListTitle" placeholder="여정 제목 입력" />
+          <div class="modal-button-box">
+            <button @click="createList">만들기</button>
+            <button @click="showModal = false">취소</button>
+          </div>
+        </div>
+      </div>
+      <div v-if="showSaveModal" class="modal">
+        <div class="modal-content">
+          <h3 class="modal-header">저장할 목록 선택</h3>
+          <ul class="list">
+            <li v-for="list in lists" :key="list.id" @click="saveToList(list)" class="list-item">
+              {{ list.title }}
+            </li>
+          </ul>
+          <div class="modal-button-box">
+            <button @click="showSaveModal = false">취소</button>
+          </div>
         </div>
       </div>
     </div>
@@ -555,13 +555,20 @@ const updateRegionCoordinates = () => {
 <style scoped>
 .app-container {
   display: flex;
-  width: 70%;
+  width: 100%;
   margin: 0 auto;
-  margin-top: 120px;
+  padding-top: 120px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  background-color: #f9f9f9;
+  background-color: #f8f4e1;
   border-radius: 10px;
+  height: 100%;
+}
+
+.app-wrap {
+  display: flex;
+  margin: 0 auto;
   height: 800px;
+  width: 70%;
 }
 
 .left-container {
@@ -617,7 +624,7 @@ const updateRegionCoordinates = () => {
 }
 
 .category-buttons {
-  z-index: 1000;
+  z-index: 10;
   position: absolute;
   top: 20px;
   left: 20px;
